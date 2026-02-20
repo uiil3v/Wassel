@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}الرئيسية - وصل{% endblock %}
+
+{% block content %}
+
+<style>
+/* ================= HERO ================= */
+
+.hero-section {
+    background: #ffffff;
+    transition: 0.3s ease;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.hero-text {
+    font-size: 1.1rem;
+    color: #475569;
+}
+
+.btn-accent {
+    background-color: #1e3a8a;
+    color: white;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-accent:hover {
+    background-color: #162e6f;
+    transform: translateY(-2px);
+}
+
+.hero-card {
+    background: #f8fafc;
+    transition: 0.3s ease;
+}
+
+.hero-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.feature-list li {
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+/* ================= SECTIONS ================= */
+
+.section-title {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #1e293b;
+}
+
+.section-divider {
+    width: 60px;
+    height: 4px;
+    background-color: #1e3a8a;
+    margin: 10px auto 20px;
+    border-radius: 2px;
+}
+
+.section-subtitle {
+    color: #64748b;
+}
+
+/* ================= ABOUT ================= */
+
+.about-section {
+    background: #ffffff;
+}
+
+.about-text {
+    max-width: 800px;
+    font-size: 1.05rem;
+    color: #475569;
+}
+
+/* ================= VALUES ================= */
+
+.values-section {
+    background: #f1f5f9;
+}
+
+.value-card {
+    padding: 30px;
+    border-radius: 20px;
+    background: white;
+    transition: 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.value-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.value-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+</style>
+
+
+<div class="container my-5">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero-section p-5 mb-5 rounded-4 shadow-lg">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+                <h1 class="hero-title mb-4">
+                    مرحبًا بك في منصة وصل 🚍
+                </h1>
+
+                <p class="hero-text mb-4">
+                    منصة نقل جامعي ذكية تربط الطلاب بسائقين مستقلين موثوقين،
+                    لتوفير تجربة تنقل يومية منظمة وآمنة باشتراك ثابت وشفاف.
+                </p>
+
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="#" class="btn btn-accent btn-lg px-4">ابدأ الآن</a>
+                    <a href="#" class="btn btn-outline-dark btn-lg px-4">تعرف علينا</a>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <div class="hero-card p-4 rounded-4 shadow-sm">
+                    <h5 class="fw-bold mb-4 text-center">مميزات المنصة</h5>
+                    <ul class="list-unstyled feature-list">
+                        <li>✔ مطابقة ذكية بين الطالب والسائق</li>
+                        <li>✔ سائقون موثقون ومعتمدون</li>
+                        <li>✔ اشتراكات شهرية وفصلية</li>
+                        <li>✔ مدفوعات إلكترونية آمنة</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ================= ABOUT ================= -->
+    <section class="about-section p-5 mb-5 rounded-4 shadow-sm">
+        <div class="text-center mb-4">
+            <h2 class="section-title">من نحن</h2>
+            <div class="section-divider"></div>
+            <p class="section-subtitle">
+                رؤية حديثة لتنظيم النقل الجامعي بطريقة آمنة وفعالة
+            </p>
+        </div>
+
+        <div class="about-text text-center mx-auto">
+            تهدف منصة <strong>وصل</strong> إلى تقليل معاناة الطلاب في الوصول إلى الجامعة
+            من خلال نظام اشتراكات واضح يتيح اختيار السائق حسب الحي والسعر والتقييم.
+            كما تسهم المنصة في تعزيز الاستدامة وتقليل الازدحام المروري،
+            بما يتماشى مع رؤية المملكة 2030.
+        </div>
+    </section>
+
+
+    <!-- ================= VALUES ================= -->
+    <section class="values-section p-5 rounded-4 shadow-sm">
+        <div class="text-center mb-5">
+            <h2 class="section-title">قيمنا</h2>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="row g-4 text-center">
+
+            <div class="col-md-4">
+                <div class="value-card h-100">
+                    <div class="value-icon">🛡️</div>
+                    <h5 class="fw-bold">الأمان أولاً</h5>
+                    <p class="text-muted">
+                        جميع السائقين يخضعون لعملية توثيق دقيقة لضمان أعلى معايير الأمان.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card h-100">
+                    <div class="value-icon">⏱️</div>
+                    <h5 class="fw-bold">الاعتمادية</h5>
+                    <p class="text-muted">
+                        نظام اشتراكات منظم يضمن الالتزام بالمواعيد والاستمرارية.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="value-card h-100">
+                    <div class="value-icon">📊</div>
+                    <h5 class="fw-bold">الشفافية</h5>
+                    <p class="text-muted">
+                        أسعار واضحة وتقييمات حقيقية وسجلات رقمية لكل العمليات.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}
