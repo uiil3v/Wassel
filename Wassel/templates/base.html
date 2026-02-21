@@ -1,18 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}وصل{% endblock %}</title>
+    <title>{% block title %}وصِل{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Google Arabic Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap"
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Vazirmatn:wght@400;700&family=Lateef:wght@400;700&display=swap"
         rel="stylesheet">
 
+
     <!-- Bootstrap RTL -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
 
     <style>
         :root {
@@ -24,13 +28,24 @@
         }
 
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: "Readex Pro", sans-serif;
             background-color: var(--light-bg);
             color: var(--dark-color);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
+
+        /* ====== العناوين والشعار ====== */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: "Vazirmatn", sans-serif;
+            font-weight: 700;
+        }
+
 
         /* ================= NAVBAR ================= */
         .navbar {
@@ -39,15 +54,18 @@
         }
 
         .navbar-brand {
+            font-family: "Lateef", serif;
             font-weight: 700;
-            font-size: 1.4rem;
+            font-size: 3.5rem;
             color: var(--dark-color) !important;
-            letter-spacing: 1px;
+            margin-left: 30px;
+
         }
 
         .nav-link {
             color: var(--dark-color) !important;
-            font-weight: 500;
+            font-weight: 400;
+            font-size: 18px;
             transition: 0.3s;
         }
 
@@ -55,17 +73,40 @@
             color: var(--accent-color) !important;
         }
 
-        .btn-accent {
+        .btn.btn-accent {
             background-color: var(--accent-color);
             color: white;
-            font-weight: 600;
+            font-weight: 400;
             border-radius: 25px;
-            padding: 6px 18px;
+            padding: 8px 18px;
             border: none;
+            transition: 0.3s ease;
         }
 
-        .btn-accent:hover {
+        .btn.btn-accent:hover {
             background-color: #b8953f;
+        }
+
+        /* ===== Mobile Navbar Spacing ===== */
+        @media (max-width: 991px) {
+
+            .navbar-nav .nav-item {
+                margin: 8px 0;
+                /* مسافة بين كل عنصر */
+            }
+
+            .navbar-nav .nav-link {
+                padding: 10px 0;
+                /* مساحة ضغط أكبر */
+                font-size: 20px;
+                /* تكبير الخط شوي */
+            }
+
+            .btn.btn-accent {
+                padding: 13px 25px;
+                /* تكبير زر إنشاء حساب */
+            }
+
         }
 
         /* ================= MAIN ================= */
@@ -80,11 +121,6 @@
             background-color: var(--dark-color);
             color: white;
             padding: 50px 0 20px 0;
-        }
-
-        footer h5 {
-            font-weight: 600;
-            margin-bottom: 15px;
         }
 
         footer p,
@@ -105,6 +141,21 @@
             font-size: 0.85rem;
             text-align: center;
         }
+
+        footer ul li {
+            margin-bottom: 12px;
+        }
+
+        footer ul li a {
+            display: inline-block;
+            padding: 4px 0;
+        }
+
+        footer h5 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -115,27 +166,35 @@
     <!-- ================= HEADER ================= -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="/">وصل 🚍</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+            <!-- الشعار -->
+            <a class="navbar-brand" href="/">وصْـــــل</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto align-items-center">
 
-                    <li class="nav-item">
+                <!-- الروابط الأساسية جنب اللوقو -->
+                <ul class="navbar-nav align-items-center me-auto">
+
+                    <li class="nav-item mx-2">
                         <a class="nav-link" href="/">الرئيسية</a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item mx-2">
                         <a class="nav-link" href="/about/">من نحن</a>
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item mx-2">
                         <a class="nav-link" href="/contact/">تواصل معنا</a>
                     </li>
+
+                </ul>
+
+                <!-- تسجيل الدخول وإنشاء حساب في الجهة الأخرى -->
+                <ul class="navbar-nav align-items-center">
 
                     <li class="nav-item ms-3">
                         <a class="nav-link" href="#">تسجيل الدخول</a>
@@ -146,6 +205,7 @@
                     </li>
 
                 </ul>
+
             </div>
         </div>
     </nav>
@@ -161,7 +221,8 @@
         <div class="container">
             <div class="row">
 
-                <div class="col-md-4 mb-4">
+                <!-- عن وصل (أكبر لأنه فيه نص طويل) -->
+                <div class="col-md-5 mb-4">
                     <h5>عن وصل</h5>
                     <p>
                         منصة وصل هي منصة نقل ذكية تربط طلاب الجامعات
@@ -169,7 +230,8 @@
                     </p>
                 </div>
 
-                <div class="col-md-4 mb-4">
+                <!-- الخدمات (أصغر لأنه قائمة قصيرة) -->
+                <div class="col-md-3 mb-4">
                     <h5>الخدمات</h5>
                     <ul class="list-unstyled">
                         <li><a href="#">اشتراكات الطلاب</a></li>
@@ -179,17 +241,18 @@
                     </ul>
                 </div>
 
+                <!-- تواصل معنا (مساحة متوسطة) -->
                 <div class="col-md-4 mb-4">
                     <h5>تواصل معنا</h5>
                     <p>البريد الإلكتروني: support@wassel.sa</p>
-                    <p>جامعة نجران</p>
-                    <p>مشروع تخرج 2025</p>
+                    <p>جامعة نجران - كلية علوم الحاسب</p>
+                    <p>مشروع تخرج 2025/2026</p>
                 </div>
 
             </div>
 
             <div class="footer-bottom">
-                © 2025 منصة وصل. جميع الحقوق محفوظة.
+                © 2026 منصة وصل. جميع الحقوق محفوظة.
             </div>
         </div>
     </footer>
@@ -199,4 +262,5 @@
     {% block extra_js %}{% endblock %}
 
 </body>
+
 </html>
