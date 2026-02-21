@@ -53,6 +53,28 @@
             border-bottom: 2px solid var(--accent-color);
         }
 
+        /* ================= FIXED NAVBAR ================= */
+
+        .custom-navbar {
+            transition: all 0.3s ease;
+            padding: 18px 0;
+            z-index: 1000;
+        }
+
+        /* لما يسوي المستخدم scroll */
+        .custom-navbar.scrolled {
+            padding: 8px 0;
+            background-color: rgba(232, 223, 209, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* تصغير الشعار عند النزول */
+        .custom-navbar.scrolled .navbar-brand {
+            font-size: 2.5rem;
+            transition: 0.3s ease;
+        }
+
         .navbar-brand {
             font-family: "Lateef", serif;
             font-weight: 700;
@@ -112,7 +134,7 @@
         /* ================= MAIN ================= */
         main {
             flex: 1;
-            padding-top: 60px;
+            padding-top: 175px;
             padding-bottom: 60px;
         }
 
@@ -164,7 +186,7 @@
 <body>
 
     <!-- ================= HEADER ================= -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
         <div class="container">
 
             <!-- الشعار -->

@@ -1,184 +1,227 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}الرئيسية - وصل{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ================= HERO ================= */
+
+    .hero-wrapper {
+        position: relative;
+        height: 75vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 50px;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background-image: url("{% static 'main/images/homePhoto.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.95;
+        z-index: 1;
+    }
+
+    .hero-overlay::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.45),
+                rgba(0, 0, 0, 0.5));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+        text-align: center;
+        max-width: 850px;
+        padding: 20px;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .hero-text {
+        font-size: 1.5rem;
+        margin-bottom: 35px;
+        line-height: 1.8;
+    }
+
+    .hero-btn {
+        padding: 14px 36px;
+        font-size: 1.3rem;
+        border-radius: 40px;
+        transition: 0.3s ease;
+    }
+
+    .hero-btn-primary {
+        background-color: var(--accent-color);
+        color: white;
+        border: none;
+    }
+
+    .hero-btn-primary:hover {
+        background-color: #b8953f;
+        transform: translateY(-4px);
+    }
+
+    .hero-btn-outline {
+        border: 2px solid white;
+        color: white;
+    }
+
+    .hero-btn-outline:hover {
+        background: white;
+        color: var(--dark-color);
+    }
+
+    /* ================= ABOUT ================= */
+
+    .about-section {
+        padding: 100px 0;
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 2.6rem;
+        margin-bottom: 20px;
+        color: var(--dark-color);
+    }
+
+    .section-divider {
+        width: 140px;
+        height: 4px;
+        background-color: var(--accent-color);
+        margin: 0 auto 30px;
+        border-radius: 2px;
+    }
+
+    .section-subtitle {
+        color: var(--soft-color);
+        font-size: 1.4rem;
+        line-height: 2;
+    }
+
+    /* ================= VALUES (معدل بالكامل) ================= */
+
+    .values-section {
+        padding-bottom: 80px;
+
+        background: #f9f7f3;
+    }
+
+    .values-section .section-title {
+        margin-bottom: 15px;
+    }
+
+    .value-card {
+        background: white;
+        padding: 35px 35px;
+        border-radius: 30px;
+        transition: 0.35s ease;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.208);
+    }
+
+    .value-card:hover {
+        transform: translateY(-14px);
+        box-shadow: 0 35px 70px rgba(0, 0, 0, 0.12);
+    }
+
+    .value-icon {
+        font-size: 3rem;
+        margin-bottom: 25px;
+    }
+
+    .value-card h5 {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+    }
+
+    .value-card p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--soft-color);
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-text {
+            font-size: 1.1rem;
+        }
+
+        .hero-wrapper {
+            height: 70vh;
+            border-radius: 30px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<style>
-/* ================= HERO ================= */
+<section class="hero-wrapper">
+    <div class="hero-overlay"></div>
 
-.hero-section {
-    background: #ffffff;
-    transition: 0.3s ease;
-}
+    <div class="hero-content">
+        <h1 class="hero-title">
+            وصْــل… حيث يلتقي الأمان بالالتزام
+        </h1>
 
-.hero-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1e293b;
-}
+        <p class="hero-text">
+            وصْــل منصة تقنية تمثل نقطة وصل للطلاب بسائقين موثوقين عبر نظام اشتراكات منظم،
+            لنصنع تجربة نقل يومية آمنة، شفافة، ومستقرة.
+        </p>
 
-.hero-text {
-    font-size: 1.1rem;
-    color: #475569;
-}
-
-.btn-accent {
-    background-color: #1e3a8a;
-    color: white;
-    border: none;
-    transition: 0.3s ease;
-}
-
-.btn-accent:hover {
-    background-color: #162e6f;
-    transform: translateY(-2px);
-}
-
-.hero-card {
-    background: #f8fafc;
-    transition: 0.3s ease;
-}
-
-.hero-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-}
-
-.feature-list li {
-    margin-bottom: 12px;
-    font-size: 1rem;
-}
-
-/* ================= SECTIONS ================= */
-
-.section-title {
-    font-weight: 700;
-    font-size: 2rem;
-    color: #1e293b;
-}
-
-.section-divider {
-    width: 60px;
-    height: 4px;
-    background-color: #1e3a8a;
-    margin: 10px auto 20px;
-    border-radius: 2px;
-}
-
-.section-subtitle {
-    color: #64748b;
-}
-
-/* ================= ABOUT ================= */
-
-.about-section {
-    background: #ffffff;
-}
-
-.about-text {
-    max-width: 800px;
-    font-size: 1.05rem;
-    color: #475569;
-}
-
-/* ================= VALUES ================= */
-
-.values-section {
-    background: #f1f5f9;
-}
-
-.value-card {
-    padding: 30px;
-    border-radius: 20px;
-    background: white;
-    transition: 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
-
-.value-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-}
-
-.value-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-}
-</style>
-
-
-<div class="container my-5">
-
-    <!-- ================= HERO ================= -->
-    <section class="hero-section p-5 mb-5 rounded-4 shadow-lg">
-        <div class="row align-items-center">
-
-            <div class="col-lg-6">
-                <h1 class="hero-title mb-4">
-                    مرحبًا بك في منصة وصل 🚍
-                </h1>
-
-                <p class="hero-text mb-4">
-                    منصة نقل جامعي ذكية تربط الطلاب بسائقين مستقلين موثوقين،
-                    لتوفير تجربة تنقل يومية منظمة وآمنة باشتراك ثابت وشفاف.
-                </p>
-
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="#" class="btn btn-accent btn-lg px-4">ابدأ الآن</a>
-                    <a href="#" class="btn btn-outline-dark btn-lg px-4">تعرف علينا</a>
-                </div>
-            </div>
-
-            <div class="col-lg-6 mt-4 mt-lg-0">
-                <div class="hero-card p-4 rounded-4 shadow-sm">
-                    <h5 class="fw-bold mb-4 text-center">مميزات المنصة</h5>
-                    <ul class="list-unstyled feature-list">
-                        <li>✔ مطابقة ذكية بين الطالب والسائق</li>
-                        <li>✔ سائقون موثقون ومعتمدون</li>
-                        <li>✔ اشتراكات شهرية وفصلية</li>
-                        <li>✔ مدفوعات إلكترونية آمنة</li>
-                    </ul>
-                </div>
-            </div>
-
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="#" class="btn hero-btn hero-btn-primary">ابدأ الآن</a>
+            <a href="#" class="btn hero-btn hero-btn-outline">تعرف علينا</a>
         </div>
-    </section>
+    </div>
+</section>
 
+<section class="about-section text-center container">
+    <h2 class="section-title">فكرة وصْــل</h2>
+    <div class="section-divider"></div>
 
-    <!-- ================= ABOUT ================= -->
-    <section class="about-section p-5 mb-5 rounded-4 shadow-sm">
-        <div class="text-center mb-4">
-            <h2 class="section-title">من نحن</h2>
-            <div class="section-divider"></div>
-            <p class="section-subtitle">
-                رؤية حديثة لتنظيم النقل الجامعي بطريقة آمنة وفعالة
-            </p>
-        </div>
+    <p class="section-subtitle mx-auto" style="max-width: 950px;">
+        بدأت فكرة وصْــل من ملاحظة حاجة حقيقية إلى تنظيم النقل الجامعي بطريقة أكثر أمانًا ووضوحًا،
+        حيث يواجه العديد من الطلاب تحديات تتعلق بالالتزام بالمواعيد وضمان الثقة بين الطرفين.
+        ومن هنا جاءت وصْــل لتقدم حلًا تقنيًا منظمًا يربط بين الطلاب والسائقين ضمن إطار واضح من الثقة،
+        الشفافية، والالتزام، لتصنع تجربة تنقل يومية أكثر استقرارًا وطمأنينة.
+    </p>
+</section>
 
-        <div class="about-text text-center mx-auto">
-            تهدف منصة <strong>وصل</strong> إلى تقليل معاناة الطلاب في الوصول إلى الجامعة
-            من خلال نظام اشتراكات واضح يتيح اختيار السائق حسب الحي والسعر والتقييم.
-            كما تسهم المنصة في تعزيز الاستدامة وتقليل الازدحام المروري،
-            بما يتماشى مع رؤية المملكة 2030.
-        </div>
-    </section>
+<section class="values-section">
+    <div class="container text-center">
+        <h2 class="section-title">قيمنا</h2>
+        <div class="section-divider"></div>
 
-
-    <!-- ================= VALUES ================= -->
-    <section class="values-section p-5 rounded-4 shadow-sm">
-        <div class="text-center mb-5">
-            <h2 class="section-title">قيمنا</h2>
-            <div class="section-divider"></div>
-        </div>
-
-        <div class="row g-4 text-center">
+        <div class="row g-4 mt-5">
 
             <div class="col-md-4">
                 <div class="value-card h-100">
                     <div class="value-icon">🛡️</div>
                     <h5 class="fw-bold">الأمان أولاً</h5>
-                    <p class="text-muted">
+                    <p>
                         جميع السائقين يخضعون لعملية توثيق دقيقة لضمان أعلى معايير الأمان.
                     </p>
                 </div>
@@ -188,8 +231,8 @@
                 <div class="value-card h-100">
                     <div class="value-icon">⏱️</div>
                     <h5 class="fw-bold">الاعتمادية</h5>
-                    <p class="text-muted">
-                        نظام اشتراكات منظم يضمن الالتزام بالمواعيد والاستمرارية.
+                    <p>
+                        التزام بالمواعيد ونظام اشتراكات منظم يضمن الاستقرار والاستمرارية.
                     </p>
                 </div>
             </div>
@@ -198,15 +241,14 @@
                 <div class="value-card h-100">
                     <div class="value-icon">📊</div>
                     <h5 class="fw-bold">الشفافية</h5>
-                    <p class="text-muted">
-                        أسعار واضحة وتقييمات حقيقية وسجلات رقمية لكل العمليات.
+                    <p>
+                        أسعار واضحة، تقييمات حقيقية، وسجل رقمي منظم لكل العمليات.
                     </p>
                 </div>
             </div>
 
         </div>
-    </section>
-
-</div>
+    </div>
+</section>
 
 {% endblock %}
