@@ -4,6 +4,7 @@
 {% block title %}الرئيسية - وصل{% endblock %}
 
 {% block extra_css %}
+
 <style>
     /* ================= HERO ================= */
 
@@ -89,6 +90,7 @@
 
     .about-section {
         padding: 100px 0;
+        margin-bottom: 0;
     }
 
     .section-title {
@@ -112,44 +114,68 @@
         line-height: 2;
     }
 
-    /* ================= VALUES (معدل بالكامل) ================= */
+    /* ================= VALUES (نسخة فخمة) ================= */
 
     .values-section {
-        padding-bottom: 80px;
-
-        background: #f9f7f3;
-    }
-
-    .values-section .section-title {
-        margin-bottom: 15px;
+        padding: 10px 0;
+        margin-bottom: 70px;
+        background: linear-gradient(135deg, #f6f2ea, #ffffff);
     }
 
     .value-card {
+        position: relative;
         background: white;
-        padding: 35px 35px;
-        border-radius: 30px;
-        transition: 0.35s ease;
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.208);
+        padding: 50px 35px;
+        border-radius: 35px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: 0.4s ease;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border-color: var(--accent-color);
+    }
+
+    .value-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: var(--accent-color);
+        opacity: 0.05;
+        border-bottom-left-radius: 100%;
+
     }
 
     .value-card:hover {
-        transform: translateY(-14px);
-        box-shadow: 0 35px 70px rgba(0, 0, 0, 0.12);
+        transform: translateY(-12px);
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.12);
+        border-color: var(--dark-color);
     }
 
     .value-icon {
-        font-size: 3rem;
-        margin-bottom: 25px;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 30px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
     }
 
     .value-card h5 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
+        font-weight: 700;
         margin-bottom: 15px;
     }
 
     .value-card p {
-        font-size: 1.1rem;
-        line-height: 1.8;
+        font-size: 1.15rem;
+        line-height: 1.9;
         color: var(--soft-color);
     }
 
@@ -187,7 +213,7 @@
         </h1>
 
         <p class="hero-text">
-            وصْــل منصة تقنية تمثل نقطة وصل للطلاب بسائقين موثوقين عبر نظام اشتراكات منظم،
+            منصة تقنية تمثل نقطة وصل للطلاب والطالبات بسائقين موثوقين عبر نظام اشتراكات منظم،
             لنصنع تجربة نقل يومية آمنة، شفافة، ومستقرة.
         </p>
 
@@ -204,7 +230,7 @@
 
     <p class="section-subtitle mx-auto" style="max-width: 950px;">
         بدأت فكرة وصْــل من ملاحظة حاجة حقيقية إلى تنظيم النقل الجامعي بطريقة أكثر أمانًا ووضوحًا،
-        حيث يواجه العديد من الطلاب تحديات تتعلق بالالتزام بالمواعيد وضمان الثقة بين الطرفين.
+        حيث يواجه العديد من الطلاب والطالبات تحديات تتعلق بالالتزام بالمواعيد وضمان الثقة بين الطرفين.
         ومن هنا جاءت وصْــل لتقدم حلًا تقنيًا منظمًا يربط بين الطلاب والسائقين ضمن إطار واضح من الثقة،
         الشفافية، والالتزام، لتصنع تجربة تنقل يومية أكثر استقرارًا وطمأنينة.
     </p>
@@ -219,8 +245,10 @@
 
             <div class="col-md-4">
                 <div class="value-card h-100">
-                    <div class="value-icon">🛡️</div>
-                    <h5 class="fw-bold">الأمان أولاً</h5>
+                    <div class="value-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold">الأمان</h5>
                     <p>
                         جميع السائقين يخضعون لعملية توثيق دقيقة لضمان أعلى معايير الأمان.
                     </p>
@@ -229,17 +257,22 @@
 
             <div class="col-md-4">
                 <div class="value-card h-100">
-                    <div class="value-icon">⏱️</div>
-                    <h5 class="fw-bold">الاعتمادية</h5>
+                    <div class="value-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h5 class="fw-bold">بناء الثقة</h5>
                     <p>
-                        التزام بالمواعيد ونظام اشتراكات منظم يضمن الاستقرار والاستمرارية.
+                        نظام تحقق وتقييم متبادل يعزز الشفافية
+                        ويؤسس لعلاقة مستقرة وآمنة بين جميع الأطراف.
                     </p>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="value-card h-100">
-                    <div class="value-icon">📊</div>
+                    <div class="value-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
                     <h5 class="fw-bold">الشفافية</h5>
                     <p>
                         أسعار واضحة، تقييمات حقيقية، وسجل رقمي منظم لكل العمليات.
