@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}إنشاء حساب - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ===== Register Section ===== */
+
+.register-section {
+    padding: 40px 0 100px;
+}
+
+.register-wrapper {
+    background: linear-gradient(135deg, #f6f2ea, #ece6db);
+    border-radius: 60px;
+    padding: 60px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+}
+
+.register-card {
+    background: white;
+    border-radius: 35px;
+    padding: 55px;
+    border: 1px solid rgba(200, 169, 81, 0.25);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* ===== Titles ===== */
+
+.register-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.register-subtitle {
+    color: var(--soft-color);
+    margin-bottom: 40px;
+}
+
+/* ===== Premium Inputs ===== */
+
+.premium-input,
+.premium-select {
+    width: 100%;
+    border-radius: 22px;
+    padding: 16px 20px;
+    border: 1.5px solid rgba(0,0,0,0.08);
+    background: #fdfcf9;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Hover */
+.premium-input:hover,
+.premium-select:hover {
+    border-color: rgba(200,169,81,0.4);
+}
+
+/* Focus */
+.premium-input:focus,
+.premium-select:focus {
+    background: white;
+    border-color: var(--accent-color);
+    box-shadow: 0 15px 35px rgba(200,169,81,0.18);
+    transform: translateY(-3px);
+}
+
+/* Error Style */
+.input-error {
+    border-color: #dc3545 !important;
+    background: #fff5f5;
+}
+
+.error-text {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 6px;
+}
+
+/* Label */
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--dark-color);
+}
+
+/* Button */
+
+.btn-register {
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 35px;
+    padding: 14px;
+    border: none;
+    transition: 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-register:hover {
+    background-color: #b8953f;
+    transform: translateY(-4px);
+}
+
+.login-link {
+    margin-top: 25px;
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+
+    .register-wrapper {
+        padding: 25px;
+        border-radius: 30px;
+    }
+
+    .register-card {
+        padding: 30px 20px;
+        border-radius: 25px;
+    }
+
+    .register-title {
+        font-size: 1.8rem;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .register-wrapper {
+        padding: 15px;
+    }
+
+    .register-card {
+        padding: 25px 15px;
+    }
+
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="register-section">
+    <div class="container">
+        <div class="register-wrapper">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="register-card text-center">
+
+                        <h2 class="register-title">إنشاء حساب جديد</h2>
+                        <p class="register-subtitle">
+                            انضم إلى منصة وصْــل وابدأ تجربة نقل أكثر أمانًا وتنظيمًا
+                        </p>
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="row text-start">
+
+                                <!-- First Name -->
+                                <div class="col-md-6 mb-4">
+                                    <label>الاسم الأول</label>
+                                    <input type="text" name="first_name"
+                                           value="{{ form.first_name.value|default:'' }}"
+                                           class="premium-input {% if form.first_name.errors %}input-error{% endif %}">
+                                    {% for error in form.first_name.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="col-md-6 mb-4">
+                                    <label>اسم العائلة</label>
+                                    <input type="text" name="last_name"
+                                           value="{{ form.last_name.value|default:'' }}"
+                                           class="premium-input {% if form.last_name.errors %}input-error{% endif %}">
+                                    {% for error in form.last_name.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Username -->
+                                <div class="col-md-12 mb-4">
+                                    <label>اسم المستخدم</label>
+                                    <input type="text" name="username"
+                                           value="{{ form.username.value|default:'' }}"
+                                           class="premium-input {% if form.username.errors %}input-error{% endif %}">
+                                    {% for error in form.username.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-12 mb-4">
+                                    <label>البريد الإلكتروني</label>
+                                    <input type="email" name="email"
+                                           value="{{ form.email.value|default:'' }}"
+                                           class="premium-input {% if form.email.errors %}input-error{% endif %}">
+                                    {% for error in form.email.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Role -->
+                                <div class="col-md-12 mb-4">
+                                    <label>نوع الحساب</label>
+                                    <select name="role"
+                                            class="premium-select {% if form.role.errors %}input-error{% endif %}">
+                                        <option value="">اختر نوع الحساب</option>
+                                        {% for value, label in form.fields.role.choices %}
+                                            <option value="{{ value }}"
+                                                {% if form.role.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    {% for error in form.role.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Password -->
+                                <div class="col-md-6 mb-4">
+                                    <label>كلمة المرور</label>
+                                    <input type="password" name="password1"
+                                           class="premium-input {% if form.password1.errors %}input-error{% endif %}">
+                                    {% for error in form.password1.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6 mb-4">
+                                    <label>تأكيد كلمة المرور</label>
+                                    <input type="password" name="password2"
+                                           class="premium-input {% if form.password2.errors %}input-error{% endif %}">
+                                    {% for error in form.password2.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-register w-100">
+                                إنشاء الحساب
+                            </button>
+
+                        </form>
+
+                        <div class="login-link">
+                            لديك حساب بالفعل؟
+                            <a href="{% url 'accounts:login' %}">تسجيل الدخول</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

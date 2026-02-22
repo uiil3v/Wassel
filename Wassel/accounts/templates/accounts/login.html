@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل الدخول - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+
+    .register-section {
+        padding: 0px 0 100px;
+    }
+
+    .register-wrapper {
+        background: linear-gradient(135deg, #f6f2ea, #ece6db);
+        border-radius: 60px;
+        padding: 60px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 35px;
+        padding: 55px;
+        border: 1px solid rgba(200, 169, 81, 0.25);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
+    }
+
+    .register-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .register-subtitle {
+        color: var(--soft-color);
+        margin-bottom: 40px;
+    }
+
+    /* Premium Inputs */
+
+    .premium-input {
+        width: 100%;
+        border-radius: 22px;
+        padding: 16px 20px;
+        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        background: #fdfcf9;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .premium-input:hover {
+        border-color: rgba(200, 169, 81, 0.4);
+    }
+
+    .premium-input:focus {
+        background: white;
+        border-color: var(--accent-color);
+        box-shadow: 0 15px 35px rgba(200, 169, 81, 0.18);
+        transform: translateY(-3px);
+    }
+
+    .btn-register {
+        background-color: var(--accent-color);
+        color: white;
+        border-radius: 35px;
+        padding: 14px;
+        border: none;
+        transition: 0.3s ease;
+        font-weight: 600;
+    }
+
+    .btn-register:hover {
+        background-color: #b8953f;
+        transform: translateY(-4px);
+    }
+
+    .login-link {
+        margin-top: 25px;
+        font-size: 0.95rem;
+    }
+
+    .login-link a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+
+    .register-wrapper {
+        padding: 25px;
+        border-radius: 30px;
+    }
+
+    .register-card {
+        padding: 30px 20px;
+        border-radius: 25px;
+    }
+
+    .register-title {
+        font-size: 1.9rem;
+    }
+
+}
+    @media (max-width: 576px) {
+
+    .register-wrapper {
+        padding: 15px;
+    }
+
+    .register-card {
+        padding: 25px 15px;
+    }
+
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="register-section">
+    <div class="container">
+        <div class="register-wrapper">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="register-card text-center">
+
+                        <h2 class="register-title">تسجيل الدخول</h2>
+                        <p class="register-subtitle">
+                            أهلاً بعودتك 👋 قم بتسجيل الدخول للمتابعة
+                        </p>
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="text-start mb-4">
+                                <label>اسم المستخدم</label>
+                                <input type="text" name="username" class="premium-input" required>
+                            </div>
+
+                            <div class="text-start mb-4">
+                                <label>كلمة المرور</label>
+                                <input type="password" name="password" class="premium-input" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-register w-100">
+                                تسجيل الدخول
+                            </button>
+
+                        </form>
+
+                        <div class="login-link">
+                            ليس لديك حساب؟
+                            <a href="{% url 'accounts:register' %}">إنشاء حساب</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

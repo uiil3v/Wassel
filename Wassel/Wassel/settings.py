@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "main",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -118,5 +119,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "Wassel" / "static",
+    BASE_DIR / "static",
 ]
+
+AUTH_USER_MODEL = 'accounts.User'

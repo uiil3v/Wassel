@@ -237,11 +237,11 @@
                 <ul class="navbar-nav align-items-center">
 
                     <li class="nav-item ms-3">
-                        <a class="nav-link" href="#">تسجيل الدخول</a>
+                        <a class="nav-link" href="{% url 'accounts:login' %}">تسجيل الدخول</a>
                     </li>
 
                     <li class="nav-item ms-2">
-                        <a class="btn btn-accent" href="#">إنشاء حساب</a>
+                        <a class="btn btn-accent" href="{% url 'accounts:register' %}">إنشاء حساب</a>
                     </li>
 
                 </ul>
@@ -252,8 +252,29 @@
 
     <!-- ================= CONTENT ================= -->
     <main class="container">
-        {% block content %}
-        {% endblock %}
+        {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+
+            {% if message.tags == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show">
+                {% elif message.tags == "success" %}
+                <div class="alert alert-success alert-dismissible fade show">
+                    {% elif message.tags == "warning" %}
+                    <div class="alert alert-warning alert-dismissible fade show">
+                        {% else %}
+                        <div class="alert alert-info alert-dismissible fade show">
+                            {% endif %}
+
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% block content %}
+                    {% endblock %}
     </main>
 
     <!-- ================= FOOTER ================= -->
