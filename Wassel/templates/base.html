@@ -179,6 +179,14 @@
             margin-bottom: 15px;
             letter-spacing: 0.5px;
         }
+
+        .active-link {
+            background-color: var(--accent-color);
+            color: white !important;
+            padding: 8px 18px;
+            border-radius: 20px;
+            transition: 0.3s ease;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -203,15 +211,24 @@
                 <ul class="navbar-nav align-items-center me-auto">
 
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="{% url 'main:index' %}">الرئيسية</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active-link{% endif %}"
+                            href="{% url 'main:index' %}">
+                            الرئيسية
+                        </a>
                     </li>
 
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="{% url 'main:about' %}">من نحن</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active-link{% endif %}"
+                            href="{% url 'main:about' %}">
+                            من نحن
+                        </a>
                     </li>
 
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="{% url 'main:contact' %}">تواصل معنا</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active-link{% endif %}"
+                            href="{% url 'main:contact' %}">
+                            تواصل معنا
+                        </a>
                     </li>
 
                 </ul>
