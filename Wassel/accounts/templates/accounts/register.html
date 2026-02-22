@@ -216,6 +216,23 @@ label {
                                     {% endfor %}
                                 </div>
 
+                                <!-- Phone -->
+                                <div class="col-md-12 mb-4">
+                                    <label>رقم الجوال</label>
+                                    <input type="tel"
+                                        name="phone"
+                                        value="{{ form.phone.value|default:'' }}"
+                                        class="premium-input {% if form.phone.errors %}input-error{% endif %}"
+                                        placeholder="05XXXXXXXX"
+                                        pattern="05[0-9]{8}"
+                                        maxlength="10"
+                                        required>
+
+                                    {% for error in form.phone.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
                                 <!-- Role -->
                                 <div class="col-md-12 mb-4">
                                     <label>نوع الحساب</label>
