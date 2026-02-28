@@ -4,7 +4,6 @@
 
 {% block extra_css %}
 <style>
-
     .register-section {
         padding: 0px 0 100px;
     }
@@ -91,32 +90,33 @@
 
     @media (max-width: 768px) {
 
-    .register-wrapper {
-        padding: 25px;
-        border-radius: 30px;
+        .register-wrapper {
+            padding: 25px;
+            border-radius: 30px;
+        }
+
+        .register-card {
+            padding: 30px 20px;
+            border-radius: 25px;
+        }
+
+        .register-title {
+            font-size: 1.9rem;
+        }
+
     }
 
-    .register-card {
-        padding: 30px 20px;
-        border-radius: 25px;
-    }
-
-    .register-title {
-        font-size: 1.9rem;
-    }
-
-}
     @media (max-width: 576px) {
 
-    .register-wrapper {
-        padding: 15px;
-    }
+        .register-wrapper {
+            padding: 15px;
+        }
 
-    .register-card {
-        padding: 25px 15px;
-    }
+        .register-card {
+            padding: 25px 15px;
+        }
 
-}
+    }
 </style>
 {% endblock %}
 
@@ -138,8 +138,8 @@
                             {% csrf_token %}
 
                             <div class="text-start mb-4">
-                                <label>اسم المستخدم</label>
-                                <input type="text" name="username" class="premium-input" required>
+                                <label>البريد الإلكتروني</label>
+                                <input type="email" name="email" class="premium-input text-start" dir="ltr" required>
                             </div>
 
                             <div class="text-start mb-4">

@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    /* ===== Layout Wrapper ===== */
+    .driver-layout {
+        display: flex;
+        gap: 35px;
+    }
+
+    /* ===== Sidebar ===== */
+    .driver-sidebar {
+        width: 270px;
+        background: white;
+        border-radius: 40px;
+        padding: 30px 20px;
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.05);
+        height: fit-content;
+    }
+
+    /* ===== Dashboard Background Layer ===== */
+    .driver-page-bg {
+        background: linear-gradient(135deg, #f6f2ea, #ebe3d6);
+        padding: 50px;
+        border-radius: 45px;
+    }
+
+    /* Mobile Fix */
+    @media (max-width: 768px) {
+        .driver-page-bg {
+            padding: 20px;
+            border-radius: 25px;
+        }
+    }
+
+
+
+    /* ===== Profile Box ===== */
+    .driver-profile-box {
+        text-align: center;
+        padding-bottom: 25px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+    }
+
+    .driver-avatar {
+        width: 85px;
+        height: 85px;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+        color: white;
+        font-size: 30px;
+        box-shadow: 0 15px 35px rgba(200, 169, 81, 0.35);
+    }
+
+    .driver-status {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 13px;
+        padding: 4px 14px;
+        border-radius: 20px;
+        background-color: rgba(200, 169, 81, 0.15);
+        color: var(--accent-color);
+    }
+
+    /* ===== Links ===== */
+    .driver-link {
+        display: flex;
+        align-items: center;
+        padding: 12px 18px;
+        border-radius: 22px;
+        margin-bottom: 10px;
+        text-decoration: none;
+        color: var(--dark-color);
+        font-weight: 500;
+        transition: 0.3s ease;
+        position: relative;
+    }
+
+    .driver-link i {
+        font-size: 18px;
+    }
+
+    .driver-link:hover {
+        background-color: rgba(200, 169, 81, 0.15);
+        color: var(--accent-color);
+        transform: translateX(-6px);
+    }
+
+    /* Active Link */
+    .driver-link.active {
+        background-color: rgba(200, 169, 81, 0.2);
+        color: var(--accent-color);
+    }
+
+    .driver-link.active::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 20%;
+        height: 60%;
+        width: 4px;
+        background-color: var(--accent-color);
+        border-radius: 5px;
+    }
+
+    /* ===== Content Area ===== */
+    .driver-content {
+        flex: 1;
+    }
+
+    /* ===== Mobile Toggle Button ===== */
+    .sidebar-toggle-btn {
+        display: none;
+        margin-bottom: 20px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 991px) {
+
+        .driver-layout {
+            flex-direction: column;
+        }
+
+        .driver-sidebar {
+            display: none;
+        }
+
+        .sidebar-toggle-btn {
+            display: inline-block;
+        }
+    }
+
+    /* ===== Mobile Offcanvas Styling ===== */
+    .driver-offcanvas {
+        background-color: var(--light-bg);
+        border-left: 3px solid var(--accent-color);
+    }
+
+    .driver-offcanvas .offcanvas-body {
+        padding: 25px;
+    }
+
+    .driver-offcanvas .driver-link {
+        color: var(--dark-color);
+    }
+
+    .driver-offcanvas .driver-link:hover {
+        background-color: rgba(200, 169, 81, 0.15);
+        color: var(--accent-color);
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- Mobile Toggle -->
+<button class="btn btn-accent sidebar-toggle-btn" data-bs-toggle="offcanvas" data-bs-target="#driverSidebarMobile">
+    <i class="bi bi-speedometer2 me-2"></i>
+    لوحة السائق
+</button>
+
+<div class="driver-page-bg">
+    <div class="driver-layout">
+
+        <!-- ===== Desktop Sidebar ===== -->
+        <div class="driver-sidebar d-none d-lg-block">
+
+            <div class="driver-profile-box">
+                <div class="driver-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+
+                <h6 class="mt-3 mb-1">{{ user.get_full_name }}</h6>
+
+                {% if user.driver_profile.verification_status == "approved" %}
+                <span class="driver-status text-success">معتمد</span>
+
+                {% elif user.driver_profile.verification_status == "pending" %}
+                <span class="driver-status text-warning">قيد المراجعة</span>
+
+                {% elif user.driver_profile.verification_status == "rejected" %}
+                <span class="driver-status text-danger">مرفوض</span>
+
+                {% else %}
+                <span class="driver-status text-secondary">غير مكتمل</span>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'driver:dashboard' %}" class="driver-link active">
+                <i class="bi bi-speedometer2 me-2"></i>
+                الرئيسية
+            </a>
+
+            <a href="#" class="driver-link">
+                <i class="bi bi-ticket-perforated me-2"></i>
+                اشتراكاتي
+            </a>
+
+            <a href="#" class="driver-link">
+                <i class="bi bi-plus-circle me-2"></i>
+                إنشاء اشتراك
+            </a>
+
+            <a href="#" class="driver-link">
+                <i class="bi bi-clipboard-check me-2"></i>
+                الطلبات
+            </a>
+
+            <a href="#" class="driver-link">
+                <i class="bi bi-bell me-2"></i>
+                الإشعارات
+            </a>
+
+            <a href="#" class="driver-link">
+                <i class="bi bi-person me-2"></i>
+                الملف الشخصي
+            </a>
+
+            <a href="#" class="driver-link">
+                <i class="bi bi-shield-check me-2"></i>
+                التوثيق
+            </a>
+
+        </div>
+
+        <!-- ===== Content Area ===== -->
+        <div class="driver-content">
+            {% block driver_content %}{% endblock %}
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===== Mobile Offcanvas Sidebar ===== -->
+<div class="offcanvas offcanvas-start driver-offcanvas" tabindex="-1" id="driverSidebarMobile">
+
+    <div class="offcanvas-header border-0">
+        <h5 class="fw-bold">لوحة السائق</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body">
+
+        <div class="driver-profile-box text-center mb-4">
+            <div class="driver-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-3 mb-1">{{ user.get_full_name }}</h6>
+            <span class="driver-status">موثق</span>
+        </div>
+
+        <a href="{% url 'driver:dashboard' %}" class="driver-link active">
+            <i class="bi bi-speedometer2 me-2"></i>
+            الرئيسية
+        </a>
+
+        <a href="#" class="driver-link">
+            <i class="bi bi-ticket-perforated me-2"></i>
+            اشتراكاتي
+        </a>
+
+        <a href="#" class="driver-link">
+            <i class="bi bi-plus-circle me-2"></i>
+            إنشاء اشتراك
+        </a>
+
+        <a href="#" class="driver-link">
+            <i class="bi bi-clipboard-check me-2"></i>
+            الطلبات
+        </a>
+
+        <a href="#" class="driver-link">
+            <i class="bi bi-bell me-2"></i>
+            الإشعارات
+        </a>
+
+        <a href="#" class="driver-link">
+            <i class="bi bi-person me-2"></i>
+            الملف الشخصي
+        </a>
+
+        <a href="#" class="driver-link">
+            <i class="bi bi-shield-check me-2"></i>
+            التوثيق
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}

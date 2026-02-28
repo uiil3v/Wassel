@@ -1,0 +1,299 @@
+{% extends "driver/base_driver.html" %}
+
+{% block driver_content %}
+
+<style>
+    /* ===== Card Base ===== */
+    .profile-card {
+        background: white;
+        border-radius: 35px;
+        padding: 40px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 35px;
+    }
+
+    .profile-card h5 {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    /* ===== Status Bar ===== */
+    .status-bar-wrapper {
+        background: white;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 40px;
+    }
+
+    .status-progress {
+        height: 8px;
+        background: #eee;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .status-progress-inner {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-color), #d4af37);
+    }
+
+    /* ===== Inputs ===== */
+    .premium-input {
+        width: 100%;
+        border-radius: 22px;
+        padding: 14px 18px;
+        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        background: #fdfcf9;
+        transition: 0.3s ease;
+    }
+
+    .premium-input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.2);
+        outline: none;
+    }
+
+    /* ===== Document Box ===== */
+    .doc-box {
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 25px;
+        padding: 20px;
+        text-align: center;
+        transition: 0.3s ease;
+        background: #faf9f6;
+    }
+
+    .doc-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .doc-preview {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 18px;
+        margin-bottom: 15px;
+    }
+
+    /* Disabled */
+    .disabled-overlay {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+</style>
+
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- ================= STATUS ================= -->
+    <div class="status-bar-wrapper">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>حالة التوثيق</h5>
+
+            {% if profile.verification_status == "approved" %}
+            <span class="badge bg-success">معتمد</span>
+            {% elif profile.verification_status == "pending" %}
+            <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            {% elif profile.verification_status == "rejected" %}
+            <span class="badge bg-danger">مرفوض</span>
+            {% else %}
+            <span class="badge bg-secondary">غير مكتمل</span>
+            {% endif %}
+        </div>
+
+        <div class="status-progress mb-3">
+            <div class="status-progress-inner" style="width:
+        {% if profile.verification_status == 'approved' %}100%
+        {% elif profile.verification_status == 'pending' %}60%
+        {% elif profile.verification_status == 'rejected' %}80%
+        {% else %}20%
+        {% endif %}
+        ">
+            </div>
+        </div>
+
+        <!-- 🔴 سبب الرفض -->
+        {% if profile.verification_status == "rejected" and profile.rejection_reason %}
+        <div class="alert alert-danger mt-2 mb-0">
+            <strong>سبب الرفض:</strong>
+            {{ profile.rejection_reason }}
+        </div>
+        {% endif %}
+
+        <!-- 🟢 رسالة النجاح -->
+        {% if profile.verification_status == "approved" %}
+        <div class="alert alert-success mt-2 mb-0">
+            تم اعتماد حسابك ويمكنك استقبال الطلبات 🎉
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================= GENERAL INFO ================= -->
+    <div class="profile-card {% if profile.verification_status == 'pending' %}disabled-overlay{% endif %}">
+        <h5>المعلومات العامة</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>الاسم الأول</label>
+                <input type="text" name="first_name" value="{{ user.first_name }}" class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>اسم العائلة</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}" class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>البريد الإلكتروني</label>
+                <input type="email" name="email" value="{{ user.email }}" class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>رقم الجوال</label>
+                <input type="text" name="phone" value="{{ user.phone }}" class="premium-input text-start" dir="ltr"
+                    style="direction: ltr; text-align: left;">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= DRIVER DOCUMENTS ================= -->
+    <div class="profile-card">
+        <h5>بيانات السائق</h5>
+
+        <div class="row g-4">
+
+            <!-- ID -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">صورة الهوية</h6>
+
+                    {% if profile.id_document_image %}
+                    <img src="{{ profile.id_document_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="id_document_image" class="form-control">
+                </div>
+            </div>
+
+            <!-- License -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">رخصة القيادة</h6>
+
+                    {% if profile.driving_license_image %}
+                    <img src="{{ profile.driving_license_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="driving_license_image" class="form-control">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= VEHICLE DATA ================= -->
+    <div class="profile-card {% if profile.verification_status == 'pending' %}disabled-overlay{% endif %}">
+        <h5>بيانات المركبة</h5>
+
+        <!-- موديل المركبة -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label>موديل المركبة</label>
+                <input type="text" name="vehicle_model" value="{{ profile.vehicle_model }}" class="premium-input">
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- استمارة المركبة -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">استمارة المركبة</h6>
+
+                    {% if profile.vehicle_registration_image %}
+                    <img src="{{ profile.vehicle_registration_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="vehicle_registration_image" class="form-control">
+                </div>
+            </div>
+
+            <!-- تأمين المركبة -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">تأمين المركبة</h6>
+
+                    {% if profile.vehicle_insurance_image %}
+                    <img src="{{ profile.vehicle_insurance_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="vehicle_insurance_image" class="form-control">
+                </div>
+            </div>
+
+            <!-- صورة أمامية -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">صورة أمامية للمركبة</h6>
+
+                    {% if profile.vehicle_front_image %}
+                    <img src="{{ profile.vehicle_front_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="vehicle_front_image" class="form-control">
+                </div>
+            </div>
+
+            <!-- صورة خلفية -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">صورة خلفية للمركبة</h6>
+
+                    {% if profile.vehicle_back_image %}
+                    <img src="{{ profile.vehicle_back_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="vehicle_back_image" class="form-control">
+                </div>
+            </div>
+
+            <!-- صورة جانبية -->
+            <div class="col-md-4">
+                <div class="doc-box">
+                    <h6 class="mb-3">صورة جانبية للمركبة</h6>
+
+                    {% if profile.vehicle_side_image %}
+                    <img src="{{ profile.vehicle_side_image.url }}" class="doc-preview">
+                    {% endif %}
+
+                    <input type="file" name="vehicle_side_image" class="form-control">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= SAVE BUTTON ================= -->
+    {% if profile.verification_status != "pending" %}
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-accent px-5 py-2">
+            حفظ التعديلات وإرسال للمراجعة
+        </button>
+    </div>
+    {% else %}
+    <div class="alert alert-warning mt-4">
+        لا يمكنك التعديل أثناء المراجعة.
+    </div>
+    {% endif %}
+
+</form>
+
+{% endblock %}

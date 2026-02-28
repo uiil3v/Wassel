@@ -4,9 +4,9 @@ from .models import User
 
 
 class CustomUserAdmin(UserAdmin):
+    model = User
 
     list_display = (
-        "username",
         "email",
         "full_name",
         "phone",
@@ -21,16 +21,24 @@ class CustomUserAdmin(UserAdmin):
         "is_staff",
     )
 
-    fieldsets = UserAdmin.fieldsets + (
-        ("معلومات إضافية", {
-            "fields": ("phone", "role", "status"),
+    ordering = ("email",)  # 🔥 مهم جدًا بدل username
+
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
+        ("المعلومات الشخصية", {"fields": ("first_name", "last_name", "phone")}),
+        ("الصلاحيات", {"fields": ("role", "status", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        ("تواريخ مهمة", {"fields": ("last_login", "date_joined")}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "first_name", "last_name", "phone", "role", "status", "password1", "password2"),
         }),
     )
 
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ("معلومات إضافية", {
-            "fields": ("phone", "role", "status"),
-        }),
-    )
+    search_fields = ("email", "first_name", "last_name")
+    readonly_fields = ("last_login", "date_joined")
+
 
 admin.site.register(User, CustomUserAdmin)

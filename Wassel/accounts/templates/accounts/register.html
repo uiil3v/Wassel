@@ -194,17 +194,6 @@ label {
                                     {% endfor %}
                                 </div>
 
-                                <!-- Username -->
-                                <div class="col-md-12 mb-4">
-                                    <label>اسم المستخدم</label>
-                                    <input type="text" name="username"
-                                           value="{{ form.username.value|default:'' }}"
-                                           class="premium-input {% if form.username.errors %}input-error{% endif %}">
-                                    {% for error in form.username.errors %}
-                                        <div class="error-text">{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-
                                 <!-- Email -->
                                 <div class="col-md-12 mb-4">
                                     <label>البريد الإلكتروني</label>

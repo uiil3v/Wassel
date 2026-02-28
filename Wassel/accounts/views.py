@@ -11,22 +11,20 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
 
-            # 🚍 إذا سائق → يكون معلق
-            if user.role == "driver":
-                user.status = "suspended"
-            else:
-                user.status = "active"
-
+            # الحالة الافتراضية للحساب
+            user.status = "active"
             user.save()
 
-            # نسجل دخوله عادي
+            # تسجيل الدخول مباشرة بعد التسجيل
             login(request, user)
 
+            # إذا كان سائق → يروح يكمل بياناته
             if user.role == "driver":
-                messages.warning(request, "يرجى تسجيل الدخول  وإكمال بياناتك، سيكون حسابك قيد المراجعة.")
-            else:
-                messages.success(request, "تم إنشاء الحساب بنجاح 🎉")
+                messages.warning(request, "يرجى إكمال بياناتك أولاً.")
+                return redirect("driver:profile")
 
+            # إذا طالب
+            messages.success(request, "تم إنشاء الحساب بنجاح 🎉")
             return redirect("main:index")
 
         else:
@@ -40,27 +38,26 @@ def register_view(request):
 
 def login_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        email = request.POST.get("email")   # 🔥 بدل username
         password = request.POST.get("password")
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
+
+            # 🔒 منع المحظورين
+            if user.status == "banned":
+                messages.error(request, "حسابك محظور.")
+                return redirect("accounts:login")
+
             login(request, user)
-
-            if user.status == "suspended":
-                messages.warning(request, "حسابك قيد المراجعة، يرجى إكمال بياناتك.")
-
-            else:
-                messages.success(request, "تم تسجيل الدخول بنجاح 👋")
-
+            messages.success(request, "تم تسجيل الدخول بنجاح 👋")
             return redirect("main:index")
 
         else:
-            messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
+            messages.error(request, "البريد الإلكتروني أو كلمة المرور غير صحيحة.")
 
     return render(request, "accounts/login.html")
-
 
 
 def logout_view(request):
