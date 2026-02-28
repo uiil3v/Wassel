@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.utils import timezone
 from .models import DriverProfile
 
 
@@ -54,16 +53,11 @@ class DriverProfileAdmin(admin.ModelAdmin):
     actions = ["approve_drivers", "reject_drivers"]
 
     def approve_drivers(self, request, queryset):
-        queryset.update(
-            verification_status="approved",
-            reviewed_at=timezone.now(),
-            rejection_reason=""
-        )
+        for driver in queryset:
+            driver.approve()
     approve_drivers.short_description = "✔ الموافقة على السائقين المحددين"
 
     def reject_drivers(self, request, queryset):
-        queryset.update(
-            verification_status="rejected",
-            reviewed_at=timezone.now()
-        )
+        for driver in queryset:
+            driver.reject()
     reject_drivers.short_description = "✖ رفض السائقين المحددين"

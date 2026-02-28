@@ -128,10 +128,26 @@ def driver_profile(request):
     return render(request, "driver/profile.html", context)
 
 
-@login_required
-def driver_verification(request):
 
+@login_required
+def driver_subscriptions(request):
     if request.user.role != "driver":
         return redirect("main:index")
 
-    return render(request, "driver/verification.html")
+    return render(request, "driver/subscriptions.html")
+
+
+@login_required
+def driver_requests(request):
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    return render(request, "driver/requests.html")
+
+
+@login_required
+def driver_notifications(request):
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    return render(request, "driver/notifications.html")

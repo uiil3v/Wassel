@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 
 class DriverProfile(models.Model):
@@ -81,6 +82,20 @@ class DriverProfile(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     reviewed_at = models.DateTimeField(blank=True, null=True)
+
+    def approve(self):
+        if self.verification_status == "pending":
+            self.verification_status = "approved"
+            self.reviewed_at = timezone.now()
+            self.rejection_reason = ""
+            self.save()
+
+    def reject(self, reason=None):
+        self.verification_status = "rejected"
+        self.reviewed_at = timezone.now()
+        if reason:
+            self.rejection_reason = reason
+        self.save()
 
     def __str__(self):
         return f"{self.user.email} ({self.verification_status})"

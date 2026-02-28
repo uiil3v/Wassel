@@ -192,39 +192,34 @@
                 {% endif %}
             </div>
 
-            <a href="{% url 'driver:dashboard' %}" class="driver-link active">
+            <a href="{% url 'driver:dashboard' %}"
+                class="driver-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                 <i class="bi bi-speedometer2 me-2"></i>
                 الرئيسية
             </a>
 
-            <a href="#" class="driver-link">
+            <a href="{% url 'driver:subscriptions' %}"
+                class="driver-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
                 <i class="bi bi-ticket-perforated me-2"></i>
                 اشتراكاتي
             </a>
 
-            <a href="#" class="driver-link">
-                <i class="bi bi-plus-circle me-2"></i>
-                إنشاء اشتراك
-            </a>
-
-            <a href="#" class="driver-link">
+            <a href="{% url 'driver:requests' %}"
+                class="driver-link {% if request.resolver_match.url_name == 'requests' %}active{% endif %}">
                 <i class="bi bi-clipboard-check me-2"></i>
                 الطلبات
             </a>
 
-            <a href="#" class="driver-link">
+            <a href="{% url 'driver:notifications' %}"
+                class="driver-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
                 <i class="bi bi-bell me-2"></i>
                 الإشعارات
             </a>
 
-            <a href="#" class="driver-link">
+            <a href="{% url 'driver:profile' %}"
+                class="driver-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                 <i class="bi bi-person me-2"></i>
                 الملف الشخصي
-            </a>
-
-            <a href="#" class="driver-link">
-                <i class="bi bi-shield-check me-2"></i>
-                التوثيق
             </a>
 
         </div>
@@ -257,40 +252,36 @@
             <span class="driver-status">موثق</span>
         </div>
 
-        <a href="{% url 'driver:dashboard' %}" class="driver-link active">
+        <a href="{% url 'driver:dashboard' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="bi bi-speedometer2 me-2"></i>
             الرئيسية
         </a>
 
-        <a href="#" class="driver-link">
+        <a href="{% url 'driver:subscriptions' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
             <i class="bi bi-ticket-perforated me-2"></i>
             اشتراكاتي
         </a>
 
-        <a href="#" class="driver-link">
-            <i class="bi bi-plus-circle me-2"></i>
-            إنشاء اشتراك
-        </a>
-
-        <a href="#" class="driver-link">
+        <a href="{% url 'driver:requests' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'requests' %}active{% endif %}">
             <i class="bi bi-clipboard-check me-2"></i>
             الطلبات
         </a>
 
-        <a href="#" class="driver-link">
+        <a href="{% url 'driver:notifications' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
             <i class="bi bi-bell me-2"></i>
             الإشعارات
         </a>
 
-        <a href="#" class="driver-link">
+        <a href="{% url 'driver:profile' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
             <i class="bi bi-person me-2"></i>
             الملف الشخصي
         </a>
 
-        <a href="#" class="driver-link">
-            <i class="bi bi-shield-check me-2"></i>
-            التوثيق
-        </a>
 
     </div>
 </div>
