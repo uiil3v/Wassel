@@ -9,6 +9,7 @@ from subscriptions.models import (
 )
 from django.db import transaction
 from django.utils import timezone
+from django.db.models import Q
 
 
 @login_required
@@ -75,26 +76,69 @@ def available_subscriptions(request):
     if request.user.role != "student":
         return redirect("main:index")
 
-    profile = request.user.student_profile
+    # ================= GET PARAMETERS =================
+    search_query = request.GET.get("search", "").strip()
+    duration = request.GET.get("duration", "")
+    min_price = request.GET.get("min_price", "")
+    max_price = request.GET.get("max_price", "")
+    sort = request.GET.get("sort", "")
 
-    # منع عرض الاشتراكات إذا عنده طلب نشط
-    active_request_exists = profile.subscription_requests.filter(
-        status__in=["pending", "approved"]
-    ).exists()
-
+    # ================= BASE QUERY =================
     subscriptions = Subscription.objects.filter(
         status="active",
         available_seats__gt=0
-    ).select_related("driver__user").order_by("-created_at")
+    ).select_related("driver__user")
 
+    # ================= SEARCH =================
+    if search_query:
+        subscriptions = subscriptions.filter(
+            Q(neighborhood__icontains=search_query) |
+            Q(driver__user__first_name__icontains=search_query) |
+            Q(driver__user__last_name__icontains=search_query)
+        )
+
+    # ================= DURATION FILTER =================
+    if duration:
+        subscriptions = subscriptions.filter(duration=duration)
+
+    # ================= PRICE FILTER =================
+    if min_price:
+        try:
+            subscriptions = subscriptions.filter(price__gte=float(min_price))
+        except ValueError:
+            pass
+
+    if max_price:
+        try:
+            subscriptions = subscriptions.filter(price__lte=float(max_price))
+        except ValueError:
+            pass
+
+    # ================= SORTING =================
+    if sort == "price_asc":
+        subscriptions = subscriptions.order_by("price")
+    elif sort == "price_desc":
+        subscriptions = subscriptions.order_by("-price")
+    elif sort == "seats":
+        subscriptions = subscriptions.order_by("-available_seats")
+    else:
+        subscriptions = subscriptions.order_by("-created_at")
+
+    # ================= RESULTS COUNT =================
+    results_count = subscriptions.count()
+
+    # ================= CONTEXT =================
     context = {
         "subscriptions": subscriptions,
-        "has_active_request": active_request_exists,
+        "search_query": search_query,
+        "duration": duration,
+        "min_price": min_price,
+        "max_price": max_price,
+        "sort": sort,
+        "results_count": results_count,
     }
 
     return render(request, "student/subscriptions.html", context)
-
-
 
 @login_required
 def subscription_detail_view(request, sub_id):
