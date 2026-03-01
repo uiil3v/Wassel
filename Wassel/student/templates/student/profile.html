@@ -1,0 +1,133 @@
+{% extends "student/base_student.html" %}
+
+{% block student_content %}
+
+<style>
+
+.profile-card {
+    background: white;
+    border-radius: 35px;
+    padding: 40px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+    margin-bottom: 35px;
+}
+
+.profile-card h5 {
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.premium-input {
+    width: 100%;
+    border-radius: 22px;
+    padding: 14px 18px;
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
+    background: #fdfcf9;
+    transition: 0.3s ease;
+}
+
+.premium-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 25px rgba(200, 169, 81, 0.2);
+    outline: none;
+}
+
+</style>
+
+<h4 class="fw-bold mb-4">ملفي الشخصي</h4>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <!-- ================= GENERAL INFO ================= -->
+    <div class="profile-card">
+        <h5>المعلومات الشخصية</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>الاسم الأول</label>
+                <input type="text" name="first_name"
+                       value="{{ user.first_name }}"
+                       class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>اسم العائلة</label>
+                <input type="text" name="last_name"
+                       value="{{ user.last_name }}"
+                       class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>البريد الإلكتروني</label>
+                <input type="email" name="email"
+                       value="{{ user.email }}"
+                       class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>رقم الجوال</label>
+                <input type="text" name="phone"
+                       value="{{ user.phone }}"
+                       class="premium-input text-start"
+                       dir="ltr"
+                       style="direction:ltr;text-align:left;">
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= UNIVERSITY INFO ================= -->
+    <div class="profile-card">
+        <h5>المعلومات الجامعية</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>اسم الجامعة</label>
+                <input type="text" name="university_name"
+                       value="{{ profile.university_name }}"
+                       class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>الجنس</label>
+                <select name="gender" class="premium-input">
+                    <option value="male" {% if profile.gender == "male" %}selected{% endif %}>ذكر</option>
+                    <option value="female" {% if profile.gender == "female" %}selected{% endif %}>أنثى</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= LOCATION ================= -->
+    <div class="profile-card">
+        <h5>الموقع</h5>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>الحي</label>
+                <input type="text" name="neighborhood"
+                       value="{{ profile.neighborhood }}"
+                       class="premium-input">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>رابط الموقع (Google Maps)</label>
+                <input type="url" name="location_url"
+                       value="{{ profile.location_url }}"
+                       class="premium-input"
+                       dir="ltr"
+                       style="direction:ltr;text-align:left;">
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SAVE BUTTON ================= -->
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-accent px-5 py-2">
+            حفظ التعديلات
+        </button>
+    </div>
+
+</form>
+
+{% endblock %}

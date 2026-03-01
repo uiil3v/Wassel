@@ -10,4 +10,5 @@ urlpatterns = [
     path("subscription/<int:sub_id>/", views.subscription_detail_view, name="subscription_detail_view"),
     path("create-request/<int:sub_id>/", views.create_request, name="create_request"),
     path("cancel-request/<int:req_id>/", views.cancel_request, name="cancel_request"),
+    path("profile/", views.student_profile, name="profile"),
 ]

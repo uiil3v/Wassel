@@ -10,7 +10,9 @@ from subscriptions.models import (
 from django.db import transaction
 from django.utils import timezone
 from django.db.models import Q
-
+from student.models import StudentProfile
+from accounts.models import User
+from django.contrib import messages
 
 @login_required
 def student_dashboard(request):
@@ -257,3 +259,51 @@ def cancel_request(request, req_id):
             req.cancel()
 
     return redirect("student:dashboard")
+
+
+
+
+@login_required
+def student_profile(request):
+
+    if request.user.role != "student":
+        return redirect("main:index")
+
+    profile, created = StudentProfile.objects.get_or_create(
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        # ===== تحديث بيانات الحساب =====
+        request.user.first_name = request.POST.get("first_name")
+        request.user.last_name = request.POST.get("last_name")
+
+        new_email = request.POST.get("email")
+        new_phone = request.POST.get("phone")
+
+        # تحقق أن الإيميل غير مستخدم
+        if User.objects.exclude(pk=request.user.pk).filter(email=new_email).exists():
+            messages.error(request, "البريد الإلكتروني مستخدم بالفعل.")
+            return redirect("student:profile")
+
+        request.user.email = new_email
+        request.user.phone = new_phone
+        request.user.save()
+
+        # ===== تحديث بيانات الطالب =====
+        profile.university_name = request.POST.get("university_name")
+        profile.gender = request.POST.get("gender")
+        profile.neighborhood = request.POST.get("neighborhood")
+        profile.location_url = request.POST.get("location_url")
+
+        profile.save()
+
+        messages.success(request, "تم حفظ التعديلات بنجاح 🎉")
+        return redirect("student:profile")
+
+    context = {
+        "profile": profile
+    }
+
+    return render(request, "student/profile.html", context)
