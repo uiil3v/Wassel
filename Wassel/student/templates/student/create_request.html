@@ -1,0 +1,128 @@
+{% extends "student/base_student.html" %}
+
+{% block student_content %}
+
+<style>
+    .detail-card {
+        background: white;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+
+    .schedule-row {
+        padding: 18px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .schedule-row:last-child {
+        border-bottom: none;
+    }
+
+    .day-name {
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .time-input {
+        max-width: 140px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .info-row span:first-child {
+        color: var(--soft-color);
+    }
+</style>
+
+
+<!-- ===== Subscription Info ===== -->
+<div class="detail-card">
+
+    <h4 class="fw-bold mb-4">طلب اشتراك</h4>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ subscription.neighborhood }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السعر</span>
+        <span>{{ subscription.price }} ر.س</span>
+    </div>
+
+    <div class="info-row">
+        <span>السائق</span>
+        <span>{{ subscription.driver.user.get_full_name }}</span>
+    </div>
+
+</div>
+
+
+<!-- ===== Schedule Form ===== -->
+<form method="post">
+    {% csrf_token %}
+
+    <div class="detail-card">
+
+        <h5 class="fw-bold mb-4">حدد جدولك الأسبوعي</h5>
+
+        {% for day_code, day_label in days %}
+
+        <div class="schedule-row">
+
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+
+                <!-- Day Name -->
+                <div class="day-name">
+                    {{ day_label }}
+                </div>
+
+                <!-- Time Inputs -->
+                <div class="d-flex gap-3 align-items-center flex-wrap">
+
+                    <div>
+                        <label class="small text-muted">ذهاب</label><br>
+                        <input type="time" name="{{ day_code }}_pickup" class="form-control time-input">
+                    </div>
+
+                    <div>
+                        <label class="small text-muted">عودة</label><br>
+                        <input type="time" name="{{ day_code }}_return" class="form-control time-input">
+                    </div>
+
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" name="{{ day_code }}_off"
+                            id="{{ day_code }}_off">
+                        <label class="form-check-label small" for="{{ day_code }}_off">
+                            إجازة
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- ===== Submit Button ===== -->
+    <div class="detail-card text-center">
+        <button type="submit" class="btn btn-accent px-5">
+            إرسال الطلب
+        </button>
+    </div>
+
+</form>
+
+{% endblock %}

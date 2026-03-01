@@ -1,0 +1,174 @@
+{% extends "student/base_student.html" %}
+
+{% block student_content %}
+
+<style>
+    .dashboard-welcome {
+        background: white;
+        border-radius: 35px;
+        padding: 40px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 40px;
+    }
+
+    .status-card {
+        background: white;
+        border-radius: 30px;
+        padding: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+
+    .subscription-card {
+        background: white;
+        border-radius: 30px;
+        padding: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+        transition: 0.3s ease;
+        height: 100%;
+    }
+
+    .subscription-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.08);
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .info-row span:first-child {
+        color: var(--soft-color);
+    }
+</style>
+
+<!-- ===== Welcome ===== -->
+<div class="dashboard-welcome">
+    <h3>مرحباً بك، {{ user.first_name }} 👋</h3>
+    <p class="text-muted mt-2">
+        هنا يمكنك متابعة حالة اشتراكك وإدارة طلباتك.
+    </p>
+</div>
+
+
+{% if not active_request %}
+
+<!-- ===== No Subscription ===== -->
+<div class="status-card text-center">
+    <h5 class="fw-bold mb-3">لا يوجد لديك اشتراك حالياً</h5>
+    <p class="text-muted mb-4">
+        يمكنك استعراض الاشتراكات المتاحة واختيار الأنسب لك.
+    </p>
+
+    <a href="{% url 'student:subscriptions' %}" class="btn btn-accent">
+        استعراض الاشتراكات
+    </a>
+</div>
+
+
+{% elif active_request.status == "pending" %}
+
+<!-- ===== Pending ===== -->
+<div class="status-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">طلبك قيد المراجعة</h5>
+        <span class="badge bg-warning text-dark">
+            ⏳ قيد الانتظار
+        </span>
+    </div>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ active_request.subscription.neighborhood }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السائق</span>
+        <span>{{ active_request.subscription.driver.user.get_full_name }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السعر</span>
+        <span>{{ active_request.price_snapshot }} ر.س</span>
+    </div>
+
+    <form method="post" action="{% url 'student:cancel_request' active_request.id %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm mt-4">
+            إلغاء الطلب
+        </button>
+    </form>
+
+</div>
+
+
+{% elif active_request.status == "approved" %}
+
+<!-- ===== Approved ===== -->
+<div class="status-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">اشتراكك نشط</h5>
+        <span class="badge bg-success">
+            ✅ نشط
+        </span>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Driver Info -->
+        <div class="col-md-6">
+            <div class="subscription-card">
+                <h6 class="fw-bold mb-3">بيانات السائق</h6>
+
+                <div class="info-row">
+                    <span>الاسم</span>
+                    <span>{{ active_request.subscription.driver.user.get_full_name }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span>الهاتف</span>
+                    <span>{{ active_request.subscription.driver.user.phone }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscription Info -->
+        <div class="col-md-6">
+            <div class="subscription-card">
+                <h6 class="fw-bold mb-3">تفاصيل الاشتراك</h6>
+
+                <div class="info-row">
+                    <span>الحي</span>
+                    <span>{{ active_request.subscription.neighborhood }}</span>
+                </div>
+
+                <div class="info-row">
+                    <span>السعر</span>
+                    <span>{{ active_request.price_snapshot }} ر.س</span>
+                </div>
+
+                <div class="info-row">
+                    <span>المدة</span>
+                    <span>{{ active_request.subscription.duration }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 🔥 زر عرض التفاصيل الكاملة -->
+    <div class="mt-4 text-end">
+        <a href="{% url 'student:subscription_detail' active_request.id %}" class="btn btn-accent">
+            عرض التفاصيل الكاملة
+        </a>
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

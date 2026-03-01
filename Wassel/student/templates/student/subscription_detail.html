@@ -1,5 +1,6 @@
-{% extends "driver/base_driver.html" %}
-{% block driver_content %}
+{% extends "student/base_student.html" %}
+
+{% block student_content %}
 
 <style>
 .detail-card {
@@ -13,7 +14,7 @@
 .info-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .info-row span:first-child {
@@ -56,12 +57,6 @@
     font-weight: 500;
 }
 
-/* ===== Action Buttons ===== */
-
-.action-wrapper {
-    text-align: center;
-}
-
 @media (max-width: 576px) {
     .time-box {
         gap: 10px;
@@ -70,58 +65,51 @@
 </style>
 
 
-<!-- ===== Main Detail Card ===== -->
+<!-- ===== Main Card ===== -->
 <div class="detail-card">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        {% if req.status == "pending" %}
-            <h4 class="fw-bold mb-0">تفاصيل طلب الاشتراك</h4>
-            <span class="badge bg-warning text-dark">⏳ قيد الانتظار</span>
-        {% elif req.status == "approved" %}
-            <h4 class="fw-bold mb-0">تفاصيل الطالب المشترك</h4>
-            <span class="badge bg-success">✅ مقبول</span>
-        {% elif req.status == "rejected" %}
-            <h4 class="fw-bold mb-0">طلب مرفوض</h4>
-            <span class="badge bg-danger">❌ مرفوض</span>
-        {% endif %}
+        <h4 class="fw-bold mb-0">تفاصيل اشتراكك</h4>
+        <span class="badge bg-success">نشط</span>
     </div>
 
-    <h6 class="fw-bold mt-4 mb-3">بيانات الطالب</h6>
+    <!-- ===== Driver Info ===== -->
+    <h6 class="fw-bold mt-4 mb-3">بيانات السائق</h6>
 
     <div class="info-row">
         <span>الاسم</span>
-        <span>{{ req.student.user.get_full_name }}</span>
+        <span>{{ req.subscription.driver.user.get_full_name }}</span>
     </div>
 
     <div class="info-row">
-        <span>البريد</span>
-        <span>{{ req.student.user.email }}</span>
+        <span>الهاتف</span>
+        <span>{{ req.subscription.driver.user.phone }}</span>
     </div>
 
-    <div class="info-row">
-        <span>رقم الجوال</span>
-        <span>{{ req.student.user.phone }}</span>
-    </div>
+    <hr>
 
-    <div class="info-row">
-        <span>الجامعة</span>
-        <span>{{ req.student.university_name }}</span>
-    </div>
+    <!-- ===== Subscription Info ===== -->
+    <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
 
     <div class="info-row">
         <span>الحي</span>
-        <span>{{ req.student.neighborhood }}</span>
+        <span>{{ req.subscription.neighborhood }}</span>
     </div>
 
-    {% if req.student.location_url %}
     <div class="info-row">
-        <span>الموقع</span>
-        <a href="{{ req.student.location_url }}" target="_blank"
-           class="btn btn-outline-secondary btn-sm">
-            عرض على Google Maps
-        </a>
+        <span>السعر</span>
+        <span>{{ req.price_snapshot }} ر.س</span>
     </div>
-    {% endif %}
+
+    <div class="info-row">
+        <span>تاريخ البداية</span>
+        <span>{{ req.subscription.start_date }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ النهاية</span>
+        <span>{{ req.subscription.end_date }}</span>
+    </div>
 
 </div>
 
@@ -138,12 +126,12 @@
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
 
-                <!-- Day Name -->
+                <!-- اسم اليوم -->
                 <div class="day-name mb-2 mb-md-0">
                     {{ day.get_day_of_week_display }}
                 </div>
 
-                <!-- Times -->
+                <!-- الأوقات -->
                 <div>
 
                     {% if day.is_off_day %}
@@ -186,35 +174,5 @@
     {% endif %}
 
 </div>
-
-
-<!-- ===== Action Buttons ===== -->
-{% if req.status == "pending" %}
-<div class="detail-card action-wrapper">
-
-    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-
-        <form method="post" action="{% url 'driver:approve_request' req.id %}">
-            {% csrf_token %}
-            <button type="submit"
-                    class="btn btn-success px-4"
-                    onclick="return confirm('هل أنت متأكد من قبول الطلب؟');">
-                قبول الطلب
-            </button>
-        </form>
-
-        <form method="post" action="{% url 'driver:reject_request' req.id %}">
-            {% csrf_token %}
-            <button type="submit"
-                    class="btn btn-danger px-4"
-                    onclick="return confirm('هل أنت متأكد من رفض الطلب؟');">
-                رفض الطلب
-            </button>
-        </form>
-
-    </div>
-
-</div>
-{% endif %}
 
 {% endblock %}

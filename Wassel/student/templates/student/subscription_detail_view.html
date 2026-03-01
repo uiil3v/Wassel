@@ -1,0 +1,106 @@
+{% extends "student/base_student.html" %}
+
+{% block student_content %}
+
+<style>
+    .detail-card {
+        background: white;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .info-row span:first-child {
+        color: var(--soft-color);
+    }
+</style>
+
+
+<div class="detail-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">تفاصيل الاشتراك</h4>
+
+        {% if subscription.available_seats <= 2 %} <span class="badge bg-danger">مقاعد قليلة</span>
+            {% else %}
+            <span class="badge bg-success">متاح</span>
+            {% endif %}
+    </div>
+
+    <!-- ===== Driver Info ===== -->
+    <h6 class="fw-bold mb-3">بيانات السائق</h6>
+
+    <div class="info-row">
+        <span>الاسم</span>
+        <span>{{ subscription.driver.user.get_full_name }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>الهاتف</span>
+        <span>{{ subscription.driver.user.phone }}</span>
+    </div>
+
+    <hr>
+
+    <!-- ===== Subscription Info ===== -->
+    <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ subscription.neighborhood }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السعر</span>
+        <span>{{ subscription.price }} ر.س</span>
+    </div>
+
+    <div class="info-row">
+        <span>المدة</span>
+        <span>{{ subscription.get_duration_display }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>المقاعد المتبقية</span>
+        <span>{{ subscription.available_seats }} / {{ subscription.seats }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ البداية</span>
+        <span>{{ subscription.start_date }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ النهاية</span>
+        <span>{{ subscription.end_date }}</span>
+    </div>
+
+</div>
+
+
+<!-- ===== Request Button ===== -->
+<div class="detail-card text-center">
+
+    {% if has_active_request %}
+    <div class="alert alert-warning">
+        لديك طلب اشتراك قائم بالفعل.
+    </div>
+    {% elif subscription.available_seats <= 0 %} <div class="alert alert-danger">
+        لا توجد مقاعد متاحة حالياً.
+</div>
+{% else %}
+<a href="{% url 'student:create_request' subscription.id %}" class="btn btn-accent px-5">
+    طلب اشتراك
+</a>
+{% endif %}
+
+</div>
+
+{% endblock %}
