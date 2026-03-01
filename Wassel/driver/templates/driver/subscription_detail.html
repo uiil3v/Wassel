@@ -1,0 +1,169 @@
+{% extends "driver/base_driver.html" %}
+
+{% block driver_content %}
+
+<style>
+    .detail-card {
+        background: white;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .student-row {
+        padding: 18px;
+        border-radius: 20px;
+        background: #faf9f6;
+        margin-bottom: 15px;
+        transition: 0.3s ease;
+    }
+
+    .student-row:hover {
+        transform: translateY(-4px);
+    }
+</style>
+
+<!-- ========================= -->
+<!-- القسم 1: معلومات الاشتراك -->
+<!-- ========================= -->
+
+<div class="detail-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">{{ subscription.neighborhood }}</h4>
+
+        {% if subscription.status == "active" %}
+        <span class="badge bg-success">نشط</span>
+        {% elif subscription.status == "full" %}
+        <span class="badge bg-warning text-dark">ممتلئ</span>
+        {% else %}
+        <span class="badge bg-secondary">غير نشط</span>
+        {% endif %}
+    </div>
+
+    <div class="row text-center">
+
+        <div class="col-md-3">
+            <div class="text-muted mb-1">النوع</div>
+            <div class="fw-bold fs-5">
+                {{ subscription.get_duration_display }}
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="text-muted mb-1">السعر</div>
+            <div class="fw-bold fs-5">
+                {{ subscription.price|floatformat:0 }} ر.س
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="text-muted mb-1">المقاعد المتبقية</div>
+            <div class="fw-bold fs-5">
+                {{ subscription.available_seats }}
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="text-muted mb-1">إجمالي المقاعد</div>
+            <div class="fw-bold fs-5">
+                {{ subscription.seats }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- القسم 2: الطلبات Pending -->
+<!-- ========================= -->
+
+<div class="detail-card">
+
+    <h5 class="section-title">الطلبات الجديدة</h5>
+
+    {% if pending_requests %}
+
+    {% for req in pending_requests %}
+    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="text-decoration-none text-dark">
+
+        <div class="student-row d-flex justify-content-between align-items-center">
+
+            <div>
+                <div class="fw-bold">
+                    {{ req.student.user.get_full_name }}
+                </div>
+                <div class="text-muted small">
+                    {{ req.student.neighborhood }}
+                </div>
+            </div>
+
+            <div>
+                <span class="btn btn-outline-primary btn-sm">
+                    عرض التفاصيل
+                </span>
+            </div>
+
+        </div>
+    </a>
+    {% endfor %}
+
+    {% else %}
+    <p class="text-muted">لا توجد طلبات حالياً.</p>
+    {% endif %}
+
+</div>
+
+
+<!-- ========================= -->
+<!-- القسم 3: الطلاب المقبولين -->
+<!-- ========================= -->
+
+<div class="detail-card">
+
+    <h5 class="section-title">الطلاب المقبولين</h5>
+
+    {% if approved_requests %}
+
+    {% for req in approved_requests %}
+
+    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="text-decoration-none text-dark">
+
+        <div class="student-row d-flex justify-content-between align-items-center">
+
+            <div>
+                <div class="fw-bold">
+                    {{ req.student.user.get_full_name }}
+                </div>
+                <div class="text-muted small">
+                    مشترك منذ {{ req.decision_date|date:"d/m/Y" }}
+                </div>
+            </div>
+
+            <div>
+                <span class="btn btn-outline-primary btn-sm">
+                    عرض التفاصيل
+                </span>
+            </div>
+
+        </div>
+
+    </a>
+
+    {% endfor %}
+
+    {% else %}
+    <p class="text-muted">لا يوجد طلاب مشتركين حالياً.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "driver/base_driver.html" %}
+
+{% block driver_content %}
+
+<style>
+    .form-card {
+        background: white;
+        border-radius: 35px;
+        padding: 40px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 35px;
+    }
+
+    .form-card h5 {
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .premium-input {
+        width: 100%;
+        border-radius: 22px;
+        padding: 14px 18px;
+        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        background: #fdfcf9;
+        transition: 0.3s ease;
+    }
+
+    .premium-input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.2);
+        outline: none;
+    }
+</style>
+
+<div class="form-card">
+
+    <h3 class="mb-4">إنشاء اشتراك جديد</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="row">
+
+            <div class="col-md-6 mb-3">
+                <label>الحي</label>
+                <input type="text" name="neighborhood" class="premium-input" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>السعر (ر.س)</label>
+                <input type="number" step="0.01" name="price" class="premium-input" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>عدد المقاعد</label>
+                <input type="number" name="seats" class="premium-input" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>نوع الاشتراك</label>
+                <select name="duration" class="premium-input">
+                    <option value="monthly">شهري</option>
+                    <option value="semester">فصلي</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>تاريخ البداية</label>
+                <input type="date" name="start_date" class="premium-input" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label>تاريخ النهاية</label>
+                <input type="date" name="end_date" class="premium-input" required>
+            </div>
+
+            <div class="col-12 mb-4">
+                <label>ملاحظات (اختياري)</label>
+                <textarea name="notes" rows="3" class="premium-input"></textarea>
+            </div>
+
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-accent px-5 py-2">
+                إنشاء الاشتراك
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

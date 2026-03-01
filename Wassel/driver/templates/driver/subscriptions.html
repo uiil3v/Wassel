@@ -1,6 +1,137 @@
 {% extends "driver/base_driver.html" %}
 
 {% block driver_content %}
-<h3>اشتراكاتي</h3>
-<p>سيتم إضافة المحتوى قريبًا...</p>
+
+<style>
+    .sub-card {
+        background: white;
+        border-radius: 35px;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 25px;
+        transition: 0.3s ease;
+        cursor: pointer;
+    }
+
+    .sub-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 35px 75px rgba(0, 0, 0, 0.08);
+    }
+
+    .sub-title {
+        font-weight: 700;
+    }
+
+    .sub-meta {
+        color: var(--soft-color);
+        font-size: 14px;
+    }
+
+    .sub-status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+
+    .empty-box {
+        background: white;
+        border-radius: 35px;
+        padding: 50px;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">اشتراكاتي</h3>
+
+    <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
+        <i class="bi bi-plus-circle me-2"></i>
+        إنشاء اشتراك جديد
+    </a>
+</div>
+
+{% if subscriptions %}
+
+    {% for sub in subscriptions %}
+
+    <a href="{% url 'driver:subscription_detail' sub.id %}" class="card-link">
+        <div class="sub-card">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="sub-title mb-1">
+                        {{ sub.neighborhood }}
+                    </h5>
+
+                    <div class="sub-meta">
+                        {{ sub.get_duration_display }} |
+                        {{ sub.start_date|date:"d/m/Y" }} -
+                        {{ sub.end_date|date:"d/m/Y" }}
+                    </div>
+                </div>
+
+                <div>
+                    {% if sub.status == "active" %}
+                        <span class="badge bg-success sub-status-badge">نشط</span>
+                    {% elif sub.status == "full" %}
+                        <span class="badge bg-warning text-dark sub-status-badge">ممتلئ</span>
+                    {% else %}
+                        <span class="badge bg-secondary sub-status-badge">غير نشط</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row text-center">
+
+                <div class="col-md-3">
+                    <div class="fw-bold">
+                        {{ sub.price|floatformat:0 }} ر.س
+                    </div>
+                    <div class="sub-meta">السعر</div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="fw-bold">{{ sub.seats }}</div>
+                    <div class="sub-meta">إجمالي المقاعد</div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="fw-bold">{{ sub.available_seats }}</div>
+                    <div class="sub-meta">المقاعد المتبقية</div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="fw-bold">{{ sub.requests.count }}</div>
+                    <div class="sub-meta">عدد الطلبات</div>
+                </div>
+
+            </div>
+
+        </div>
+    </a>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="empty-box">
+        <h5 class="mb-3">لا يوجد لديك اشتراكات حالياً</h5>
+        <p class="text-muted mb-4">
+            ابدأ بإنشاء اشتراك جديد لاستقبال الطلبات من الطلاب.
+        </p>
+
+        <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
+            إنشاء اشتراك
+        </a>
+    </div>
+
+{% endif %}
+
 {% endblock %}

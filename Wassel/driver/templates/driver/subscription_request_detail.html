@@ -1,0 +1,157 @@
+{% extends "driver/base_driver.html" %}
+{% block driver_content %}
+
+<style>
+    .detail-wrapper {
+        background: white;
+        border-radius: 35px;
+        padding: 40px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+
+    .info-item {
+        margin-bottom: 15px;
+    }
+
+    .schedule-row {
+        background: #f8f7f4;
+        padding: 18px;
+        border-radius: 18px;
+        margin-bottom: 14px;
+    }
+
+    .action-buttons {
+        margin-top: 30px;
+    }
+</style>
+
+<div class="detail-wrapper">
+
+    {% if req.status == "pending" %}
+    <h4 class="fw-bold mb-4">تفاصيل طلب الاشتراك</h4>
+    {% elif req.status == "approved" %}
+    <h4 class="fw-bold mb-4">تفاصيل الطالب المشترك</h4>
+    {% endif %}
+
+    <div class="info-item">
+        <strong>الاسم:</strong>
+        {{ req.student.user.get_full_name }}
+    </div>
+
+    <div class="info-item">
+        <strong>البريد:</strong>
+        {{ req.student.user.email }}
+    </div>
+
+    <div class="info-item">
+        <strong>رقم الجوال:</strong>
+        {{ req.student.user.phone }}
+    </div>
+
+    <div class="info-item">
+        <strong>الجامعة:</strong>
+        {{ req.student.university_name }}
+    </div>
+
+    <div class="info-item">
+        <strong>الحي:</strong>
+        {{ req.student.neighborhood }}
+    </div>
+
+    {% if req.student.location_url %}
+    <div class="info-item">
+        <strong>الموقع على الخريطة:</strong>
+        <a href="{{ req.student.location_url }}" target="_blank" class="text-decoration-none">
+            عرض الموقع على Google Maps
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+
+<div class="detail-wrapper">
+
+    <h5 class="fw-bold mb-3">الجدول الأسبوعي</h5>
+
+    {% if schedule %}
+
+    {% for day in schedule %}
+    <div class="schedule-row">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+
+            <!-- اسم اليوم -->
+            <div class="mb-2 mb-md-0">
+                <strong>{{ day.get_day_of_week_display }}</strong>
+            </div>
+
+            <!-- الأوقات -->
+            <div>
+                {% if day.is_off_day %}
+                <span class="text-danger fw-bold">إجازة</span>
+                {% else %}
+
+                <div class="d-flex flex-column flex-sm-row gap-1 gap-sm-3">
+
+                    <div>
+                        <span class="fw-bold">ذهاب:</span>
+                        {% with pickup=day.pickup_time|time:"h:i A" %}
+                        {{ pickup|cut:"AM"|cut:"PM" }}
+                        {% if "AM" in pickup %} ص {% else %} م {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <div>
+                        <span class="fw-bold">عودة:</span>
+                        {% with ret=day.return_time|time:"h:i A" %}
+                        {{ ret|cut:"AM"|cut:"PM" }}
+                        {% if "AM" in ret %} ص {% else %} م {% endif %}
+                        {% endwith %}
+                    </div>
+
+                </div>
+
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <p class="text-muted">لم يتم تحديد جدول بعد.</p>
+    {% endif %}
+
+</div>
+
+
+{% if req.status == "pending" %}
+<div class="detail-wrapper action-buttons">
+
+    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+
+        <form method="post" action="{% url 'driver:approve_request' req.id %}" class="w-100 w-sm-auto">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100 px-4"
+                onclick="return confirm('هل أنت متأكد من قبول الطلب؟');">
+                قبول الطلب
+            </button>
+        </form>
+
+        <form method="post" action="{% url 'driver:reject_request' req.id %}" class="w-100 w-sm-auto">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100 px-4"
+                onclick="return confirm('هل أنت متأكد من رفض الطلب؟');">
+                رفض الطلب
+            </button>
+        </form>
+
+    </div>
+
+</div>
+{% endif %}
+
+{% endblock %}

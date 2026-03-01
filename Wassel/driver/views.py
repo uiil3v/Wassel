@@ -1,8 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import DriverProfile
 from accounts.models import User
+from subscriptions.models import Subscription
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from subscriptions.models import Subscription, SubscriptionRequest
+from django.db.models import Sum
+
+
 
 
 @login_required
@@ -17,28 +24,43 @@ def driver_dashboard(request):
         messages.warning(request, "يرجى إكمال بياناتك أولاً.")
         return redirect("driver:profile")
 
-    if profile.verification_status == "incomplete":
-        messages.warning(request, "يرجى إكمال بياناتك أولاً.")
+    if profile.verification_status != "approved":
+        messages.warning(request, "حسابك غير معتمد حالياً.")
         return redirect("driver:profile")
 
-    if profile.verification_status == "pending":
-        messages.warning(request, "طلبك قيد المراجعة حالياً.")
-        return redirect("driver:profile")
+    # ===============================
+    # الحسابات الحقيقية
+    # ===============================
 
-    if profile.verification_status == "rejected":
-        messages.error(request, "تم رفض طلبك، يرجى تعديل بياناتك.")
-        return redirect("driver:profile")
+    subscriptions = Subscription.objects.filter(driver=profile)
+
+    active_subscriptions = subscriptions.filter(status="active").count()
+
+    new_requests = SubscriptionRequest.objects.filter(
+        subscription__driver=profile,
+        status="pending"
+    ).count()
+
+    approved_requests = SubscriptionRequest.objects.filter(
+        subscription__driver=profile,
+        status="approved"
+    )
+
+    students_count = approved_requests.count()
+
+    total_earnings = approved_requests.aggregate(
+        total=Sum("price_snapshot")
+    )["total"] or 0
 
     context = {
         "profile": profile,
-        "active_subscriptions": 0,
-        "new_requests": 0,
-        "students_count": 0,
-        "total_earnings": 0,
+        "active_subscriptions": active_subscriptions,
+        "new_requests": new_requests,
+        "students_count": students_count,
+        "total_earnings": total_earnings,
     }
 
     return render(request, "driver/dashboard.html", context)
-
 
 @login_required
 def driver_profile(request):
@@ -128,13 +150,66 @@ def driver_profile(request):
     return render(request, "driver/profile.html", context)
 
 
-
 @login_required
-def driver_subscriptions(request):
+def create_subscription(request):
+
     if request.user.role != "driver":
         return redirect("main:index")
 
-    return render(request, "driver/subscriptions.html")
+    profile = request.user.driver_profile
+
+    if profile.verification_status != "approved":
+        messages.error(request, "لا يمكنك إنشاء اشتراك قبل اعتماد حسابك.")
+        return redirect("driver:dashboard")
+
+    if request.method == "POST":
+
+        neighborhood = request.POST.get("neighborhood")
+        price = request.POST.get("price")
+        seats = request.POST.get("seats")
+        duration = request.POST.get("duration")
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        notes = request.POST.get("notes")
+
+        try:
+            Subscription.objects.create(
+                driver=profile,
+                neighborhood=neighborhood,
+                price=price,
+                seats=seats,
+                duration=duration,
+                start_date=start_date,
+                end_date=end_date,
+                notes=notes
+            )
+
+            messages.success(request, "تم إنشاء الاشتراك بنجاح 🎉")
+            return redirect("driver:subscriptions")
+
+        except Exception as e:
+            messages.error(request, f"حدث خطأ: {e}")
+
+    return render(request, "driver/create_subscription.html")
+
+
+@login_required
+def driver_subscriptions(request):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    profile = request.user.driver_profile
+
+    subscriptions = Subscription.objects.filter(
+        driver=profile
+    ).order_by("-created_at")
+
+    context = {
+        "subscriptions": subscriptions
+    }
+
+    return render(request, "driver/subscriptions.html", context)
 
 
 @login_required
@@ -143,6 +218,88 @@ def driver_requests(request):
         return redirect("main:index")
 
     return render(request, "driver/requests.html")
+
+@login_required
+def subscription_detail(request, sub_id):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    profile = request.user.driver_profile
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=sub_id,
+        driver=profile
+    )
+
+    pending_requests = subscription.requests.filter(
+        status="pending"
+    ).select_related("student__user")
+
+    approved_requests = subscription.requests.filter(
+        status="approved"
+    ).select_related("student__user")
+
+    context = {
+        "subscription": subscription,
+        "pending_requests": pending_requests,
+        "approved_requests": approved_requests,
+    }
+
+    return render(request, "driver/subscription_detail.html", context)
+
+
+
+
+@login_required
+def subscription_request_detail(request, req_id):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    profile = request.user.driver_profile
+
+    request_obj = get_object_or_404(
+        SubscriptionRequest.objects.select_related(
+            "student__user",
+            "subscription"
+        ).prefetch_related("schedule"),
+        id=req_id,
+        subscription__driver=profile
+    )
+
+    context = {
+        "req": request_obj,
+        "schedule": request_obj.schedule.all()
+    }
+
+    return render(
+        request,
+        "driver/subscription_request_detail.html",
+        context
+    )
+    
+@login_required
+def approve_request(request, req_id):
+
+    req = get_object_or_404(SubscriptionRequest, id=req_id)
+
+    if request.method == "POST":
+        req.approve()
+
+    return redirect("driver:subscription_detail", sub_id=req.subscription.id)
+
+
+@login_required
+def reject_request(request, req_id):
+
+    req = get_object_or_404(SubscriptionRequest, id=req_id)
+
+    if request.method == "POST":
+        req.reject()
+
+    return redirect("driver:subscription_detail", sub_id=req.subscription.id)
 
 
 @login_required
