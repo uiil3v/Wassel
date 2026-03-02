@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'subscriptions',
     'student',
     "location",
+    'payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [

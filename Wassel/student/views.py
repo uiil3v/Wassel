@@ -14,6 +14,9 @@ from student.models import StudentProfile
 from accounts.models import User
 from django.contrib import messages
 from accounts.models import City
+from payment.services import freeze_student_amount
+from django.core.exceptions import ValidationError
+from payment.services import refund_frozen_amount, refund_after_approval
 
 @login_required
 def student_dashboard(request):
@@ -175,7 +178,6 @@ def subscription_detail_view(request, sub_id):
 
 
 
-
 @login_required
 def create_request(request, sub_id):
 
@@ -188,12 +190,13 @@ def create_request(request, sub_id):
         Subscription,
         id=sub_id,
         status="active",
-        driver__user__city=request.user.city   # 🔥 حماية المدينة
+        driver__user__city=request.user.city
     )
 
     if profile.subscription_requests.filter(
         status__in=["pending", "approved"]
     ).exists():
+        messages.warning(request, "لديك طلب اشتراك نشط بالفعل.")
         return redirect("student:dashboard")
 
     days = [
@@ -208,33 +211,44 @@ def create_request(request, sub_id):
 
     if request.method == "POST":
 
-        with transaction.atomic():
+        try:
+            with transaction.atomic():
 
-            req = SubscriptionRequest.objects.create(
-                student=profile,
-                subscription=subscription,
-                status="pending",
-                price_snapshot=subscription.price
-            )
-
-            for day_code, _ in days:
-
-                is_off = request.POST.get(f"{day_code}_off") == "on"
-                pickup = request.POST.get(f"{day_code}_pickup")
-                ret = request.POST.get(f"{day_code}_return")
-
-                schedule = SubscriptionRequestSchedule.objects.create(
-                    request=req,
-                    day_of_week=day_code,
-                    is_off_day=is_off
+                # إنشاء الطلب
+                req = SubscriptionRequest.objects.create(
+                    student=profile,
+                    subscription=subscription,
+                    status="pending",
+                    price_snapshot=subscription.price
                 )
 
-                if not is_off and pickup and ret:
-                    schedule.pickup_time = pickup
-                    schedule.return_time = ret
-                    schedule.save()
+                # 🔥 تجميد المبلغ
+                freeze_student_amount(request.user, req)
 
-        return redirect("student:dashboard")
+                # إنشاء الجدول
+                for day_code, _ in days:
+
+                    is_off = request.POST.get(f"{day_code}_off") == "on"
+                    pickup = request.POST.get(f"{day_code}_pickup")
+                    ret = request.POST.get(f"{day_code}_return")
+
+                    schedule = SubscriptionRequestSchedule.objects.create(
+                        request=req,
+                        day_of_week=day_code,
+                        is_off_day=is_off
+                    )
+
+                    if not is_off and pickup and ret:
+                        schedule.pickup_time = pickup
+                        schedule.return_time = ret
+                        schedule.save()
+
+            messages.success(request, "تم إرسال الطلب وتجميد المبلغ بنجاح.")
+            return redirect("student:dashboard")
+
+        except ValidationError as e:
+            messages.error(request, str(e))
+            return redirect("student:subscription_detail_view", sub_id=sub_id)
 
     context = {
         "subscription": subscription,
@@ -242,7 +256,6 @@ def create_request(request, sub_id):
     }
 
     return render(request, "student/create_request.html", context)
-
 
 
 
@@ -261,15 +274,14 @@ def cancel_request(request, req_id):
     )
 
     if request.method == "POST":
+
         if req.status == "pending":
-            req.status = "cancelled"
-            req.save()
+            refund_frozen_amount(req)
+
         elif req.status == "approved":
-            req.cancel()
+            refund_after_approval(req)
 
-    return redirect("student:dashboard")
-
-
+        return redirect("student:dashboard")
 
 @login_required
 def student_profile(request):

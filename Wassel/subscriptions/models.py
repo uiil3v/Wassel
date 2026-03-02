@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from driver.models import DriverProfile
 from student.models import StudentProfile
+from django.db.models import Q
 
 
 # ==========================================
@@ -146,7 +147,13 @@ class SubscriptionRequest(models.Model):
     note = models.TextField(blank=True, null=True)
 
     class Meta:
-        unique_together = ("student", "subscription")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["student", "subscription"],
+                condition=Q(status__in=["pending", "approved"]),
+                name="unique_active_subscription_request"
+            )
+        ]
 
     # -------------------------
     # Approve

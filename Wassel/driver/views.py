@@ -9,7 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from subscriptions.models import Subscription, SubscriptionRequest
 from django.db.models import Sum
 from accounts.models import City
-
+from payment.services import approve_subscription_payment
+from django.core.exceptions import ValidationError
+from django.db import transaction
 
 
 
@@ -294,13 +296,23 @@ def subscription_request_detail(request, req_id):
         context
     )
     
+    
 @login_required
 def approve_request(request, req_id):
 
     req = get_object_or_404(SubscriptionRequest, id=req_id)
 
     if request.method == "POST":
-        req.approve()
+
+        try:
+            with transaction.atomic():
+                req.approve()  # الموافقة الأصلية
+                approve_subscription_payment(req)  # 🔥 تحويل الأموال
+
+            messages.success(request, "تمت الموافقة وتحويل المبلغ بنجاح.")
+
+        except ValidationError as e:
+            messages.error(request, str(e))
 
     return redirect("driver:subscription_detail", sub_id=req.subscription.id)
 
