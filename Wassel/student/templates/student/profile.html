@@ -103,6 +103,20 @@
         <h5>الموقع</h5>
 
         <div class="row">
+
+
+            <div class="col-md-6 mb-3">
+                <label>المدينة</label>
+                <select name="city" class="premium-input">
+                    {% for city in cities %}
+                        <option value="{{ city.id }}"
+                            {% if user.city.id == city.id %}selected{% endif %}>
+                            {{ city.name_ar }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="col-md-6 mb-3">
                 <label>الحي</label>
                 <input type="text" name="neighborhood"

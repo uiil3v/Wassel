@@ -222,6 +222,25 @@ label {
                                     {% endfor %}
                                 </div>
 
+                                <!-- City -->
+                                <div class="col-md-12 mb-4">
+                                    <label>المدينة</label>
+                                    <select name="city"
+                                            class="premium-select {% if form.city.errors %}input-error{% endif %}">
+                                        <option value="">اختر مدينتك</option>
+                                        {% for city in form.fields.city.queryset %}
+                                            <option value="{{ city.id }}"
+                                                {% if form.city.value == city.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ city.name_ar }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    {% for error in form.city.errors %}
+                                        <div class="error-text">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
                                 <!-- Role -->
                                 <div class="col-md-12 mb-4">
                                     <label>نوع الحساب</label>

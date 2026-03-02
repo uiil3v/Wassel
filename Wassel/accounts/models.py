@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from location.models import City
 
 
 class CustomUserManager(BaseUserManager):
@@ -9,6 +10,11 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Email is required")
 
         email = self.normalize_email(email)
+
+        # 🔥 تأكد أن المدينة موجودة للمستخدم العادي
+        if not extra_fields.get("city"):
+            raise ValueError("City is required")
+
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -25,12 +31,19 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
+        # 🔥 تعيين أول مدينة تلقائيًا لو ما انرسلت
+        if "city" not in extra_fields or not extra_fields["city"]:
+            first_city = City.objects.first()
+            if not first_city:
+                raise ValueError("You must create at least one City before creating a superuser.")
+            extra_fields["city"] = first_city
+
         return self.create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):
 
-    username = None  # 🔥 حذفنا username رسميًا
+    username = None  # حذفنا username رسميًا
 
     ROLE_CHOICES = (
         ('student', 'طالب'),
@@ -52,6 +65,13 @@ class User(AbstractUser):
 
     phone = models.CharField(max_length=20)
 
+    city = models.ForeignKey(
+        City,
+        on_delete=models.PROTECT,
+        related_name="users",
+        verbose_name="المدينة"
+    )
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -59,6 +79,8 @@ class User(AbstractUser):
     )
 
     USERNAME_FIELD = "email"
+
+    # 🔥 حذفنا city من هنا عشان ما يطلبها createsuperuser
     REQUIRED_FIELDS = ["first_name", "last_name", "phone"]
 
     objects = CustomUserManager()

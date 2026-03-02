@@ -4,6 +4,8 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import RegisterForm
 
 
+
+
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -34,6 +36,8 @@ def register_view(request):
         form = RegisterForm()
 
     return render(request, "accounts/register.html", {"form": form})
+
+
 
 
 def login_view(request):

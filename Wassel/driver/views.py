@@ -8,6 +8,8 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from subscriptions.models import Subscription, SubscriptionRequest
 from django.db.models import Sum
+from accounts.models import City
+
 
 
 
@@ -74,55 +76,66 @@ def driver_profile(request):
 
     if request.method == "POST":
 
-        # 🔒 منع التعديل أثناء المراجعة
         if profile.verification_status == "pending":
             messages.warning(request, "لا يمكنك التعديل أثناء المراجعة.")
             return redirect("driver:profile")
 
-        # ================= تحديث بيانات الحساب =================
-
+        # ===== بيانات الحساب =====
         request.user.first_name = request.POST.get("first_name")
         request.user.last_name = request.POST.get("last_name")
 
         new_email = request.POST.get("email")
         new_phone = request.POST.get("phone")
+        new_city_id = request.POST.get("city")
 
-        # تحقق أن الإيميل غير مستخدم
+        # تحقق من تكرار الإيميل
         if User.objects.exclude(pk=request.user.pk).filter(email=new_email).exists():
             messages.error(request, "البريد الإلكتروني مستخدم بالفعل.")
             return redirect("driver:profile")
 
+        # ===== منع تغيير المدينة لو عنده اشتراكات أو طلاب =====
+        has_active_subscriptions = Subscription.objects.filter(
+            driver=profile,
+            status="active"
+        ).exists()
+
+        has_approved_students = SubscriptionRequest.objects.filter(
+            subscription__driver=profile,
+            status="approved"
+        ).exists()
+
+        if (has_active_subscriptions or has_approved_students) and str(request.user.city_id) != new_city_id:
+            messages.error(request, "لا يمكنك تغيير المدينة أثناء وجود اشتراكات أو طلاب نشطين.")
+            return redirect("driver:profile")
+
+        # ===== حفظ بيانات المستخدم =====
         request.user.email = new_email
         request.user.phone = new_phone
+        request.user.city_id = new_city_id
         request.user.save()
 
-        # ================= تحديث بيانات السائق =================
-
+        # ===== بيانات السائق =====
         profile.vehicle_model = request.POST.get("vehicle_model")
 
-        if request.FILES.get("id_document_image"):
-            profile.id_document_image = request.FILES.get("id_document_image")
+        # ملفات
+        for field in [
+            "id_document_image",
+            "driving_license_image",
+            "vehicle_registration_image",
+            "vehicle_insurance_image",
+            "vehicle_front_image",
+            "vehicle_back_image",
+            "vehicle_side_image",
+        ]:
+            if request.FILES.get(field):
+                setattr(profile, field, request.FILES.get(field))
 
-        if request.FILES.get("driving_license_image"):
-            profile.driving_license_image = request.FILES.get("driving_license_image")
+        # ===== إعادة مراجعة لو غير المدينة =====
+        if str(request.user.city_id) != new_city_id:
+            profile.verification_status = "pending"
+            messages.info(request, "تم تغيير المدينة وسيتم إعادة مراجعة حسابك.")
 
-        if request.FILES.get("vehicle_registration_image"):
-            profile.vehicle_registration_image = request.FILES.get("vehicle_registration_image")
-
-        if request.FILES.get("vehicle_insurance_image"):
-            profile.vehicle_insurance_image = request.FILES.get("vehicle_insurance_image")
-
-        if request.FILES.get("vehicle_front_image"):
-            profile.vehicle_front_image = request.FILES.get("vehicle_front_image")
-
-        if request.FILES.get("vehicle_back_image"):
-            profile.vehicle_back_image = request.FILES.get("vehicle_back_image")
-
-        if request.FILES.get("vehicle_side_image"):
-            profile.vehicle_side_image = request.FILES.get("vehicle_side_image")
-
-        # ================= تحقق اكتمال البيانات =================
-
+        # ===== تحقق اكتمال البيانات =====
         documents_complete = all([
             profile.id_document_image,
             profile.driving_license_image,
@@ -144,7 +157,8 @@ def driver_profile(request):
         return redirect("driver:profile")
 
     context = {
-        "profile": profile
+        "profile": profile,
+        "cities": City.objects.filter(is_active=True)
     }
 
     return render(request, "driver/profile.html", context)

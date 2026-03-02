@@ -13,6 +13,7 @@ from django.db.models import Q
 from student.models import StudentProfile
 from accounts.models import User
 from django.contrib import messages
+from accounts.models import City
 
 @login_required
 def student_dashboard(request):
@@ -23,7 +24,7 @@ def student_dashboard(request):
     profile = getattr(request.user, "student_profile", None)
 
     if not profile:
-        return redirect("students:profile")
+        return redirect("student:profile")
 
     active_request = SubscriptionRequest.objects.filter(
         student=profile,
@@ -34,7 +35,8 @@ def student_dashboard(request):
 
     if not active_request:
         available_subscriptions = Subscription.objects.filter(
-            status="active"
+            status="active",
+            driver__user__city=request.user.city
         ).select_related("driver__user")[:6]
 
     context = {
@@ -88,7 +90,8 @@ def available_subscriptions(request):
     # ================= BASE QUERY =================
     subscriptions = Subscription.objects.filter(
         status="active",
-        available_seats__gt=0
+        available_seats__gt=0,
+        driver__user__city=request.user.city
     ).select_related("driver__user")
 
     # ================= SEARCH =================
@@ -142,6 +145,8 @@ def available_subscriptions(request):
 
     return render(request, "student/subscriptions.html", context)
 
+
+
 @login_required
 def subscription_detail_view(request, sub_id):
 
@@ -153,7 +158,8 @@ def subscription_detail_view(request, sub_id):
     subscription = get_object_or_404(
         Subscription.objects.select_related("driver__user"),
         id=sub_id,
-        status="active"
+        status="active",
+        driver__user__city=request.user.city   # 🔥 حماية المدينة
     )
 
     has_active_request = profile.subscription_requests.filter(
@@ -168,6 +174,8 @@ def subscription_detail_view(request, sub_id):
     return render(request, "student/subscription_detail_view.html", context)
 
 
+
+
 @login_required
 def create_request(request, sub_id):
 
@@ -179,7 +187,8 @@ def create_request(request, sub_id):
     subscription = get_object_or_404(
         Subscription,
         id=sub_id,
-        status="active"
+        status="active",
+        driver__user__city=request.user.city   # 🔥 حماية المدينة
     )
 
     if profile.subscription_requests.filter(
@@ -262,7 +271,6 @@ def cancel_request(request, req_id):
 
 
 
-
 @login_required
 def student_profile(request):
 
@@ -281,14 +289,26 @@ def student_profile(request):
 
         new_email = request.POST.get("email")
         new_phone = request.POST.get("phone")
+        new_city_id = request.POST.get("city")
 
         # تحقق أن الإيميل غير مستخدم
         if User.objects.exclude(pk=request.user.pk).filter(email=new_email).exists():
             messages.error(request, "البريد الإلكتروني مستخدم بالفعل.")
             return redirect("student:profile")
 
+        # ===== منع تغيير المدينة لو عنده اشتراك نشط =====
+        has_active_request = profile.subscription_requests.filter(
+            status__in=["pending", "approved"]
+        ).exists()
+
+        if has_active_request and str(request.user.city_id) != new_city_id:
+            messages.error(request, "لا يمكنك تغيير المدينة أثناء وجود اشتراك نشط.")
+            return redirect("student:profile")
+
+        # حفظ بيانات الحساب
         request.user.email = new_email
         request.user.phone = new_phone
+        request.user.city_id = new_city_id
         request.user.save()
 
         # ===== تحديث بيانات الطالب =====
@@ -303,7 +323,8 @@ def student_profile(request):
         return redirect("student:profile")
 
     context = {
-        "profile": profile
+        "profile": profile,
+        "cities": City.objects.all()
     }
 
     return render(request, "student/profile.html", context)

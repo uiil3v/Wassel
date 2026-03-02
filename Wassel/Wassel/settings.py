@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "driver",
     'subscriptions',
     'student',
+    "location",
 ]
 
 MIDDLEWARE = [

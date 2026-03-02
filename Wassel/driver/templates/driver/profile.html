@@ -158,6 +158,18 @@
                 <input type="text" name="phone" value="{{ user.phone }}" class="premium-input text-start" dir="ltr"
                     style="direction: ltr; text-align: left;">
             </div>
+            <div class="col-md-6 mb-3">
+                <label>المدينة</label>
+
+                <select name="city" class="premium-input">
+                    {% for city in cities %}
+                        <option value="{{ city.id }}"
+                            {% if user.city.id == city.id %}selected{% endif %}>
+                            {{ city.name_ar }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
     </div>
 
