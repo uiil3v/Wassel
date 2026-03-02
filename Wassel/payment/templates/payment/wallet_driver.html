@@ -1,0 +1,213 @@
+{% extends "driver/base_driver.html" %}
+
+{% block driver_content %}
+
+<style>
+/* ===== Wallet Summary Cards ===== */
+
+.wallet-card {
+    background: white;
+    border-radius: 35px;
+    padding: 30px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+.wallet-icon {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, var(--accent-color), #d4af37);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.wallet-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.wallet-label {
+    color: var(--soft-color);
+}
+
+/* ===== Transactions Section ===== */
+
+.wallet-section {
+    background: white;
+    border-radius: 35px;
+    padding: 35px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
+}
+
+.transaction-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+</style>
+
+
+<!-- ===== Summary Cards ===== -->
+<div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+        <div class="wallet-card">
+            <div class="wallet-icon">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="wallet-number">{{ wallet.balance }} ر.س</div>
+            <div class="wallet-label">الرصيد المتاح</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="wallet-card">
+            <div class="wallet-icon">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            <div class="wallet-number">{{ wallet.frozen_balance }} ر.س</div>
+            <div class="wallet-label">الرصيد المجمد</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="wallet-card">
+            <div class="wallet-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="wallet-number">
+                {{ wallet.balance|add:wallet.frozen_balance }} ر.س
+            </div>
+            <div class="wallet-label">إجمالي المحفظة</div>
+        </div>
+    </div>
+
+    <div class="d-flex mb-4">
+
+    <button class="btn btn-danger px-4"
+            data-bs-toggle="modal"
+            data-bs-target="#withdrawModal">
+        <i class="bi bi-cash-coin me-2"></i>
+        سحب الرصيد
+    </button>
+
+</div>
+
+</div>
+
+
+
+<!-- ===== Transactions ===== -->
+<div class="wallet-section">
+
+    <h5 class="fw-bold mb-4">سجل العمليات</h5>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+
+            <thead>
+                <tr>
+                    <th>النوع</th>
+                    <th>المبلغ</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for tx in transactions %}
+                <tr>
+
+                    <td>
+                        {% if tx.type == "deposit" %}
+                            <span class="badge bg-success-subtle text-success transaction-badge">إيداع</span>
+                        {% elif tx.type == "withdraw" %}
+                            <span class="badge bg-danger-subtle text-danger transaction-badge">سحب</span>
+                        {% elif tx.type == "freeze" %}
+                            <span class="badge bg-info-subtle text-info transaction-badge">تجميد</span>
+                        {% elif tx.type == "refund" %}
+                            <span class="badge bg-primary-subtle text-primary transaction-badge">استرجاع</span>
+                        {% elif tx.type == "commission" %}
+                            <span class="badge bg-warning-subtle text-warning transaction-badge">عمولة</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="fw-bold">
+                        {{ tx.amount }} ر.س
+                    </td>
+
+                    <td>
+                        <span class="badge bg-success-subtle text-success transaction-badge">
+                            {{ tx.status }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {{ tx.created_at|date:"d M Y - h:i A" }}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        لا توجد عمليات حتى الآن
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+<!-- ===== Withdraw Modal ===== -->
+<div class="modal fade" id="withdrawModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 p-3">
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="withdraw">
+
+                <div class="modal-header border-0">
+                    <h5 class="fw-bold text-danger">سحب رصيد</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <label class="form-label">المبلغ</label>
+                    <input type="number"
+                           name="amount"
+                           step="0.01"
+                           min="1"
+                           class="form-control"
+                           required>
+
+                    <small class="text-muted">
+                        الرصيد المتاح: {{ wallet.balance }} ر.س
+                    </small>
+
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="submit"
+                            class="btn btn-danger w-100">
+                        تأكيد السحب
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+<h2>💳 محفظتي</h2>
+
+<p>الرصيد المتاح: {{ wallet.balance }} ر.س</p>
+<p>الرصيد المجمد: {{ wallet.frozen_balance }} ر.س</p>
+
+<hr>
+
+<h4>العمليات:</h4>
+
+<ul>
+{% for tx in transactions %}
+    <li>
+        {{ tx.type }} - {{ tx.amount }} - {{ tx.created_at }}
+    </li>
+{% empty %}
+    <li>لا توجد عمليات.</li>
+{% endfor %}
+</ul>

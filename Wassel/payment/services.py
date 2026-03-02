@@ -219,3 +219,52 @@ def refund_after_approval(subscription_request):
 
     # 🔹 إعادة المقعد
     subscription.increase_seat()
+    
+    
+    
+    
+@transaction.atomic
+def withdraw_wallet(user, amount):
+
+    amount = Decimal(amount)
+
+    if amount <= 0:
+        raise ValidationError("المبلغ غير صالح.")
+
+    wallet = user.wallet
+
+    if wallet.balance < amount:
+        raise ValidationError("رصيدك غير كافي.")
+
+    wallet.balance -= amount
+    wallet.save()
+
+    Transaction.objects.create(
+        wallet=wallet,
+        type="withdraw",
+        amount=amount,
+        status="completed"
+    ) 
+   
+   
+    
+@transaction.atomic
+def deposit_wallet(user, amount):
+
+    amount = Decimal(amount)
+
+    if amount <= 0:
+        raise ValidationError("المبلغ غير صالح.")
+
+    wallet, _ = Wallet.objects.get_or_create(user=user)
+
+    wallet.balance += amount
+    wallet.save()
+
+    Transaction.objects.create(
+        wallet=wallet,
+        type="deposit",
+        amount=amount,
+        status="completed"
+    )
+    

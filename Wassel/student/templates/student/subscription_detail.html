@@ -111,6 +111,21 @@
         <span>{{ req.subscription.end_date }}</span>
     </div>
 
+    {% if req.status == "approved" or req.status == "pending" %}
+    <hr>
+
+    <div class="text-start mt-4">
+
+        <button class="btn btn-outline-danger px-4"
+                data-bs-toggle="modal"
+                data-bs-target="#cancelModal">
+            <i class="bi bi-x-circle me-2"></i>
+            إلغاء الاشتراك
+        </button>
+
+    </div>
+    {% endif %}
+
 </div>
 
 
@@ -173,6 +188,54 @@
         <p class="text-muted">لم يتم تحديد جدول بعد.</p>
     {% endif %}
 
+</div>
+
+<!-- ===== Cancel Modal ===== -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:25px;">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">تأكيد الإلغاء</h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+
+                {% if req.status == "pending" %}
+                    <p class="text-muted">
+                        سيتم استرجاع المبلغ كاملاً إلى محفظتك.
+                    </p>
+                {% elif req.status == "approved" %}
+                    <p class="text-muted">
+                        سيتم احتساب مبلغ الاسترجاع حسب المدة المتبقية من الاشتراك.
+                    </p>
+                {% endif %}
+
+                <div class="mt-4 d-flex justify-content-center gap-3">
+
+                    <button type="button"
+                            class="btn btn-light px-4"
+                            data-bs-dismiss="modal">
+                        تراجع
+                    </button>
+
+                    <form method="post"
+                          action="{% url 'student:cancel_request' req.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="btn btn-danger px-4">
+                            نعم، إلغاء
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
 </div>
 
 {% endblock %}

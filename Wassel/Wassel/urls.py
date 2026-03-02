@@ -24,4 +24,5 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("driver/", include("driver.urls")), 
     path("student/", include("student.urls")), 
+    path("", include("payment.urls")),
 ]

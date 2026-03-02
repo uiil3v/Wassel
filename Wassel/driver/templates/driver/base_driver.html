@@ -210,6 +210,12 @@
                 الطلبات
             </a>
 
+            <a href="{% url 'payment:wallet' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
+                <i class="bi bi-wallet2 me-2"></i>
+                محفظتي
+            </a>
+
             <a href="{% url 'driver:notifications' %}"
                 class="driver-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
                 <i class="bi bi-bell me-2"></i>
@@ -268,6 +274,12 @@
             class="driver-link {% if request.resolver_match.url_name == 'requests' %}active{% endif %}">
             <i class="bi bi-clipboard-check me-2"></i>
             الطلبات
+        </a>
+
+        <a href="{% url 'payment:wallet' %}"
+        class="driver-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
+            <i class="bi bi-wallet2 me-2"></i>
+            محفظتي
         </a>
 
         <a href="{% url 'driver:notifications' %}"

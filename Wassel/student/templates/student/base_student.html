@@ -183,6 +183,12 @@
                 الاشتراكات المتاحة
             </a>
 
+            <a href="{% url 'payment:wallet' %}"
+            class="student-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
+                <i class="bi bi-wallet2 me-2"></i>
+                محفظتي
+            </a>
+
             <a href="{% url 'student:profile' %}"
                class="student-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                 <i class="bi bi-person me-2"></i>
@@ -224,6 +230,12 @@
            class="student-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
             <i class="bi bi-ticket-perforated me-2"></i>
             الاشتراكات المتاحة
+        </a>
+
+        <a href="{% url 'payment:wallet' %}"
+        class="student-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
+            <i class="bi bi-wallet2 me-2"></i>
+            محفظتي
         </a>
 
         <a href="{% url 'student:profile' %}"
