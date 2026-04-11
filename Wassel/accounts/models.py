@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from location.models import City
+from django.core.exceptions import ValidationError
 
 
 class CustomUserManager(BaseUserManager):
@@ -48,12 +49,35 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         ('student', 'طالب'),
         ('driver', 'سائق'),
+        ('admin', 'مدير'),  # 🔥 الجديد
     )
 
     STATUS_CHOICES = (
         ('active', 'Active'),
         ('banned', 'Banned'),
     )
+    
+    ADMIN_LEVELS = (
+        (1, "Super Admin"),
+        (2, "Manager"),
+    )
+
+    admin_level = models.IntegerField(
+        choices=ADMIN_LEVELS,
+        null=True,
+        blank=True
+    )
+    
+    def clean(self):
+        if self.role != "admin" and self.admin_level is not None:
+            raise ValidationError("Only admin users can have admin_level.")
+
+        if self.role == "admin" and self.admin_level is None:
+            raise ValidationError("Admin users must have admin_level.")
+        
+    def save(self, *args, **kwargs):
+        self.clean()  # 🔥 يجبر التحقق
+        super().save(*args, **kwargs)
 
     email = models.EmailField(unique=True)
 

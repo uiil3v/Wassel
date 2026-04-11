@@ -1,0 +1,180 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+
+/* ===== Stats Layout ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* ===== Card ===== */
+.stat-card {
+    background: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-title {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+/* ===== Table Card ===== */
+.table-card {
+    background: white;
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+}
+
+/* ===== Table ===== */
+.table th {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+
+.table td {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* ===== Status ===== */
+.badge-status {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+</style>
+
+<h3 class="mb-4 fw-bold">الرئيسية</h3>
+
+<!-- ================= Stats ================= -->
+
+<div class="stats-grid mb-5">
+
+
+<div class="stat-card">
+    <div class="stat-title">المستخدمين</div>
+    <div class="stat-number">{{ users_count }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-title">السائقين</div>
+    <div class="stat-number">{{ drivers_count }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-title">الطلاب</div>
+    <div class="stat-number">{{ students_count }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-title">طلبات قيد الانتظار</div>
+    <div class="stat-number text-warning">{{ pending_requests }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-title">طلبات مكتملة</div>
+    <div class="stat-number text-success">{{ completed_requests }}</div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-title">الأرباح</div>
+    <div class="stat-number text-success">{{ total_earnings }} ريال</div>
+</div>
+
+
+</div>
+
+<!-- ================= Latest Requests ================= -->
+
+<div class="table-card">
+
+
+<h5 class="fw-bold mb-4">📦 أحدث الطلبات</h5>
+
+<div class="table-responsive">
+    <table class="table align-middle text-center">
+
+        <thead>
+            <tr>
+                <th>الطالب</th>
+                <th>السائق</th>
+                <th>الحي</th>
+                <th>الحالة</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for req in latest_requests %}
+            <tr>
+                <td>{{ req.student.user.full_name }}</td>
+                <td>{{ req.subscription.driver.user.full_name }}</td>
+                <td>{{ req.subscription.neighborhood }}</td>
+
+                <td>
+                    {% if req.status == "pending" %}
+                        <span class="badge-status pending">Pending</span>
+
+                    {% elif req.status == "approved" %}
+                        <span class="badge-status approved">Approved</span>
+
+                    {% elif req.status == "rejected" %}
+                        <span class="badge-status rejected">Rejected</span>
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-muted">
+                    لا توجد طلبات حالياً
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+
+
+</div>
+
+{% endblock %}

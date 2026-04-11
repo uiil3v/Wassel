@@ -1,0 +1,159 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.detail-card {
+    background: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-approve {
+    background: #28a745;
+    color: white;
+}
+
+.btn-reject {
+    background: #dc3545;
+    color: white;
+}
+
+.doc-img {
+    width: 100%;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+</style>
+
+<h3 class="mb-4 fw-bold">🚗 تفاصيل طلب توثيق السائق</h3>
+
+<!-- ================= Actions ================= -->
+
+<div class="detail-card text-center">
+
+
+{% if driver.verification_status == "pending" %}
+
+    <!-- Approve -->
+    <a href="{% url 'admin_panel:approve_driver' driver.id %}" 
+       class="action-btn btn-approve"
+       onclick="return confirm('هل أنت متأكد من اعتماد السائق؟')">
+        ✔️ اعتماد السائق
+    </a>
+
+    <!-- Reject -->
+    <button class="action-btn btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
+        ❌ رفض السائق
+    </button>
+
+{% else %}
+    <span class="badge bg-secondary">تم اتخاذ إجراء</span>
+{% endif %}
+
+
+</div>
+
+<!-- ================= Driver Info ================= -->
+
+<div class="detail-card">
+    <div class="section-title">👤 بيانات السائق</div>
+
+
+<p><strong>الاسم:</strong> {{ driver.user.full_name }}</p>
+<p><strong>البريد:</strong> {{ driver.user.email }}</p>
+<p><strong>الجوال:</strong> {{ driver.user.phone }}</p>
+
+
+</div>
+
+<!-- ================= Vehicle ================= -->
+
+<div class="detail-card">
+    <div class="section-title">🚗 بيانات المركبة</div>
+
+
+<p><strong>الموديل:</strong> {{ driver.vehicle_model }}</p>
+
+
+</div>
+
+<!-- ================= Documents ================= -->
+
+<div class="detail-card">
+    <div class="section-title">📂 مستندات السائق</div>
+
+
+{% if driver.id_document_image %}
+    <img src="{{ driver.id_document_image.url }}" class="doc-img">
+{% endif %}
+
+{% if driver.driving_license_image %}
+    <img src="{{ driver.driving_license_image.url }}" class="doc-img">
+{% endif %}
+
+{% if driver.vehicle_registration_image %}
+    <img src="{{ driver.vehicle_registration_image.url }}" class="doc-img">
+{% endif %}
+
+{% if driver.vehicle_front_image %}
+    <img src="{{ driver.vehicle_front_image.url }}" class="doc-img">
+{% endif %}
+
+{% if driver.vehicle_back_image %}
+    <img src="{{ driver.vehicle_back_image.url }}" class="doc-img">
+{% endif %}
+
+{% if driver.vehicle_side_image %}
+    <img src="{{ driver.vehicle_side_image.url }}" class="doc-img">
+{% endif %}
+
+
+</div>
+
+<!-- ================= Reject Modal ================= -->
+
+<div class="modal fade" id="rejectModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+
+  <form method="post" action="{% url 'admin_panel:reject_driver' driver.id %}">
+    {% csrf_token %}
+
+    <div class="modal-header">
+      <h5 class="modal-title">سبب الرفض</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+      <textarea name="reason" class="form-control" rows="4" placeholder="اكتب سبب الرفض..." required></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-danger">تأكيد الرفض</button>
+    </div>
+
+  </form>
+
+</div>
+
+
+  </div>
+</div>
+
+{% endblock %}

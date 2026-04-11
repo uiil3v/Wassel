@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'student',
     "location",
     'payment.apps.PaymentConfig',
+    'admin_panel.apps.AdminPanelConfig',
 ]
 
 MIDDLEWARE = [

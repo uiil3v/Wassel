@@ -1,0 +1,144 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.section-card {
+    background: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.view-btn {
+    background: #e7f1ff;
+    color: #0d6efd;
+    padding: 6px 14px;
+    border-radius: 15px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+
+<h3 class="mb-4 fw-bold">📦 إدارة الطلبات</h3>
+
+<!-- ================= Requests ================= -->
+
+<div class="section-card">
+
+
+<h5 class="mb-3">طلبات الاشتراك</h5>
+
+<table class="table text-center align-middle">
+    <thead>
+        <tr>
+            <th>الطالب</th>
+            <th>السائق</th>
+            <th>الحي</th>
+            <th>الحالة</th>
+            <th>عرض</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for req in requests %}
+        <tr>
+            <td>{{ req.student.user.full_name }}</td>
+            <td>{{ req.subscription.driver.user.full_name }}</td>
+            <td>{{ req.subscription.neighborhood }}</td>
+
+            <td>
+                {% if req.status == "pending" %}
+                    <span class="status-badge pending">Pending</span>
+                {% elif req.status == "approved" %}
+                    <span class="status-badge approved">Approved</span>
+                {% else %}
+                    <span class="status-badge rejected">Rejected</span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="{% url 'admin_panel:request_detail' req.id %}" class="view-btn">
+                    👁️ عرض
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>
+
+
+</div>
+
+<!-- ================= Drivers ================= -->
+
+<div class="section-card">
+
+
+<h5 class="mb-3">طلبات توثيق السائقين</h5>
+
+<table class="table text-center align-middle">
+    <thead>
+        <tr>
+            <th>السائق</th>
+            <th>السيارة</th>
+            <th>الحالة</th>
+            <th>عرض</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for d in drivers %}
+        <tr>
+            <td>{{ d.user.full_name }}</td>
+            <td>{{ d.vehicle_model }}</td>
+
+            <td>
+                {% if d.verification_status == "pending" %}
+                    <span class="status-badge pending">Pending</span>
+                {% elif d.verification_status == "approved" %}
+                    <span class="status-badge approved">Approved</span>
+                {% else %}
+                    <span class="status-badge rejected">Rejected</span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="{% url 'admin_panel:driver_detail' d.id %}" class="view-btn">
+                    👁️ عرض
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>
+
+
+</div>
+
+{% endblock %}
