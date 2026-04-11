@@ -27,6 +27,24 @@ from driver.models import DriverProfile
 
 from .decorators import admin_required
 
+from django.shortcuts import render
+from accounts.models import User
+from django.db.models import Q
+from .decorators import admin_required
+
+from django.shortcuts import render, get_object_or_404
+from accounts.models import User
+from .decorators import admin_required
+
+
+from payment.models import Transaction
+from django.db.models import Sum
+from .decorators import admin_required
+
+from payment.models import Transaction
+from django.db.models import Sum, Q
+from .decorators import admin_required
+
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
@@ -200,4 +218,157 @@ def driver_detail(request, pk):
     })
     
     
-    
+@admin_required(levels=[1, 2])
+def users_list(request):
+
+    users = User.objects.all().order_by("-date_joined")
+
+    # ======================
+    # Search
+    # ======================
+    search = request.GET.get("search")
+
+    if search:
+        users = users.filter(
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search) |
+            Q(email__icontains=search)
+        )
+
+    # ======================
+    # Filter by Role
+    # ======================
+    role = request.GET.get("role")
+
+    if role and role != "all":
+        users = users.filter(role=role)
+
+    # ======================
+    # Filter by Status
+    # ======================
+    status = request.GET.get("status")
+
+    if status and status != "all":
+        users = users.filter(status=status)
+
+    context = {
+        "users": users,
+        "search": search,
+        "role": role,
+        "status": status,
+    }
+
+    return render(request, "admin_panel/users.html", context)
+
+
+@admin_required(levels=[1, 2])
+def user_detail(request, pk):
+
+    user = get_object_or_404(User, id=pk)
+
+    student = None
+    driver = None
+
+    # ======================
+    # Detect Role
+    # ======================
+    if user.role == "student":
+        student = getattr(user, "student_profile", None)
+
+    elif user.role == "driver":
+        driver = getattr(user, "driver_profile", None)
+
+    context = {
+        "user_obj": user,
+        "student": student,
+        "driver": driver,
+    }
+
+    return render(request, "admin_panel/user_detail.html", context)
+
+@admin_required(levels=[1])
+def ban_user(request, pk):
+    user = get_object_or_404(User, id=pk)
+    user.status = "banned"
+    user.save()
+    return redirect("admin_panel:user_detail", pk=pk)
+
+@admin_required(levels=[1])
+def activate_user(request, pk):
+    user = get_object_or_404(User, id=pk)
+    user.status = "active"
+    user.save()
+    return redirect("admin_panel:user_detail", pk=pk)
+
+
+
+@admin_required(levels=[1, 2])
+def payments_view(request):
+
+    transactions = Transaction.objects.select_related("wallet__user").order_by("-created_at")
+
+    # ======================
+    # Filters
+    # ======================
+
+    search = request.GET.get("search")
+    type_filter = request.GET.get("type")
+    status_filter = request.GET.get("status")
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
+
+    # 🔍 Search
+    if search:
+        transactions = transactions.filter(
+            Q(wallet__user__first_name__icontains=search) |
+            Q(wallet__user__last_name__icontains=search) |
+            Q(wallet__user__email__icontains=search)
+        )
+
+    # 🎛️ Type
+    if type_filter and type_filter != "all":
+        transactions = transactions.filter(type=type_filter)
+
+    # 🎛️ Status
+    if status_filter and status_filter != "all":
+        transactions = transactions.filter(status=status_filter)
+
+    # 📅 Date From
+    if date_from:
+        transactions = transactions.filter(created_at__date__gte=date_from)
+
+    # 📅 Date To
+    if date_to:
+        transactions = transactions.filter(created_at__date__lte=date_to)
+
+    # ======================
+    # Stats (نفسها)
+    # ======================
+
+    total_transactions = transactions.count()
+
+    total_earnings = transactions.filter(
+        type="commission",
+        status="completed"
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    total_withdrawals = transactions.filter(
+        type="withdraw",
+        status="completed"
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    context = {
+        "transactions": transactions,
+        "total_transactions": total_transactions,
+        "total_earnings": total_earnings,
+        "total_withdrawals": total_withdrawals,
+
+        # مهم عشان نحافظ على القيم في الفورم
+        "search": search,
+        "type": type_filter,
+        "status": status_filter,
+        "date_from": date_from,
+        "date_to": date_to,
+    }
+
+    return render(request, "admin_panel/payments.html", context)

@@ -1,0 +1,167 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.section-card {
+    background: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+/* Search & Filters */
+.filter-box {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-box input,
+.filter-box select {
+    border-radius: 15px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+.search-btn {
+    border-radius: 15px;
+    padding: 8px 16px;
+    background: black;
+    color: white;
+    border: none;
+}
+
+/* Table */
+.table th {
+    font-weight: 600;
+    color: #555;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Badges */
+.badge-role {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.student { background: #e7f1ff; color: #0d6efd; }
+.driver { background: #d4edda; color: #155724; }
+.admin { background: #f8d7da; color: #721c24; }
+
+.active { background: #d4edda; color: #155724; }
+.banned { background: #f8d7da; color: #721c24; }
+
+/* View Button */
+.view-btn {
+    background: #e7f1ff;
+    color: #0d6efd;
+    padding: 6px 14px;
+    border-radius: 15px;
+    text-decoration: none;
+}
+
+/* Hover */
+.table tbody tr:hover {
+    background: #f9f9f9;
+}
+</style>
+
+<h3 class="mb-4 fw-bold">👥 إدارة المستخدمين</h3>
+
+<!-- ================= Filters ================= -->
+
+<div class="section-card">
+
+
+<form method="get" class="filter-box">
+
+    <input type="text" name="search" placeholder="بحث بالاسم أو الإيميل" value="{{ search|default:'' }}">
+
+    <select name="role">
+        <option value="all">كل الأدوار</option>
+        <option value="student" {% if role == "student" %}selected{% endif %}>طلاب</option>
+        <option value="driver" {% if role == "driver" %}selected{% endif %}>سائقين</option>
+        <option value="admin" {% if role == "admin" %}selected{% endif %}>أدمن</option>
+    </select>
+
+    <select name="status">
+        <option value="all">كل الحالات</option>
+        <option value="active" {% if status == "active" %}selected{% endif %}>Active</option>
+        <option value="banned" {% if status == "banned" %}selected{% endif %}>Banned</option>
+    </select>
+
+    <button type="submit" class="search-btn">بحث</button>
+
+</form>
+
+
+</div>
+
+<!-- ================= Users Table ================= -->
+
+<div class="section-card">
+
+
+<table class="table text-center align-middle">
+
+    <thead>
+        <tr>
+            <th>الاسم</th>
+            <th>الإيميل</th>
+            <th>الدور</th>
+            <th>الحالة</th>
+            <th>عرض</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for user in users %}
+        <tr>
+
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.email }}</td>
+
+            <td>
+                <span class="badge-role {{ user.role }}">
+                    {{ user.role }}
+                </span>
+            </td>
+
+            <td>
+                <span class="badge-role {{ user.status }}">
+                    {{ user.status }}
+                </span>
+            </td>
+
+            <td>
+                <a href="{% url 'admin_panel:user_detail' user.id %}" class="view-btn">
+                    👁️ عرض
+                </a>
+            </td>
+
+        </tr>
+
+    {% empty %}
+        <tr>
+            <td colspan="5" class="text-muted">
+                لا يوجد مستخدمين
+            </td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+</div>
+
+{% endblock %}

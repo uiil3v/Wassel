@@ -1,0 +1,223 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.section-card {
+    background: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+/* Stats */
+.stat-card {
+    border-radius: 25px;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+}
+
+.stat-title {
+    color: #888;
+    font-size: 14px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Table */
+.table th {
+    font-weight: 600;
+    color: #555;
+}
+
+/* Badges */
+.badge-type {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.deposit { background: #d4edda; color: #155724; }
+.withdraw { background: #f8d7da; color: #721c24; }
+.commission { background: #e7f1ff; color: #0d6efd; }
+.refund { background: #fff3cd; color: #856404; }
+
+.completed { background: #d4edda; color: #155724; }
+.pending { background: #fff3cd; color: #856404; }
+.cancelled { background: #f8d7da; color: #721c24; }
+
+/* Hover */
+.table tbody tr:hover {
+    background: #f9f9f9;
+}
+</style>
+
+<h3 class="mb-4 fw-bold">💳 المدفوعات</h3>
+
+<!-- ================= Stats ================= -->
+
+<div class="row g-4 mb-4">
+
+
+<div class="col-md-4">
+    <div class="stat-card">
+        <div class="stat-title">إجمالي الأرباح</div>
+        <div class="stat-value text-success">
+            {{ total_earnings }} ريال
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="stat-card">
+        <div class="stat-title">عدد العمليات</div>
+        <div class="stat-value">
+            {{ total_transactions }}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="stat-card">
+        <div class="stat-title">إجمالي السحوبات</div>
+        <div class="stat-value text-danger">
+            {{ total_withdrawals }} ريال
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<!-- ================= Filters ================= -->
+
+<div class="section-card">
+
+<form method="get">
+
+<div class="row g-3">
+
+
+<!-- Search -->
+<div class="col-md-3">
+    <label class="form-label">🔍 بحث</label>
+    <input type="text" name="search" class="form-control"
+           placeholder="اسم أو إيميل"
+           value="{{ search|default:'' }}">
+</div>
+
+<!-- Type -->
+<div class="col-md-2">
+    <label class="form-label">نوع العملية</label>
+    <select name="type" class="form-select">
+        <option value="all">الكل</option>
+        <option value="deposit" {% if type == "deposit" %}selected{% endif %}>Deposit</option>
+        <option value="withdraw" {% if type == "withdraw" %}selected{% endif %}>Withdraw</option>
+        <option value="commission" {% if type == "commission" %}selected{% endif %}>Commission</option>
+        <option value="refund" {% if type == "refund" %}selected{% endif %}>Refund</option>
+    </select>
+</div>
+
+<!-- Status -->
+<div class="col-md-2">
+    <label class="form-label">الحالة</label>
+    <select name="status" class="form-select">
+        <option value="all">الكل</option>
+        <option value="completed" {% if status == "completed" %}selected{% endif %}>Completed</option>
+        <option value="pending" {% if status == "pending" %}selected{% endif %}>Pending</option>
+        <option value="cancelled" {% if status == "cancelled" %}selected{% endif %}>Cancelled</option>
+    </select>
+</div>
+
+<!-- Date From -->
+<div class="col-md-2">
+    <label class="form-label">من تاريخ</label>
+    <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+</div>
+
+<!-- Date To -->
+<div class="col-md-2">
+    <label class="form-label">إلى تاريخ</label>
+    <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+</div>
+
+<!-- Button -->
+<div class="col-md-1 d-flex align-items-end">
+    <button type="submit" class="btn btn-dark w-100">
+        بحث
+    </button>
+</div>
+
+
+</div>
+
+</form>
+
+</div>
+
+<!-- ================= Transactions ================= -->
+
+<div class="section-card">
+
+<h5 class="mb-3 fw-bold">📊 سجل العمليات</h5>
+
+<table class="table text-center align-middle">
+
+<thead>
+    <tr>
+        <th>المستخدم</th>
+        <th>النوع</th>
+        <th>المبلغ</th>
+        <th>الحالة</th>
+        <th>التاريخ</th>
+    </tr>
+</thead>
+
+<tbody>
+
+{% for t in transactions %}
+
+<tr>
+
+
+<td>{{ t.wallet.user.full_name }}</td>
+
+<td>
+    <span class="badge-type {{ t.type }}">
+        {{ t.type }}
+    </span>
+</td>
+
+<td>{{ t.amount }} ريال</td>
+
+<td>
+    <span class="badge-type {{ t.status }}">
+        {{ t.status }}
+    </span>
+</td>
+
+<td>{{ t.created_at|date:"Y-m-d H:i" }}</td>
+
+
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="text-muted">
+        لا توجد عمليات
+    </td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}

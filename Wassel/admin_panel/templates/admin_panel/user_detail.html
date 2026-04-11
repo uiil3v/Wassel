@@ -1,0 +1,152 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.detail-card {
+    background: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.badge-role {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.student { background: #e7f1ff; color: #0d6efd; }
+.driver { background: #d4edda; color: #155724; }
+.admin { background: #f8d7da; color: #721c24; }
+
+.active { background: #d4edda; color: #155724; }
+.banned { background: #f8d7da; color: #721c24; }
+
+.action-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-ban {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-activate {
+    background: #28a745;
+    color: white;
+}
+</style>
+
+<h3 class="mb-4 fw-bold">👤 تفاصيل المستخدم</h3>
+
+<!-- ================= Actions ================= -->
+
+<div class="detail-card text-center">
+
+
+{% if user_obj.status == "active" %}
+    <a href="{% url 'admin_panel:ban_user' user_obj.id %}" 
+       class="action-btn btn-ban"
+       onclick="return confirm('هل أنت متأكد من حظر المستخدم؟')">
+        🚫 حظر المستخدم
+    </a>
+{% else %}
+    <a href="{% url 'admin_panel:activate_user' user_obj.id %}" 
+       class="action-btn btn-activate"
+       onclick="return confirm('هل تريد تفعيل المستخدم؟')">
+        ✅ تفعيل المستخدم
+    </a>
+{% endif %}
+
+
+</div>
+
+<!-- ================= Basic Info ================= -->
+
+<div class="detail-card">
+    <div class="section-title">📌 البيانات الأساسية</div>
+
+
+<p><strong>الاسم:</strong> {{ user_obj.full_name }}</p>
+<p><strong>الإيميل:</strong> {{ user_obj.email }}</p>
+<p><strong>الجوال:</strong> {{ user_obj.phone }}</p>
+
+<p>
+    <strong>الدور:</strong>
+    <span class="badge-role {{ user_obj.role }}">
+        {{ user_obj.role }}
+    </span>
+</p>
+
+<p>
+    <strong>الحالة:</strong>
+    <span class="badge-role {{ user_obj.status }}">
+        {{ user_obj.status }}
+    </span>
+</p>
+
+
+</div>
+
+<!-- ================= Student ================= -->
+
+{% if user_obj.role == "student" and student %}
+
+<div class="detail-card">
+    <div class="section-title">🎓 بيانات الطالب</div>
+
+
+<p><strong>الجامعة:</strong> {{ student.university_name }}</p>
+<p><strong>الحي:</strong> {{ student.neighborhood }}</p>
+
+{% if student.location_url %}
+    <p><strong>الموقع:</strong> 
+        <a href="{{ student.location_url }}" target="_blank">عرض الموقع</a>
+    </p>
+{% endif %}
+
+
+</div>
+{% endif %}
+
+<!-- ================= Driver ================= -->
+
+{% if user_obj.role == "driver" and driver %}
+
+<div class="detail-card">
+    <div class="section-title">🚗 بيانات السائق</div>
+
+
+<p><strong>السيارة:</strong> {{ driver.vehicle_model }}</p>
+<p><strong>حالة التوثيق:</strong> {{ driver.verification_status }}</p>
+
+
+</div>
+{% endif %}
+
+<!-- ================= Admin ================= -->
+
+{% if user_obj.role == "admin" %}
+
+<div class="detail-card">
+    <div class="section-title">🛠 بيانات الأدمن</div>
+
+
+<p><strong>المستوى:</strong> {{ user_obj.admin_level }}</p>
+
+
+</div>
+{% endif %}
+
+{% endblock %}

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "location",
     'payment.apps.PaymentConfig',
     'admin_panel.apps.AdminPanelConfig',
+    "notifications",
 ]
 
 MIDDLEWARE = [

@@ -173,22 +173,18 @@
             الرئيسية
         </a>
 
-        <a href="#" class="driver-link">
+        <a href="{% url 'admin_panel:users' %}" class="driver-link">
             <i class="bi bi-people me-2"></i>
             المستخدمين
         </a>
 
-        <a href="#" class="driver-link">
-            <i class="bi bi-truck me-2"></i>
-            السائقين
-        </a>
 
         <a href="{% url 'admin_panel:requests' %}" class="driver-link">
             <i class="bi bi-clipboard-check me-2"></i>
             الطلبات
         </a>
 
-        <a href="#" class="driver-link">
+        <a href="{% url 'admin_panel:payments' %}" class="driver-link">
             <i class="bi bi-cash-stack me-2"></i>
             المدفوعات
         </a>
@@ -227,9 +223,8 @@
     </a>
 
     <a href="#" class="driver-link">المستخدمين</a>
-    <a href="#" class="driver-link">السائقين</a>
     <a href="#" class="driver-link">الطلبات</a>
-    <a href="#" class="driver-link">المدفوعات</a>
+    <a href="{% url 'admin_panel:payments' %}" class="driver-link">المدفوعات</a>
     <a href="#" class="driver-link">الإشعارات</a>
 
 </div>
