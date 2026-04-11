@@ -1,0 +1,131 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.section-card {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+/* Title */
+.page-title {
+    font-weight: bold;
+}
+
+/* Inputs */
+.form-control, .form-select {
+    border-radius: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+/* Labels */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* Button */
+.send-btn {
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.send-btn:hover {
+    opacity: 0.85;
+}
+
+/* Box highlight */
+.highlight-box {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 20px;
+}
+</style>
+
+<h3 class="mb-4 page-title">🔔 إرسال إشعار</h3>
+
+<div class="section-card">
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="row g-4">
+
+
+<!-- Title -->
+<div class="col-md-6">
+    <label class="form-label">عنوان الإشعار</label>
+    <input type="text" name="title" class="form-control" placeholder="مثال: تنبيه مهم" required>
+</div>
+
+<!-- Target -->
+<div class="col-md-6">
+    <label class="form-label">إرسال إلى</label>
+    <select name="target" class="form-select" id="targetSelect">
+        <option value="all">🌍 جميع المستخدمين</option>
+        <option value="student">🎓 الطلاب</option>
+        <option value="driver">🚗 السائقين</option>
+        <option value="admin">🛠 الأدمن</option>
+        <option value="user">👤 مستخدم محدد</option>
+    </select>
+</div>
+
+<!-- Message -->
+<div class="col-12">
+    <label class="form-label">نص الرسالة</label>
+    <textarea name="message" class="form-control" rows="4"
+              placeholder="اكتب محتوى الإشعار هنا..." required></textarea>
+</div>
+
+<!-- User Select -->
+<div class="col-12" id="userSelectBox" style="display:none;">
+    <div class="highlight-box">
+        <label class="form-label">اختر المستخدم</label>
+        <select name="user" class="form-select">
+            {% for u in users %}
+                <option value="{{ u.id }}">
+                    {{ u.full_name }} - {{ u.email }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Button -->
+<div class="col-12 text-end">
+    <button type="submit" class="send-btn">
+        إرسال الإشعار 🔔
+    </button>
+</div>
+
+
+</div>
+
+</form>
+
+</div>
+
+<script>
+const targetSelect = document.getElementById("targetSelect");
+const userBox = document.getElementById("userSelectBox");
+
+targetSelect.addEventListener("change", function() {
+    if (this.value === "user") {
+        userBox.style.display = "block";
+    } else {
+        userBox.style.display = "none";
+    }
+});
+</script>
+
+{% endblock %}

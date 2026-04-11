@@ -18,6 +18,8 @@ from payment.services import freeze_student_amount
 from django.core.exceptions import ValidationError
 from payment.services import refund_frozen_amount, refund_after_approval
 
+from notifications.models import Notification
+
 @login_required
 def student_dashboard(request):
 
@@ -340,3 +342,23 @@ def student_profile(request):
     }
 
     return render(request, "student/profile.html", context)
+
+
+@login_required
+def student_notifications(request):
+    if request.user.role != "student":
+        return redirect("main")
+
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    context = {
+        "notifications": notifications
+    }
+
+    return render(request, "student/notifications.html", context)
+
+
+
+

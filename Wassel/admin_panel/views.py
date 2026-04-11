@@ -45,6 +45,8 @@ from payment.models import Transaction
 from django.db.models import Sum, Q
 from .decorators import admin_required
 
+from notifications.utils import send_notification
+
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
@@ -148,6 +150,16 @@ def requests_list(request):
 def approve_request(request, pk):
     obj = get_object_or_404(SubscriptionRequest, id=pk)
     obj.approve()
+
+    # 🔔 Notification
+    send_notification(
+        title="تم قبول طلبك",
+        message="تم قبول طلب الاشتراك بنجاح ✅",
+        target="user",
+        user=obj.student.user,
+        notification_type="system"
+    )
+
     messages.success(request, "تم قبول الطلب ✅")
     return redirect("admin_panel:requests")
 
@@ -156,20 +168,41 @@ def approve_request(request, pk):
 def reject_request(request, pk):
     obj = get_object_or_404(SubscriptionRequest, id=pk)
     obj.reject()
+
+    # 🔔 Notification
+    send_notification(
+        title="تم رفض طلبك",
+        message="تم رفض طلب الاشتراك ❌",
+        target="user",
+        user=obj.student.user,
+        notification_type="system"
+    )
+
     messages.error(request, "تم رفض الطلب ❌")
     return redirect("admin_panel:requests")
-
 
 # =========================
 # Actions - Drivers
 # =========================
 
+
 @admin_required(levels=[1, 2])
 def approve_driver(request, pk):
     driver = get_object_or_404(DriverProfile, id=pk)
     driver.approve()
+
+    # 🔔 Notification
+    send_notification(
+        title="تم اعتماد حسابك كسائق",
+        message="تم توثيق حسابك بنجاح 🚗 يمكنك الآن استقبال الطلبات",
+        target="user",
+        user=driver.user,
+        notification_type="system"
+    )
+
     messages.success(request, "تم اعتماد السائق 🚗")
     return redirect("admin_panel:requests")
+
 
 
 @admin_required(levels=[1, 2])
@@ -178,12 +211,21 @@ def reject_driver(request, pk):
 
     if request.method == "POST":
         reason = request.POST.get("reason")
+
         driver.reject(reason)
+
+        # 🔔 Notification
+        send_notification(
+            title="تم رفض طلب التوثيق",
+            message=f"تم رفض طلبك ❌ السبب: {reason}",
+            target="user",
+            user=driver.user,
+            notification_type="system"
+        )
+
         messages.error(request, "تم رفض السائق ❌")
 
     return redirect("admin_panel:driver_detail", pk=pk)
-
-
 
 
 @admin_required(levels=[1, 2])
@@ -372,3 +414,36 @@ def payments_view(request):
     }
 
     return render(request, "admin_panel/payments.html", context)
+
+
+
+@admin_required(levels=[1, 2])
+def send_notification_view(request):
+
+    users = User.objects.all()
+
+    if request.method == "POST":
+        title = request.POST.get("title")
+        message = request.POST.get("message")
+        target = request.POST.get("target")
+        user_id = request.POST.get("user")
+
+        selected_user = None
+
+        if target == "user" and user_id:
+            selected_user = User.objects.get(id=user_id)
+
+        send_notification(
+            title=title,
+            message=message,
+            target=target,
+            user=selected_user,
+            notification_type="admin"
+        )
+
+        messages.success(request, "تم إرسال الإشعار بنجاح 🔔")
+
+    return render(request, "admin_panel/send_notification.html", {
+        "users": users
+    })
+    

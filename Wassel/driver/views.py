@@ -13,6 +13,8 @@ from payment.services import approve_subscription_payment, refund_frozen_amount
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
+from notifications.models import Notification
+
 
 
 @login_required
@@ -382,6 +384,15 @@ def reject_request(request, req_id):
 @login_required
 def driver_notifications(request):
     if request.user.role != "driver":
-        return redirect("main:index")
+        return redirect("main")
 
-    return render(request, "driver/notifications.html")
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    context = {
+        "notifications": notifications
+    }
+
+    return render(request, "driver/notifications.html", context)
+
