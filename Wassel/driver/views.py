@@ -9,10 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from subscriptions.models import Subscription, SubscriptionRequest
 from django.db.models import Sum
 from accounts.models import City
-from payment.services import approve_subscription_payment
+from payment.services import approve_subscription_payment, refund_frozen_amount
 from django.core.exceptions import ValidationError
 from django.db import transaction
-
 
 
 
@@ -56,15 +55,31 @@ def driver_dashboard(request):
         total=Sum("price_snapshot")
     )["total"] or 0
 
+    # ===============================
+    # آخر الطلبات 🔥
+    # ===============================
+    last_requests = SubscriptionRequest.objects.filter(
+        subscription__driver=profile
+    ).select_related(
+        "student__user",
+        "subscription"
+    ).order_by("-request_date")[:5]
+
+    # ===============================
+    # Context
+    # ===============================
     context = {
         "profile": profile,
         "active_subscriptions": active_subscriptions,
         "new_requests": new_requests,
         "students_count": students_count,
         "total_earnings": total_earnings,
+        "last_requests": last_requests,  # 🔥 المهم
     }
 
     return render(request, "driver/dashboard.html", context)
+
+
 
 @login_required
 def driver_profile(request):
@@ -228,12 +243,40 @@ def driver_subscriptions(request):
     return render(request, "driver/subscriptions.html", context)
 
 
+
 @login_required
 def driver_requests(request):
+
     if request.user.role != "driver":
         return redirect("main:index")
 
-    return render(request, "driver/requests.html")
+    profile = request.user.driver_profile
+
+    # 🔥 الطلبات الجديدة
+    pending_requests = SubscriptionRequest.objects.filter(
+        subscription__driver=profile,
+        status="pending"
+    ).select_related(
+        "student__user",
+        "subscription"
+    ).order_by("-request_date")
+
+    # 🔥 الطلبات السابقة
+    old_requests = SubscriptionRequest.objects.filter(
+        subscription__driver=profile
+    ).exclude(
+        status="pending"
+    ).select_related(
+        "student__user",
+        "subscription"
+    ).order_by("-request_date")
+
+    context = {
+        "pending_requests": pending_requests,
+        "old_requests": old_requests,
+    }
+
+    return render(request, "driver/requests.html", context)
 
 @login_required
 def subscription_detail(request, sub_id):
@@ -323,7 +366,15 @@ def reject_request(request, req_id):
     req = get_object_or_404(SubscriptionRequest, id=req_id)
 
     if request.method == "POST":
-        req.reject()
+        try:
+            with transaction.atomic():
+                req.reject()  # تغيير الحالة
+                refund_frozen_amount(req)  # 🔥 إرجاع الفلوس
+
+            messages.success(request, "تم رفض الطلب وإرجاع المبلغ للطالب.")
+
+        except ValidationError as e:
+            messages.error(request, str(e))
 
     return redirect("driver:subscription_detail", sub_id=req.subscription.id)
 

@@ -122,7 +122,7 @@
 <div class="section-card">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold">آخر الطلبات</h5>
-        <a href="#" class="btn btn-accent btn-sm">عرض الكل</a>
+        <a href="{% url 'driver:requests' %}" class="btn btn-accent btn-sm">عرض الكل</a>
     </div>
 
     <div class="table-responsive">
@@ -136,18 +136,35 @@
                 </tr>
             </thead>
             <tbody>
+
+            {% if last_requests %}
+                {% for req in last_requests %}
                 <tr>
-                    <td>أحمد محمد</td>
-                    <td>الجامعة - الحي الشمالي</td>
-                    <td><span class="badge bg-warning text-dark">قيد الانتظار</span></td>
-                    <td>اليوم</td>
+                    <td>{{ req.student.user.full_name }}</td>
+                    <td>{{ req.subscription.neighborhood }}</td>
+
+                    <td>
+                        {% if req.status == "pending" %}
+                            <span class="badge bg-warning text-dark">قيد الانتظار</span>
+                        {% elif req.status == "approved" %}
+                            <span class="badge bg-success">مقبول</span>
+                        {% elif req.status == "rejected" %}
+                            <span class="badge bg-danger">مرفوض</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ req.request_date|date:"Y-m-d" }}</td>
                 </tr>
+                {% endfor %}
+
+            {% else %}
                 <tr>
-                    <td>خالد سالم</td>
-                    <td>الجامعة - حي الفيصلية</td>
-                    <td><span class="badge bg-success">مقبول</span></td>
-                    <td>أمس</td>
+                    <td colspan="4" class="text-center py-4">
+                        🚗 لا يوجد طلبات حالياً
+                    </td>
                 </tr>
+            {% endif %}
+
             </tbody>
         </table>
     </div>
