@@ -47,6 +47,9 @@ from .decorators import admin_required
 
 from notifications.utils import send_notification
 
+from django.db.models import Q
+from notifications.models import Notification
+
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
@@ -447,3 +450,58 @@ def send_notification_view(request):
         "users": users
     })
     
+
+
+@admin_required(levels=[1, 2])
+def notifications_list(request):
+
+    notifications = Notification.objects.select_related("user").order_by("-created_at")
+
+    # ======================
+    # Search
+    # ======================
+    search = request.GET.get("search", "")
+    if search:
+        notifications = notifications.filter(
+            Q(title__icontains=search) |
+            Q(message__icontains=search) |
+            Q(user__email__icontains=search) |
+            Q(user__first_name__icontains=search) |
+            Q(user__last_name__icontains=search)
+        )
+
+    # ======================
+    # Filter: Target (Role-based)
+    # ======================
+    target = request.GET.get("target", "all")
+
+    if target == "student":
+        notifications = notifications.filter(user__role="student")
+
+    elif target == "driver":
+        notifications = notifications.filter(user__role="driver")
+
+    elif target == "admin":
+        notifications = notifications.filter(user__role="admin")
+
+    elif target == "user":
+        notifications = notifications.filter(target="user")
+
+    # ======================
+    # Filter: Type
+    # ======================
+    n_type = request.GET.get("type", "all")
+    if n_type != "all":
+        notifications = notifications.filter(notification_type=n_type)
+
+    # ======================
+    # Context
+    # ======================
+    context = {
+        "notifications": notifications,
+        "search": search,
+        "target": target,
+        "type": n_type,
+    }
+
+    return render(request, "admin_panel/notifications.html", context)

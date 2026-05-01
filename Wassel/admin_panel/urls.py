@@ -19,4 +19,5 @@ urlpatterns = [
     path("users/<int:pk>/activate/", views.activate_user, name="activate_user"),
     path("payments/", views.payments_view, name="payments"),
     path("notifications/send/", views.send_notification_view, name="send_notification"),
+    path("notifications/", views.notifications_list, name="notifications"),
 ]

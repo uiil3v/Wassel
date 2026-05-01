@@ -342,7 +342,7 @@
                                 {{ user.get_full_name }}
                             </li>
 
-                            {% if user.role == "driver" %}
+                        {% if user.role == "driver" %}
 
                             <li>
                                 <a class="dropdown-item" href="{% url 'driver:profile' %}">
@@ -358,7 +358,7 @@
                                 </a>
                             </li>
 
-                            {% elif user.role == "student" %}
+                        {% elif user.role == "student" %}
 
                             <li>
                                 <a class="dropdown-item" href="#">
@@ -374,7 +374,16 @@
                                 </a>
                             </li>
 
-                            {% endif %}
+                        {% elif user.role == "admin" %}
+
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin_panel:dashboard' %}">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    لوحة الإدارة
+                                </a>
+                            </li>
+
+                        {% endif %}
 
                             <li>
                                 <hr class="dropdown-divider">

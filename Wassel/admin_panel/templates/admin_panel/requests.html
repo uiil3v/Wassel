@@ -71,13 +71,19 @@
             <td>{{ req.subscription.neighborhood }}</td>
 
             <td>
-                {% if req.status == "pending" %}
-                    <span class="status-badge pending">Pending</span>
-                {% elif req.status == "approved" %}
-                    <span class="status-badge approved">Approved</span>
-                {% else %}
-                    <span class="status-badge rejected">Rejected</span>
-                {% endif %}
+            {% if req.status == "pending" %}
+                <span class="status-badge pending">Pending</span>
+
+            {% elif req.status == "approved" %}
+                <span class="status-badge approved">Approved</span>
+
+            {% elif req.status == "rejected" %}
+                <span class="status-badge rejected">Rejected</span>
+
+            {% elif req.status == "cancelled" %}
+                <span class="status-badge cancelled">Cancelled</span>
+
+            {% endif %}
             </td>
 
             <td>

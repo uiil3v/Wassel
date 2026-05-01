@@ -1,0 +1,119 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.notification-card {
+    background: white;
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.notification-card:hover {
+    transform: translateY(-3px);
+}
+
+.notification-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.notification-message {
+    color: #666;
+    margin-top: 5px;
+}
+
+.notification-meta {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 10px;
+}
+
+.unread {
+    border-right: 5px solid var(--accent-color);
+    background: #fdf8ef;
+}
+
+/* Filters */
+.filter-box {
+    background: white;
+    padding: 20px;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+}
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">🔔 الإشعارات</h3>
+
+    <a href="{% url 'admin_panel:send_notification' %}" class="btn btn-accent">
+        + إرسال إشعار
+    </a>
+</div>
+
+<!-- Filters -->
+<form method="get" class="filter-box row g-3">
+
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="بحث..." value="{{ search }}">
+    </div>
+
+    <div class="col-md-3">
+        <select name="target" class="form-select">
+            <option value="all">كل المستلمين</option>
+            <option value="student" {% if target == "student" %}selected{% endif %}>طلاب</option>
+            <option value="driver" {% if target == "driver" %}selected{% endif %}>سائقين</option>
+            <option value="admin" {% if target == "admin" %}selected{% endif %}>أدمن</option>
+            <option value="user" {% if target == "user" %}selected{% endif %}>مستخدم معين</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <select name="type" class="form-select">
+            <option value="all">كل الأنواع</option>
+            <option value="system" {% if type == "system" %}selected{% endif %}>System</option>
+            <option value="admin" {% if type == "admin" %}selected{% endif %}>Admin</option>
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-accent w-100">فلترة</button>
+    </div>
+
+</form>
+
+<!-- Notifications -->
+{% for n in notifications %}
+
+<div class="notification-card {% if not n.is_read %}unread{% endif %}">
+
+    <div class="notification-title">
+        {{ n.title }}
+    </div>
+
+    <div class="notification-message">
+        {{ n.message }}
+    </div>
+
+    <div class="notification-meta">
+        👤 {{ n.user.email }} |
+        🎯 {{ n.target }} |
+        🏷️ {{ n.notification_type }} |
+        {{ n.created_at|date:"Y-m-d H:i" }}
+    </div>
+
+</div>
+
+{% empty %}
+
+<div class="text-center text-muted mt-5">
+    لا توجد إشعارات 🔕
+</div>
+
+{% endfor %}
+
+{% endblock %}
