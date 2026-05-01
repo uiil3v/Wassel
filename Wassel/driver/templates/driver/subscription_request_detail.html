@@ -86,6 +86,28 @@
         {% endif %}
     </div>
 
+    <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ req.subscription.neighborhood }}</span>
+    </div>
+
+<div class="info-row">
+    <span>نوع الاشتراك</span>
+    <span>{{ req.subscription.get_duration_display }}</span>
+</div>
+
+<div class="info-row">
+    <span>السعر</span>
+    <span>{{ req.subscription.price }} ر.س</span>
+</div>
+
+<div class="info-row">
+    <span>المقاعد المتبقية</span>
+    <span>{{ req.subscription.available_seats }}</span>
+</div>
+
     <h6 class="fw-bold mt-4 mb-3">بيانات الطالب</h6>
 
     <div class="info-row">

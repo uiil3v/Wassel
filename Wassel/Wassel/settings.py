@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import cloudinary
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,6 +51,8 @@ INSTALLED_APPS = [
     'payment.apps.PaymentConfig',
     'admin_panel.apps.AdminPanelConfig',
     "notifications",
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +137,10 @@ STATICFILES_DIRS = [
 ]
 
 AUTH_USER_MODEL = "accounts.User"
+
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
+)

@@ -110,10 +110,10 @@ class Subscription(models.Model):
 class SubscriptionRequest(models.Model):
 
     STATUS_CHOICES = (
-        ("pending", "Pending"),
-        ("approved", "Approved"),
-        ("rejected", "Rejected"),
-        ("cancelled", "Cancelled"),
+        ("pending", "قيد الانتظار"),
+        ("approved", "مقبول"),
+        ("rejected", "مرفوض"),
+        ("cancelled", "ملغي"),
     )
 
     student = models.ForeignKey(

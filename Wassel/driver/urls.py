@@ -11,7 +11,9 @@ urlpatterns = [
     path("subscriptions/<int:sub_id>/", views.subscription_detail, name="subscription_detail"),
     path("requests/<int:req_id>/", views.subscription_request_detail, name="subscription_request_detail"),
     path("requests/<int:req_id>/approve/", views.approve_request, name="approve_request"),
-path("requests/<int:req_id>/reject/", views.reject_request, name="reject_request"),
+    path("requests/<int:req_id>/reject/", views.reject_request, name="reject_request"),
     path("requests/", views.driver_requests, name="requests"),
     path("notifications/", views.driver_notifications, name="notifications"),
+    path("subscriptions/delete/<int:sub_id>/", views.delete_subscription, name="delete_subscription"),
+    path("schedule/", views.driver_schedule, name="schedule"),
 ]

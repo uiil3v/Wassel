@@ -78,6 +78,29 @@
         </div>
 
     </div>
+    <hr class="my-4">
+
+    <div class="text-center">
+
+        {% if not pending_requests and not approved_requests %}
+
+        <form method="post" action="{% url 'driver:delete_subscription' subscription.id %}">
+            {% csrf_token %}
+            <button class="btn btn-danger px-4"
+                    onclick="return confirm('هل أنت متأكد من حذف الاشتراك؟');">
+                🗑 حذف الاشتراك
+            </button>
+        </form>
+
+        {% else %}
+
+        <div class="alert alert-warning mt-3">
+            لا يمكن حذف الاشتراك لوجود طلاب أو طلبات مرتبطة به.
+        </div>
+
+        {% endif %}
+
+    </div>
 
 </div>
 

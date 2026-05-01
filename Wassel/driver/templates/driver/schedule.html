@@ -1,0 +1,145 @@
+{% extends "driver/base_driver.html" %}
+
+{% block driver_content %}
+
+<style>
+.schedule-card {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+}
+
+.day-box {
+    background: #faf9f6;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.day-title {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.student-item {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.student-item:hover {
+    transform: translateY(-3px);
+}
+
+.meta {
+    font-size: 13px;
+    color: var(--soft-color);
+}
+
+/* ===== TIME DESIGN ===== */
+.time-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.time-box {
+    background: #f1f1f1;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: center;
+    min-width: 80px;
+}
+
+.time-label {
+    font-size: 11px;
+    color: #888;
+}
+
+.time-value {
+    font-weight: 700;
+}
+</style>
+
+<h3 class="fw-bold mb-4">🗓 جدولك الأسبوعي</h3>
+
+<div class="schedule-card">
+
+{% if schedule %}
+
+    {% for day, items in schedule.items %}
+
+        <div class="day-box">
+
+            <div class="day-title">📅 {{ day }}</div>
+
+            {% if items %}
+
+                {% for item in items %}
+
+                <div class="student-item">
+
+                    <!-- بيانات الطالب -->
+                    <div>
+                        <div class="fw-bold">
+                            👤 {{ item.student }}
+                        </div>
+                        <div class="meta">
+                            📍 {{ item.neighborhood }}
+                        </div>
+                    </div>
+
+                    <!-- الوقت -->
+                    <div>
+
+                        {% if item.pickup %}
+                            <div class="time-wrapper">
+
+                                <div class="time-box">
+                                    <div class="time-label">ذهاب</div>
+                                    <div class="time-value">
+                                        {{ item.pickup|time:"H:i" }}
+                                    </div>
+                                </div>
+
+                                <div class="time-box">
+                                    <div class="time-label">عودة</div>
+                                    <div class="time-value">
+                                        {{ item.return|time:"H:i" }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        {% else %}
+                            <span class="text-muted">لم يحدد الوقت</span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+                <div class="text-muted">لا يوجد طلاب في هذا اليوم</div>
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+{% else %}
+    <div class="text-center text-muted">
+        لا يوجد جدول حالياً
+    </div>
+{% endif %}
+
+</div>
+
+{% endblock %}

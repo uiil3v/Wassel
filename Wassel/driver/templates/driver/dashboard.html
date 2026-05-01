@@ -143,15 +143,18 @@
                     <td>{{ req.student.user.full_name }}</td>
                     <td>{{ req.subscription.neighborhood }}</td>
 
-                    <td>
-                        {% if req.status == "pending" %}
-                            <span class="badge bg-warning text-dark">قيد الانتظار</span>
-                        {% elif req.status == "approved" %}
-                            <span class="badge bg-success">مقبول</span>
-                        {% elif req.status == "rejected" %}
-                            <span class="badge bg-danger">مرفوض</span>
+                  <td>
+                    <span class="badge 
+                        {% if req.status == 'approved' %}bg-success
+                        {% elif req.status == 'pending' %}bg-warning text-dark
+                        {% elif req.status == 'rejected' %}bg-danger
+                        {% elif req.status == 'cancelled' %}bg-secondary
+                        {% else %}bg-dark
                         {% endif %}
-                    </td>
+                    ">
+                        {{ req.get_status_display }}
+                    </span>
+                </td>
 
                     <td>{{ req.request_date|date:"Y-m-d" }}</td>
                 </tr>

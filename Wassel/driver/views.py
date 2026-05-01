@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from notifications.models import Notification
+from collections import defaultdict
 
 
 
@@ -312,6 +313,39 @@ def subscription_detail(request, sub_id):
 
 
 
+@login_required
+def delete_subscription(request, sub_id):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    profile = request.user.driver_profile
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=sub_id,
+        driver=profile
+    )
+
+    # تحقق
+    has_students = subscription.requests.filter(status="approved").exists()
+    has_pending = subscription.requests.filter(status="pending").exists()
+
+    if has_students:
+        messages.error(request, "لا يمكن حذف الاشتراك لوجود طلاب مشتركين.")
+        return redirect("driver:subscription_detail", sub_id=sub_id)
+
+    if has_pending:
+        messages.error(request, "لا يمكن حذف الاشتراك لوجود طلبات قيد الانتظار.")
+        return redirect("driver:subscription_detail", sub_id=sub_id)
+
+    subscription.delete()
+    messages.success(request, "تم حذف الاشتراك بنجاح.")
+
+    return redirect("driver:subscriptions")
+
+
+
 
 @login_required
 def subscription_request_detail(request, req_id):
@@ -395,4 +429,59 @@ def driver_notifications(request):
     }
 
     return render(request, "driver/notifications.html", context)
+
+
+
+DAYS_MAP = {
+    "saturday": "السبت",
+    "sunday": "الأحد",
+    "monday": "الإثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+}
+
+ORDER = ["السبت","الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"]
+
+
+@login_required
+def driver_schedule(request):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    profile = request.user.driver_profile
+
+    approved_requests = SubscriptionRequest.objects.filter(
+        subscription__driver=profile,
+        status="approved"
+    ).prefetch_related("schedule", "student__user", "subscription")
+
+    weekly_schedule = defaultdict(list)
+
+    for req in approved_requests:
+        for s in req.schedule.all():
+
+            # 🔥 تجاهل الإجازات
+            if s.is_off_day:
+                continue
+
+            day_name = DAYS_MAP.get(s.day_of_week.lower(), s.day_of_week)
+
+            weekly_schedule[day_name].append({
+                "student": req.student.user.get_full_name(),
+                "neighborhood": req.subscription.neighborhood,
+                "pickup": s.pickup_time,
+                "return": s.return_time,
+            })
+
+    # 🔥 ترتيب الأيام
+    sorted_schedule = {day: weekly_schedule.get(day, []) for day in ORDER}
+
+    context = {
+        "schedule": sorted_schedule
+    }
+
+    return render(request, "driver/schedule.html", context)
 

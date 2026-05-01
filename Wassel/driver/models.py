@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 
 class DriverProfile(models.Model):
@@ -19,45 +20,52 @@ class DriverProfile(models.Model):
     )
 
     # ===== Driver Documents =====
-    id_document_image = models.ImageField(
-        upload_to="driver_docs/%Y/%m/",
+    id_document_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/docs',
         blank=True,
         null=True
     )
 
-    driving_license_image = models.ImageField(
-        upload_to="driver_docs/%Y/%m/",
+    driving_license_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/docs',
         blank=True,
         null=True
     )
 
     # ===== Vehicle Documents =====
-    vehicle_registration_image = models.ImageField(
-        upload_to="driver_vehicle/%Y/%m/",
+    vehicle_registration_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/vehicle',
         blank=True,
         null=True
     )
 
-    vehicle_insurance_image = models.ImageField(
-        upload_to="driver_vehicle/%Y/%m/",
+    vehicle_insurance_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/vehicle',
         blank=True,
         null=True
     )
 
-    vehicle_front_image = models.ImageField(
-        upload_to="driver_vehicle/%Y/%m/",
+    vehicle_front_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/vehicle',
         blank=True,
         null=True
     )
 
-    vehicle_back_image = models.ImageField(
-        upload_to="driver_vehicle/%Y/%m/",
+    vehicle_back_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/vehicle',
         blank=True,
         null=True
     )
 
-    vehicle_side_image = models.ImageField(
-        upload_to="driver_vehicle/%Y/%m/",
+    vehicle_side_image = CloudinaryField(
+        'image',
+        folder='wasl/drivers/vehicle',
         blank=True,
         null=True
     )
