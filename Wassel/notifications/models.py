@@ -5,16 +5,16 @@ class Notification(models.Model):
 
 
     NOTIFICATION_TYPE = (
-        ("system", "System"),
-        ("admin", "Admin"),
+        ("system", "نظام"),
+        ("admin", "إداري"),
     )
 
     TARGET_TYPE = (
-        ("user", "User"),
-        ("student", "Students"),
-        ("driver", "Drivers"),
-        ("all", "All Users"),
-        ("admin", "Admins"),
+        ("user", "مستخدم"),
+        ("student", "طلاب"),
+        ("driver", "سائقين"),
+        ("all", "جميع المستخدمين"),
+        ("admin", "مدراء"),
     )
 
     user = models.ForeignKey(

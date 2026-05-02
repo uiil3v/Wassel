@@ -49,12 +49,12 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         ('student', 'طالب'),
         ('driver', 'سائق'),
-        ('admin', 'مدير'),  # 🔥 الجديد
+        ('admin', 'مشرف'),  # 🔥 الجديد
     )
 
     STATUS_CHOICES = (
-        ('active', 'Active'),
-        ('banned', 'Banned'),
+        ('active', 'نشط'),
+        ('banned', 'محظور'),
     )
     
     ADMIN_LEVELS = (

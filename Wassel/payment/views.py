@@ -5,15 +5,29 @@ from django.core.exceptions import ValidationError
 from .services import deposit_wallet, withdraw_wallet
 
 
+
 @login_required
 def wallet_view(request):
 
     wallet = request.user.wallet
 
+    is_driver_blocked = False
+
+    # 🔥 تحقق إذا السائق غير معتمد
+    if request.user.role == "driver":
+        profile = getattr(request.user, "driver_profile", None)
+
+        if profile and profile.verification_status != "approved":
+            is_driver_blocked = True
+
     # ===============================
     # Handle Deposit / Withdraw
     # ===============================
     if request.method == "POST":
+
+        if is_driver_blocked:
+            messages.error(request, "لا يمكنك إجراء عمليات مالية قبل توثيق حسابك.")
+            return redirect("payment:wallet")
 
         action = request.POST.get("action")
         amount = request.POST.get("amount")
@@ -32,12 +46,8 @@ def wallet_view(request):
 
         return redirect("payment:wallet")
 
-    # ===============================
-    # Transactions
-    # ===============================
     transactions = wallet.transactions.order_by("-created_at")
 
-    # اختيار التمبليت حسب الدور
     if request.user.role == "driver":
         template = "payment/wallet_driver.html"
     else:
@@ -46,6 +56,7 @@ def wallet_view(request):
     context = {
         "wallet": wallet,
         "transactions": transactions,
+        "is_driver_blocked": is_driver_blocked,  # 🔥 مهم
     }
 
     return render(request, template, context)

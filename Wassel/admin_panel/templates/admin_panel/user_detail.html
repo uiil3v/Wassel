@@ -85,14 +85,14 @@
 <p>
     <strong>الدور:</strong>
     <span class="badge-role {{ user_obj.role }}">
-        {{ user_obj.role }}
+        {{ user_obj.get_role_display }}
     </span>
 </p>
 
 <p>
     <strong>الحالة:</strong>
     <span class="badge-role {{ user_obj.status }}">
-        {{ user_obj.status }}
+        {{ user_obj.get_status_display }}
     </span>
 </p>
 
@@ -129,7 +129,7 @@
 
 
 <p><strong>السيارة:</strong> {{ driver.vehicle_model }}</p>
-<p><strong>حالة التوثيق:</strong> {{ driver.verification_status }}</p>
+<p><strong>حالة التوثيق:</strong> {{ driver.get_verification_status_display }}</p>
 
 
 </div>

@@ -73,7 +73,7 @@
 }
 </style>
 
-<h3 class="mb-4 fw-bold">👥 إدارة المستخدمين</h3>
+<h3 class="mb-4 fw-bold">إدارة المستخدمين</h3>
 
 <!-- ================= Filters ================= -->
 
@@ -93,8 +93,8 @@
 
     <select name="status">
         <option value="all">كل الحالات</option>
-        <option value="active" {% if status == "active" %}selected{% endif %}>Active</option>
-        <option value="banned" {% if status == "banned" %}selected{% endif %}>Banned</option>
+        <option value="active" {% if status == "active" %}selected{% endif %}>نشط</option>
+        <option value="banned" {% if status == "banned" %}selected{% endif %}>محظور</option>
     </select>
 
     <button type="submit" class="search-btn">بحث</button>
@@ -131,13 +131,13 @@
 
             <td>
                 <span class="badge-role {{ user.role }}">
-                    {{ user.role }}
+                    {{ user.get_role_display }}
                 </span>
             </td>
 
             <td>
                 <span class="badge-role {{ user.status }}">
-                    {{ user.status }}
+                    {{ user.get_status_display }}
                 </span>
             </td>
 

@@ -62,7 +62,7 @@
     <div class="section-title">📦 بيانات الطلب</div>
 
 
-<p><strong>الحالة:</strong> {{ req.status }}</p>
+<p><strong>الحالة:</strong> {{ req.get_status_display }}</p>
 <p><strong>الحي:</strong> {{ req.subscription.neighborhood }}</p>
 <p><strong>تاريخ الطلب:</strong> {{ req.request_date }}</p>
 

@@ -16,6 +16,8 @@ from django.db import transaction
 from notifications.models import Notification
 from collections import defaultdict
 
+from .decorators import driver_verified_required
+
 
 
 @login_required
@@ -185,6 +187,7 @@ def driver_profile(request):
 
 
 @login_required
+@driver_verified_required
 def create_subscription(request):
 
     if request.user.role != "driver":
@@ -228,6 +231,7 @@ def create_subscription(request):
 
 
 @login_required
+@driver_verified_required
 def driver_subscriptions(request):
 
     if request.user.role != "driver":
@@ -248,6 +252,7 @@ def driver_subscriptions(request):
 
 
 @login_required
+@driver_verified_required
 def driver_requests(request):
 
     if request.user.role != "driver":
@@ -281,7 +286,10 @@ def driver_requests(request):
 
     return render(request, "driver/requests.html", context)
 
+
+
 @login_required
+@driver_verified_required
 def subscription_detail(request, sub_id):
 
     if request.user.role != "driver":
@@ -314,6 +322,7 @@ def subscription_detail(request, sub_id):
 
 
 @login_required
+@driver_verified_required
 def delete_subscription(request, sub_id):
 
     if request.user.role != "driver":
@@ -349,6 +358,7 @@ def delete_subscription(request, sub_id):
 
 
 @login_required
+@driver_verified_required
 def subscription_request_detail(request, req_id):
 
     if request.user.role != "driver":
@@ -402,6 +412,7 @@ def subscription_request_detail(request, req_id):
     
     
 @login_required
+@driver_verified_required
 def approve_request(request, req_id):
 
     req = get_object_or_404(SubscriptionRequest, id=req_id)
@@ -422,6 +433,7 @@ def approve_request(request, req_id):
 
 
 @login_required
+@driver_verified_required
 def reject_request(request, req_id):
 
     req = get_object_or_404(SubscriptionRequest, id=req_id)
@@ -470,7 +482,10 @@ DAYS_MAP = {
 ORDER = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]
 
 
+
+
 @login_required
+@driver_verified_required
 def driver_schedule(request):
 
     if request.user.role != "driver":
