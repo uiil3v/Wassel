@@ -38,18 +38,18 @@ class Wallet(models.Model):
 class Transaction(models.Model):
 
     TYPE_CHOICES = (
-        ("deposit", "Deposit"),
-        ("freeze", "Freeze"),
-        ("release", "Release"),
-        ("commission", "Commission"),
-        ("refund", "Refund"),
-        ("withdraw", "Withdraw"),
+        ("deposit", "إيداع"),
+        ("freeze", "تجميد"),
+        ("release", "إطلاق"),
+        ("commission", "عمولة"),
+        ("refund", "استرجاع"),
+        ("withdraw", "سحب"),
     )
 
     STATUS_CHOICES = (
-        ("pending", "Pending"),
-        ("completed", "Completed"),
-        ("cancelled", "Cancelled"),
+        ("pending", "قيد المعالجة"),
+        ("completed", "مكتمل"),
+        ("cancelled", "ملغي"),
     )
 
     wallet = models.ForeignKey(

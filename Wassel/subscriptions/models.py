@@ -229,13 +229,13 @@ class SubscriptionRequest(models.Model):
 class SubscriptionRequestSchedule(models.Model):
 
     DAYS_OF_WEEK = (
-        ("saturday", "السبت"),
         ("sunday", "الأحد"),
-        ("monday", "الاثنين"),
+        ("monday", "الإثنين"),
         ("tuesday", "الثلاثاء"),
         ("wednesday", "الأربعاء"),
         ("thursday", "الخميس"),
         ("friday", "الجمعة"),
+        ("saturday", "السبت"),
     )
 
     request = models.ForeignKey(

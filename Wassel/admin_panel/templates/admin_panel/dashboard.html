@@ -79,6 +79,11 @@
     color: #721c24;
 }
 
+.cancelled {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
 </style>
 
 <h3 class="mb-4 fw-bold">الرئيسية</h3>
@@ -150,13 +155,16 @@
 
                 <td>
                     {% if req.status == "pending" %}
-                        <span class="badge-status pending">Pending</span>
+                        <span class="badge-status pending">قيد الانتظار</span>
 
                     {% elif req.status == "approved" %}
-                        <span class="badge-status approved">Approved</span>
+                        <span class="badge-status approved">مقبول</span>
 
                     {% elif req.status == "rejected" %}
-                        <span class="badge-status rejected">Rejected</span>
+                        <span class="badge-status rejected">مرفوض</span>
+
+                    {% elif req.status == "cancelled" %}
+                        <span class="badge-status cancelled">ملغي</span>
                     {% endif %}
                 </td>
             </tr>

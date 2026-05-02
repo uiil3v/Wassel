@@ -41,6 +41,11 @@
     background: #f8d7da;
     color: #721c24;
 }
+
+.cancelled {
+    background: #e2e3e5;
+    color: #383d41;
+}
 </style>
 
 <h3 class="mb-4 fw-bold">📦 إدارة الطلبات</h3>
@@ -71,19 +76,15 @@
             <td>{{ req.subscription.neighborhood }}</td>
 
             <td>
-            {% if req.status == "pending" %}
-                <span class="status-badge pending">Pending</span>
-
-            {% elif req.status == "approved" %}
-                <span class="status-badge approved">Approved</span>
-
-            {% elif req.status == "rejected" %}
-                <span class="status-badge rejected">Rejected</span>
-
-            {% elif req.status == "cancelled" %}
-                <span class="status-badge cancelled">Cancelled</span>
-
-            {% endif %}
+                <span class="status-badge 
+                    {% if req.status == 'pending' %}pending
+                    {% elif req.status == 'approved' %}approved
+                    {% elif req.status == 'rejected' %}rejected
+                    {% elif req.status == 'cancelled' %}cancelled
+                    {% endif %}
+                ">
+                    {{ req.get_status_display }}
+                </span>
             </td>
 
             <td>
@@ -122,15 +123,15 @@
         <tr>
             <td>{{ d.user.full_name }}</td>
             <td>{{ d.vehicle_model }}</td>
-
             <td>
-                {% if d.verification_status == "pending" %}
-                    <span class="status-badge pending">Pending</span>
-                {% elif d.verification_status == "approved" %}
-                    <span class="status-badge approved">Approved</span>
-                {% else %}
-                    <span class="status-badge rejected">Rejected</span>
-                {% endif %}
+                <span class="status-badge 
+                    {% if d.verification_status == 'pending' %}pending
+                    {% elif d.verification_status == 'approved' %}approved
+                    {% else %}rejected
+                    {% endif %}
+                ">
+                    {{ d.get_verification_status_display }}
+                </span>
             </td>
 
             <td>

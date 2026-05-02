@@ -7,10 +7,10 @@ from cloudinary.models import CloudinaryField
 class DriverProfile(models.Model):
 
     VERIFICATION_STATUS = (
-        ("incomplete", "Incomplete"),
-        ("pending", "Pending"),
-        ("approved", "Approved"),
-        ("rejected", "Rejected"),
+        ("incomplete", "غير مكتمل"),
+        ("pending", "قيد المراجعة"),
+        ("approved", "مقبول"),
+        ("rejected", "مرفوض"),
     )
 
     user = models.OneToOneField(

@@ -347,6 +347,7 @@ def delete_subscription(request, sub_id):
 
 
 
+
 @login_required
 def subscription_request_detail(request, req_id):
 
@@ -364,9 +365,32 @@ def subscription_request_detail(request, req_id):
         subscription__driver=profile
     )
 
+    # ✅ ترتيب الأيام (الأحد → السبت)
+    ORDER = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+    ]
+
+    schedule_qs = request_obj.schedule.all()
+
+    # نحولها لدكشنري
+    schedule_dict = {s.day_of_week: s for s in schedule_qs}
+
+    # نرتبها
+    sorted_schedule = [
+        schedule_dict[day]
+        for day in ORDER
+        if day in schedule_dict
+    ]
+
     context = {
         "req": request_obj,
-        "schedule": request_obj.schedule.all()
+        "schedule": sorted_schedule
     }
 
     return render(
@@ -374,6 +398,7 @@ def subscription_request_detail(request, req_id):
         "driver/subscription_request_detail.html",
         context
     )
+    
     
     
 @login_required
@@ -442,7 +467,7 @@ DAYS_MAP = {
     "friday": "الجمعة",
 }
 
-ORDER = ["السبت","الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"]
+ORDER = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]
 
 
 @login_required

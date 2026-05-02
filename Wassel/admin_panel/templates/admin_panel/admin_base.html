@@ -3,13 +3,11 @@
 {% block extra_css %}
 
 <style>
-/* ===== Layout Wrapper ===== */
 .driver-layout {
     display: flex;
     gap: 35px;
 }
 
-/* ===== Sidebar ===== */
 .driver-sidebar {
     width: 270px;
     background: white;
@@ -19,14 +17,12 @@
     height: fit-content;
 }
 
-/* ===== Dashboard Background Layer ===== */
 .driver-page-bg {
     background: linear-gradient(135deg, #f6f2ea, #ebe3d6);
     padding: 50px;
     border-radius: 45px;
 }
 
-/* Mobile Fix */
 @media (max-width: 768px) {
     .driver-page-bg {
         padding: 20px;
@@ -34,7 +30,6 @@
     }
 }
 
-/* ===== Profile Box ===== */
 .driver-profile-box {
     text-align: center;
     padding-bottom: 25px;
@@ -53,7 +48,6 @@
     margin: auto;
     color: white;
     font-size: 30px;
-    box-shadow: 0 15px 35px rgba(200, 169, 81, 0.35);
 }
 
 .driver-status {
@@ -66,7 +60,6 @@
     color: var(--accent-color);
 }
 
-/* ===== Links ===== */
 .driver-link {
     display: flex;
     align-items: center;
@@ -86,7 +79,6 @@
     transform: translateX(-6px);
 }
 
-/* Active */
 .driver-link.active {
     background-color: rgba(200, 169, 81, 0.2);
     color: var(--accent-color);
@@ -103,12 +95,10 @@
     border-radius: 5px;
 }
 
-/* ===== Content Area ===== */
 .driver-content {
     flex: 1;
 }
 
-/* ===== Mobile ===== */
 .sidebar-toggle-btn {
     display: none;
     margin-bottom: 20px;
@@ -128,7 +118,6 @@
     }
 }
 
-/* ===== Offcanvas ===== */
 .driver-offcanvas {
     background-color: var(--light-bg);
     border-left: 3px solid var(--accent-color);
@@ -139,13 +128,9 @@
 }
 </style>
 
-
-
 {% endblock %}
 
 {% block content %}
-
-<!-- Mobile Toggle -->
 
 <button class="btn btn-accent sidebar-toggle-btn" data-bs-toggle="offcanvas" data-bs-target="#adminSidebarMobile">
     <i class="bi bi-speedometer2 me-2"></i>
@@ -155,8 +140,7 @@
 <div class="driver-page-bg">
     <div class="driver-layout">
 
-
-    <!-- Sidebar -->
+    <!-- ===== Desktop Sidebar ===== -->
     <div class="driver-sidebar d-none d-lg-block">
 
         <div class="driver-profile-box">
@@ -168,67 +152,87 @@
             <span class="driver-status">Admin</span>
         </div>
 
-        <a href="{% url 'admin_panel:dashboard' %}" class="driver-link">
+        <!-- Dashboard -->
+        <a href="{% url 'admin_panel:dashboard' %}"
+           class="driver-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="bi bi-speedometer2 me-2"></i>
             الرئيسية
         </a>
 
-        <a href="{% url 'admin_panel:users' %}" class="driver-link">
+        <!-- Users -->
+        <a href="{% url 'admin_panel:users' %}"
+           class="driver-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-people me-2"></i>
             المستخدمين
         </a>
 
-
-        <a href="{% url 'admin_panel:requests' %}" class="driver-link">
+        <!-- Requests -->
+        <a href="{% url 'admin_panel:requests' %}"
+           class="driver-link {% if 'request' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-clipboard-check me-2"></i>
             الطلبات
         </a>
 
-        <a href="{% url 'admin_panel:payments' %}" class="driver-link">
+        <!-- Payments -->
+        <a href="{% url 'admin_panel:payments' %}"
+           class="driver-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-cash-stack me-2"></i>
             المدفوعات
         </a>
 
-        <a href="{% url 'admin_panel:notifications' %}" class="driver-link">
+        <!-- Notifications -->
+        <a href="{% url 'admin_panel:notifications' %}"
+           class="driver-link {% if 'notification' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-bell me-2"></i>
             الإشعارات
         </a>
 
     </div>
 
-    <!-- Content -->
+    <!-- ===== Content ===== -->
     <div class="driver-content">
         {% block admin_content %}{% endblock %}
     </div>
 
 </div>
-
-
 </div>
 
-<!-- Mobile Sidebar -->
-
+<!-- ===== Mobile Sidebar ===== -->
 <div class="offcanvas offcanvas-start driver-offcanvas" tabindex="-1" id="adminSidebarMobile">
 
-```
-<div class="offcanvas-header border-0">
-    <h5 class="fw-bold">لوحة الإدارة</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-</div>
+    <div class="offcanvas-header border-0">
+        <h5 class="fw-bold">لوحة الإدارة</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
 
-<div class="offcanvas-body">
+    <div class="offcanvas-body">
 
-    <a href="{% url 'admin_panel:dashboard' %}" class="driver-link">
-        الرئيسية
-    </a>
+        <a href="{% url 'admin_panel:dashboard' %}"
+           class="driver-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            الرئيسية
+        </a>
 
-    <a href="#" class="driver-link">المستخدمين</a>
-    <a href="#" class="driver-link">الطلبات</a>
-    <a href="{% url 'admin_panel:payments' %}" class="driver-link">المدفوعات</a>
-    <a href="#" class="driver-link">الإشعارات</a>
+        <a href="{% url 'admin_panel:users' %}"
+           class="driver-link {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+            المستخدمين
+        </a>
 
-</div>
-```
+        <a href="{% url 'admin_panel:requests' %}"
+           class="driver-link {% if 'request' in request.resolver_match.url_name %}active{% endif %}">
+            الطلبات
+        </a>
+
+        <a href="{% url 'admin_panel:payments' %}"
+           class="driver-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
+            المدفوعات
+        </a>
+
+        <a href="{% url 'admin_panel:notifications' %}"
+           class="driver-link {% if 'notification' in request.resolver_match.url_name %}active{% endif %}">
+            الإشعارات
+        </a>
+
+    </div>
 
 </div>
 

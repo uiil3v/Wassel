@@ -19,6 +19,7 @@ from django.core.exceptions import ValidationError
 from payment.services import refund_frozen_amount, refund_after_approval
 
 from notifications.models import Notification
+from payment.models import Transaction
 
 @login_required
 def student_dashboard(request):
@@ -201,15 +202,7 @@ def create_request(request, sub_id):
         messages.warning(request, "لديك طلب اشتراك نشط بالفعل.")
         return redirect("student:dashboard")
 
-    days = [
-        ("saturday", "السبت"),
-        ("sunday", "الأحد"),
-        ("monday", "الاثنين"),
-        ("tuesday", "الثلاثاء"),
-        ("wednesday", "الأربعاء"),
-        ("thursday", "الخميس"),
-        ("friday", "الجمعة"),
-    ]
+    days = SubscriptionRequestSchedule.DAYS_OF_WEEK
 
     if request.method == "POST":
 
@@ -282,6 +275,19 @@ def cancel_request(request, req_id):
 
         elif req.status == "approved":
             refund_after_approval(req)
+
+        # ✅ تسجيل العملية (هذا المهم)
+        Transaction.objects.create(
+            wallet=request.user.wallet,
+            subscription_request=req,
+            type="refund",
+            amount=req.price_snapshot,
+            status="completed"
+        )
+
+        # تحديث الحالة
+        req.status = "cancelled"
+        req.save()
 
         return redirect("student:dashboard")
 

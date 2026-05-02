@@ -198,6 +198,12 @@
                 الرئيسية
             </a>
 
+            <a href="{% url 'driver:schedule' %}"
+            class="driver-link {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
+                <i class="bi bi-calendar-week me-2"></i>
+                جدولي
+            </a>
+
             <a href="{% url 'driver:subscriptions' %}"
                 class="driver-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
                 <i class="bi bi-ticket-perforated me-2"></i>
@@ -262,6 +268,12 @@
             class="driver-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="bi bi-speedometer2 me-2"></i>
             الرئيسية
+        </a>
+
+        <a href="{% url 'driver:schedule' %}"
+        class="driver-link {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
+            <i class="bi bi-calendar-week me-2"></i>
+            جدولي
         </a>
 
         <a href="{% url 'driver:subscriptions' %}"
