@@ -127,6 +127,8 @@ def refund_frozen_amount(subscription_request):
     )
     
     
+    
+    
 @transaction.atomic
 def refund_after_approval(subscription_request):
 
@@ -151,9 +153,20 @@ def refund_after_approval(subscription_request):
     driver_received = total_amount - commission  # 95%
 
     today = timezone.now().date()
+    
+    if not subscription_request.joined_at:
+        raise ValidationError("لا يوجد تاريخ بداية للطالب.")
 
-    start_date = subscription.start_date
+    start_date = subscription_request.joined_at.date()
     end_date = subscription.end_date
+    
+    remaining_days = (end_date - today).days
+
+    # ❌ منع بعد النهاية
+    if remaining_days <= 0:
+        raise ValidationError("لا يمكن إلغاء الاشتراك بعد انتهائه.")
+
+
 
     # -------------------------
     # الحالة 1: قبل البداية
@@ -167,13 +180,13 @@ def refund_after_approval(subscription_request):
         # الحالة 2: بعد البداية (نسبي)
         # -------------------------
 
-        total_days = (end_date - start_date).days
+        total_days = (end_date - start_date).days + 1
 
         # حماية من القسمة على صفر
         if total_days <= 0:
             refund_amount = Decimal("0.00")
         else:
-            used_days = (today - start_date).days
+            used_days = (today - start_date).days + 1
 
             if used_days < 0:
                 used_days = 0
@@ -181,9 +194,16 @@ def refund_after_approval(subscription_request):
             if used_days >= total_days:
                 refund_amount = Decimal("0.00")
             else:
-                remaining_days = total_days - used_days
-                ratio = Decimal(remaining_days) / Decimal(total_days)
-                refund_amount = driver_received * ratio
+                remaining_days_after_use = total_days - used_days
+                ratio = Decimal(remaining_days_after_use) / Decimal(total_days)
+                remaining_ratio = Decimal(remaining_days_after_use) / Decimal(total_days)
+                
+                if remaining_ratio < Decimal("0.1"):
+                    refund_amount = Decimal("0.00")
+                else:
+                    refund_amount = (driver_received * ratio).quantize(Decimal("0.01"))
+
+
 
     # 🔹 تأكد أن السائق يملك الرصيد الكافي
     if driver_wallet.balance < refund_amount:
@@ -196,7 +216,7 @@ def refund_after_approval(subscription_request):
     Transaction.objects.create(
         wallet=driver_wallet,
         subscription_request=subscription_request,
-        type="withdraw",
+        type="refund",
         amount=refund_amount,
         status="completed"
     )

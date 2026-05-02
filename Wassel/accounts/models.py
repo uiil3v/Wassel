@@ -21,10 +21,13 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("status", "active")
+        extra_fields.setdefault("role", "admin")
+        extra_fields.setdefault("admin_level", 1)  # 🔥 هذا المهم
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -32,12 +35,14 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        # 🔥 تعيين أول مدينة تلقائيًا لو ما انرسلت
-        if "city" not in extra_fields or not extra_fields["city"]:
-            first_city = City.objects.first()
-            if not first_city:
-                raise ValueError("You must create at least one City before creating a superuser.")
-            extra_fields["city"] = first_city
+        city, _ = City.objects.get_or_create(
+            name_en="Default City",
+            defaults={
+                "name_ar": "مدينة افتراضية",
+                "slug": "default-city"
+            }
+        )
+        extra_fields["city"] = city
 
         return self.create_user(email, password, **extra_fields)
 

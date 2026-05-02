@@ -40,7 +40,7 @@ class Transaction(models.Model):
     TYPE_CHOICES = (
         ("deposit", "إيداع"),
         ("freeze", "تجميد"),
-        ("release", "إطلاق"),
+        ("release", "فك التجميد"),
         ("commission", "عمولة"),
         ("refund", "استرجاع"),
         ("withdraw", "سحب"),

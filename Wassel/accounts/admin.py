@@ -29,7 +29,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {"fields": ("email", "password")}),
 
         ("المعلومات الشخصية", {
-            "fields": ("first_name", "last_name", "phone")
+            "fields": ("first_name", "last_name", "phone", "city")
         }),
 
         ("الصلاحيات", {

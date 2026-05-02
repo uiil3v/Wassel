@@ -272,24 +272,16 @@ def cancel_request(request, req_id):
 
         if req.status == "pending":
             refund_frozen_amount(req)
+            req.status = "cancelled"
+            req.save()
 
         elif req.status == "approved":
             refund_after_approval(req)
 
-        # ✅ تسجيل العملية (هذا المهم)
-        Transaction.objects.create(
-            wallet=request.user.wallet,
-            subscription_request=req,
-            type="refund",
-            amount=req.price_snapshot,
-            status="completed"
-        )
-
-        # تحديث الحالة
-        req.status = "cancelled"
-        req.save()
-
         return redirect("student:dashboard")
+    
+    
+    
 
 @login_required
 def student_profile(request):

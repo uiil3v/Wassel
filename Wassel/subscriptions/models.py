@@ -136,6 +136,7 @@ class SubscriptionRequest(models.Model):
 
     request_date = models.DateTimeField(auto_now_add=True)
     decision_date = models.DateTimeField(blank=True, null=True)
+    joined_at = models.DateTimeField(null=True, blank=True)
 
     price_snapshot = models.DecimalField(
         max_digits=8,
@@ -184,6 +185,7 @@ class SubscriptionRequest(models.Model):
 
         self.status = "approved"
         self.decision_date = timezone.now()
+        self.joined_at = timezone.now()  # 👈 هذا اللي نبيه
         self.price_snapshot = self.subscription.price
         self.save()
 
