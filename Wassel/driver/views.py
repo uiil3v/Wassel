@@ -4,7 +4,6 @@ from django.contrib import messages
 from .models import DriverProfile
 from accounts.models import User
 from subscriptions.models import Subscription
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from subscriptions.models import Subscription, SubscriptionRequest
 from django.db.models import Sum
@@ -17,6 +16,9 @@ from notifications.models import Notification
 from collections import defaultdict
 
 from .decorators import driver_verified_required
+
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 
 
@@ -187,6 +189,10 @@ def driver_profile(request):
     return render(request, "driver/profile.html", context)
 
 
+
+
+
+
 @login_required
 @driver_verified_required
 def create_subscription(request):
@@ -205,30 +211,93 @@ def create_subscription(request):
         neighborhood = request.POST.get("neighborhood")
         price = request.POST.get("price")
         seats = request.POST.get("seats")
-        duration = request.POST.get("duration")
+        duration = request.POST.get("duration")  # monthly / quarterly
         start_date = request.POST.get("start_date")
         end_date = request.POST.get("end_date")
         notes = request.POST.get("notes")
 
+        # 🔥 تحقق من وجود start_date
+        if not start_date:
+            messages.error(request, "❌ يرجى اختيار تاريخ البداية")
+            return redirect("driver:create_subscription")
+
+        # 🔥 تحقق من النوع
+        if duration not in ["monthly", "quarterly"]:
+            messages.error(request, "❌ نوع الاشتراك غير صحيح")
+            return redirect("driver:create_subscription")
+
         try:
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+            today = timezone.now().date()
+
+            # 🔥 منع الماضي
+            if start_date_obj < today:
+                messages.error(request, "❌ لا يمكنك اختيار تاريخ في الماضي")
+                return redirect("driver:create_subscription")
+
+            # =========================
+            # 🔥 منطق الاشتراك
+            # =========================
+
+            if duration == "monthly":
+
+                # 🔒 لو المستخدم حاول يغير end_date
+                if end_date:
+                    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+                    days_diff = (end_date_obj - start_date_obj).days
+
+                    if days_diff != 30:
+                        messages.error(request, "❌ الاشتراك الشهري يجب أن يكون 30 يوم بالضبط")
+                        return redirect("driver:create_subscription")
+
+                # 🔥 النظام يحسبه دائمًا
+                end_date_obj = start_date_obj + timedelta(days=30)
+
+
+            elif duration == "quarterly":
+
+                # 🟡 لو ما حدد → 90 يوم
+                if not end_date:
+                    end_date_obj = start_date_obj + timedelta(days=90)
+
+                else:
+                    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+                    if end_date_obj < start_date_obj:
+                        messages.error(request, "❌ تاريخ النهاية يجب أن يكون بعد البداية")
+                        return redirect("driver:create_subscription")
+
+                    days_diff = (end_date_obj - start_date_obj).days
+
+                    # 🔥 هنا أهم شرطك
+                    if days_diff < 90:
+                        messages.error(request, "❌ الاشتراك الفصلي يجب أن يكون 90 يوم على الأقل")
+                        return redirect("driver:create_subscription")
+
+            # 🔥 إنشاء الاشتراك
             Subscription.objects.create(
                 driver=profile,
                 neighborhood=neighborhood,
                 price=price,
                 seats=seats,
                 duration=duration,
-                start_date=start_date,
-                end_date=end_date,
+                start_date=start_date_obj,
+                end_date=end_date_obj,
                 notes=notes
             )
 
             messages.success(request, "تم إنشاء الاشتراك بنجاح 🎉")
             return redirect("driver:subscriptions")
 
+        except ValueError:
+            messages.error(request, "❌ صيغة التاريخ غير صحيحة")
         except Exception as e:
             messages.error(request, f"حدث خطأ: {e}")
 
     return render(request, "driver/create_subscription.html")
+
+
+
 
 
 @login_required

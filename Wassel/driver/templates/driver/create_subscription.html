@@ -60,18 +60,20 @@
                 <label>نوع الاشتراك</label>
                 <select name="duration" class="premium-input">
                     <option value="monthly">شهري</option>
-                    <option value="semester">فصلي</option>
+                    <option value="quarterly">فصلي</option>
                 </select>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>تاريخ البداية</label>
                 <input type="date" name="start_date" class="premium-input" required>
+
+                <small id="end-date-preview" style="display:none; color:#888;"></small>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>تاريخ النهاية</label>
-                <input type="date" name="end_date" class="premium-input" required>
+                <input type="date" name="end_date" class="premium-input">
             </div>
 
             <div class="col-12 mb-4">
@@ -90,5 +92,67 @@
     </form>
 
 </div>
+
+<script>
+const durationField = document.querySelector('[name="duration"]');
+const startDateField = document.querySelector('[name="start_date"]');
+const endDateField = document.querySelector('[name="end_date"]');
+const previewText = document.getElementById("end-date-preview");
+
+function updateEndDate() {
+
+    const duration = durationField.value;
+    const startDate = startDateField.value;
+
+    // إذا ما فيه تاريخ
+    if (!startDate) {
+        previewText.style.display = "none";
+        return;
+    }
+
+    let start = new Date(startDate);
+
+    // 🟡 اشتراك شهري
+    if (duration === "monthly") {
+
+        start.setDate(start.getDate() + 30);
+
+        let formattedDate = start.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric'
+        });
+
+        endDateField.value = start.toISOString().split('T')[0];
+        endDateField.readOnly = true;
+        endDateField.closest('.col-md-6').style.display = "none";
+
+        // 🔥 عرض النص
+        previewText.innerText = "* ينتهي الاشتراك في: " + formattedDate;
+        previewText.style.display = "block";
+    }
+
+    // 🔵 اشتراك فصلي
+    else if (duration === "quarterly") {
+
+        start.setDate(start.getDate() + 90);
+
+        endDateField.value = start.toISOString().split('T')[0];
+        endDateField.readOnly = false;
+        endDateField.closest('.col-md-6').style.display = "block";
+
+        // 🔥 إخفاء النص
+        previewText.style.display = "none";
+    }
+}
+
+// تشغيل الأحداث
+durationField.addEventListener("change", updateEndDate);
+startDateField.addEventListener("change", updateEndDate);
+
+// 🔥 تشغيل عند تحميل الصفحة
+updateEndDate();
+</script>
+
 
 {% endblock %}
