@@ -172,10 +172,11 @@ class SubscriptionRequest(models.Model):
             raise ValidationError("No seats available.")
 
         # Prevent multiple active subscriptions for student
+        today = timezone.now().date()
         active_subscription_exists = SubscriptionRequest.objects.filter(
             student=self.student,
             status="approved",
-            subscription__status="active"
+            subscription__end_date__gte=today
         ).exclude(pk=self.pk).exists()
 
         if active_subscription_exists:

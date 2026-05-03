@@ -62,18 +62,18 @@
             <div class="wallet-icon">
                 <i class="bi bi-wallet2"></i>
             </div>
-            <div class="wallet-number">{{ wallet.balance }} ر.س</div>
-            <div class="wallet-label">الرصيد المتاح</div>
+            <div class="wallet-number">{{ frozen_amount|floatformat:2 }} ر.س</div>
+            <div class="wallet-label">الرصيد المجمد</div>
         </div>
     </div>
 
     <div class="col-md-4">
         <div class="wallet-card">
             <div class="wallet-icon">
-                <i class="bi bi-lock-fill"></i>
+                <i class="bi bi-cash"></i>
             </div>
-            <div class="wallet-number">{{ wallet.frozen_balance }} ر.س</div>
-            <div class="wallet-label">الرصيد المجمد</div>
+            <div class="wallet-number">{{ available_to_withdraw|floatformat:2 }} ر.س</div>
+            <div class="wallet-label">المتاح للسحب</div>
         </div>
     </div>
 
@@ -194,15 +194,16 @@
 
                     <label class="form-label">المبلغ</label>
                     <input type="number"
-                           name="amount"
-                           step="0.01"
-                           min="1"
-                           class="form-control"
-                           {% if is_driver_blocked %}disabled{% endif %}
-                           required>
+                    name="amount"
+                    step="0.01"
+                    min="1"
+                    max="{{ available_to_withdraw }}"
+                    class="form-control"
+                    {% if is_driver_blocked %}disabled{% endif %}
+                    required>
 
                     <small class="text-muted">
-                        الرصيد المتاح: {{ wallet.balance }} ر.س
+                      الرصيد المتاح للسحب: {{ available_to_withdraw|floatformat:2 }} ر.س
                     </small>
 
                 </div>

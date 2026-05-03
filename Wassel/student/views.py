@@ -32,10 +32,18 @@ def student_dashboard(request):
     if not profile:
         return redirect("student:profile")
 
+    today = timezone.now().date()
+
     active_request = SubscriptionRequest.objects.filter(
         student=profile,
-        status__in=["pending", "approved"]
+        status="approved",
+        subscription__end_date__gte=today
     ).select_related("subscription__driver__user").first()
+    
+    pending_request = SubscriptionRequest.objects.filter(
+        student=profile,
+        status="pending"
+    ).first()
 
     available_subscriptions = None
 
@@ -47,10 +55,55 @@ def student_dashboard(request):
 
     context = {
         "active_request": active_request,
+        "pending_request": pending_request,
         "available_subscriptions": available_subscriptions,
     }
 
     return render(request, "student/dashboard.html", context)
+
+
+
+
+@login_required
+def my_subscriptions(request):
+
+    if request.user.role != "student":
+        return redirect("main:index")
+
+    profile = request.user.student_profile
+    today = timezone.now().date()
+
+    subscriptions = SubscriptionRequest.objects.filter(
+        student=profile
+    ).select_related("subscription__driver__user").order_by("-request_date")
+
+    active = []
+    expired = []
+    cancelled = []
+    pending = []
+
+    for sub in subscriptions:
+
+        if sub.status == "pending":
+            pending.append(sub)
+
+        elif sub.status == "cancelled":
+            cancelled.append(sub)
+
+        elif sub.status == "approved":
+            if sub.subscription.end_date >= today:
+                active.append(sub)
+            else:
+                expired.append(sub)
+
+    context = {
+        "active": active,
+        "expired": expired,
+        "cancelled": cancelled,
+        "pending": pending,
+    }
+
+    return render(request, "student/my_subscriptions.html", context)
 
 
 
@@ -168,8 +221,11 @@ def subscription_detail_view(request, sub_id):
         driver__user__city=request.user.city   # 🔥 حماية المدينة
     )
 
+    today = timezone.now().date()
+
     has_active_request = profile.subscription_requests.filter(
-        status__in=["pending", "approved"]
+        Q(status="pending") |
+        Q(status="approved", subscription__end_date__gte=today)
     ).exists()
 
     context = {
@@ -196,8 +252,10 @@ def create_request(request, sub_id):
         driver__user__city=request.user.city
     )
 
+    today = timezone.now().date()
     if profile.subscription_requests.filter(
-        status__in=["pending", "approved"]
+        Q(status="pending") |
+        Q(status="approved", subscription__end_date__gte=today)
     ).exists():
         messages.warning(request, "لديك طلب اشتراك نشط بالفعل.")
         return redirect("student:dashboard")

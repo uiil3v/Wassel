@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from decimal import Decimal
 from .models import Transaction, PlatformEarning, Wallet
 from django.utils import timezone
-
+from subscriptions.models import SubscriptionRequest
 
 # ==========================================
 # Freeze Amount عند إنشاء الطلب
@@ -239,23 +239,119 @@ def refund_after_approval(subscription_request):
 
     # 🔹 إعادة المقعد
     subscription.increase_seat()
+
+
+
     
     
-    
-    
+def calculate_driver_withdrawable(driver_user):
+
+    today = timezone.now().date()
+
+    requests = SubscriptionRequest.objects.filter(
+        subscription__driver__user=driver_user,
+        status__in=["approved", "cancelled"]
+    )
+
+    total_withdrawable = Decimal("0.00")
+
+    for req in requests:
+
+        if not req.joined_at:
+            continue
+
+        start_date = req.joined_at.date()
+        end_date = req.subscription.end_date
+
+        total_amount = req.price_snapshot
+        commission = total_amount * Decimal("0.05")
+        driver_amount = total_amount - commission
+
+        # 🔥 إذا ملغي نحسب فقط الجزء المستخدم
+        if req.status == "cancelled":
+
+            cancel_date = req.decision_date.date() if req.decision_date else today
+
+            total_days = (end_date - start_date).days + 1
+            used_days = (cancel_date - start_date).days + 1
+
+            if total_days <= 0:
+                continue
+
+            if used_days < 0:
+                used_days = 0
+
+            if used_days > total_days:
+                used_days = total_days
+
+            ratio_used = Decimal(used_days) / Decimal(total_days)
+
+        else:
+            # approved (نفس القديم)
+            if today >= end_date:
+                ratio_used = Decimal("1.0")
+            else:
+                total_days = (end_date - start_date).days + 1
+                used_days = (today - start_date).days + 1
+
+                if total_days <= 0:
+                    continue
+
+                if used_days < 0:
+                    used_days = 0
+
+                if used_days > total_days:
+                    used_days = total_days
+
+                ratio_used = Decimal(used_days) / Decimal(total_days)
+
+        withdrawable = (driver_amount * ratio_used).quantize(Decimal("0.01"))
+
+        total_withdrawable += withdrawable
+
+    return total_withdrawable
+
+
+from django.db.models import Sum
+from decimal import Decimal
+from django.core.exceptions import ValidationError
+from django.db import transaction
+
 @transaction.atomic
 def withdraw_wallet(user, amount):
 
     amount = Decimal(amount)
 
+    # 🔴 تحقق من صحة المبلغ
     if amount <= 0:
         raise ValidationError("المبلغ غير صالح.")
 
+    # 🔴 تأكد من وجود المحفظة
     wallet = user.wallet
 
+    # 🔥 احسب المبلغ المسموح سحبه (حسب التقدم)
+    withdrawable = calculate_driver_withdrawable(user)
+
+    # 🔥 احسب كم سحب سابقًا
+    already_withdrawn = wallet.transactions.filter(
+        type="withdraw"
+    ).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+
+    # 🔥 المبلغ المتبقي للسحب
+    available_to_withdraw = max(
+        withdrawable - already_withdrawn,
+        Decimal("0.00")
+    )
+
+    # ❌ منع سحب أكثر من المسموح
+    if amount > available_to_withdraw:
+        raise ValidationError("لا يمكنك سحب هذا المبلغ حالياً.")
+
+    # ❌ منع سحب أكثر من الرصيد الفعلي
     if wallet.balance < amount:
         raise ValidationError("رصيدك غير كافي.")
 
+    # ✅ تنفيذ السحب
     wallet.balance -= amount
     wallet.save()
 
@@ -264,8 +360,10 @@ def withdraw_wallet(user, amount):
         type="withdraw",
         amount=amount,
         status="completed"
-    ) 
-   
+    )
+  
+  
+  
    
     
 @transaction.atomic

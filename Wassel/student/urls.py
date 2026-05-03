@@ -5,6 +5,7 @@ app_name = "student"
 
 urlpatterns = [
     path("dashboard/", views.student_dashboard, name="dashboard"),
+    path("my-subscriptions/", views.my_subscriptions, name="my_subscriptions"),
     path("my-subscription/<int:req_id>/", views.student_subscription_detail, name="subscription_detail"),
     path("subscriptions/", views.available_subscriptions, name="subscriptions"),
     path("subscription/<int:sub_id>/", views.subscription_detail_view, name="subscription_detail_view"),

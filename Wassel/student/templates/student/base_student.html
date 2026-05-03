@@ -177,6 +177,12 @@
                 الرئيسية
             </a>
 
+            <a href="{% url 'student:my_subscriptions' %}"
+            class="student-link {% if request.resolver_match.url_name == 'my_subscriptions' %}active{% endif %}">
+                <i class="bi bi-collection me-2"></i>
+                اشتراكاتي
+            </a>
+
             <a href="{% url 'student:subscriptions' %}"
                class="student-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
                 <i class="bi bi-ticket-perforated me-2"></i>
@@ -230,6 +236,12 @@
            class="student-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="bi bi-speedometer2 me-2"></i>
             الرئيسية
+        </a>
+
+        <a href="{% url 'student:my_subscriptions' %}"
+        class="student-link {% if request.resolver_match.url_name == 'my_subscriptions' %}active{% endif %}">
+            <i class="bi bi-collection me-2"></i>
+            اشتراكاتي
         </a>
 
         <a href="{% url 'student:subscriptions' %}"

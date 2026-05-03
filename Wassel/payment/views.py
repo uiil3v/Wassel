@@ -4,6 +4,10 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from .services import deposit_wallet, withdraw_wallet
 
+from payment.services import calculate_driver_withdrawable
+from django.db.models import Sum
+from decimal import Decimal
+
 
 
 @login_required
@@ -52,11 +56,34 @@ def wallet_view(request):
         template = "payment/wallet_driver.html"
     else:
         template = "payment/wallet_student.html"
+    
+    available_to_withdraw = Decimal("0.00")
+    
+
+    # 🔥 نحسب فقط للسائق
+    if request.user.role == "driver" and not is_driver_blocked:
+        
+        
+
+        withdrawable = calculate_driver_withdrawable(request.user)
+
+        already_withdrawn = wallet.transactions.filter(
+            type="withdraw"
+        ).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+
+        available_to_withdraw = max(
+            withdrawable - already_withdrawn,
+            Decimal("0.00")
+        )
+    
+    frozen_amount = max(wallet.balance - available_to_withdraw, Decimal("0.00"))
 
     context = {
         "wallet": wallet,
         "transactions": transactions,
         "is_driver_blocked": is_driver_blocked,  # 🔥 مهم
+        "available_to_withdraw": available_to_withdraw,  # 🔥 الجديد
+        "frozen_amount": frozen_amount,  # 🔥 الجديد
     }
 
     return render(request, template, context)
