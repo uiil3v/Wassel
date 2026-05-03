@@ -21,6 +21,9 @@ from payment.services import refund_frozen_amount, refund_after_approval
 from notifications.models import Notification
 from payment.models import Transaction
 
+
+from datetime import datetime
+
 @login_required
 def student_dashboard(request):
 
@@ -285,16 +288,32 @@ def create_request(request, sub_id):
                     pickup = request.POST.get(f"{day_code}_pickup")
                     ret = request.POST.get(f"{day_code}_return")
 
-                    schedule = SubscriptionRequestSchedule.objects.create(
-                        request=req,
-                        day_of_week=day_code,
-                        is_off_day=is_off
-                    )
-
                     if not is_off and pickup and ret:
-                        schedule.pickup_time = pickup
-                        schedule.return_time = ret
-                        schedule.save()
+                        try:
+                            pickup_time = datetime.strptime(pickup, "%H:%M").time()
+                            return_time = datetime.strptime(ret, "%H:%M").time()
+
+                            if return_time <= pickup_time:
+                                raise ValidationError("وقت العودة يجب أن يكون بعد وقت الذهاب.")
+
+                        except ValueError:
+                            raise ValidationError("صيغة الوقت غير صحيحة.")
+
+                        schedule = SubscriptionRequestSchedule.objects.create(
+                            request=req,
+                            day_of_week=day_code,
+                            is_off_day=False,
+                            pickup_time=pickup_time,
+                            return_time=return_time
+                        )
+
+                    else:
+                        # يوم إجازة
+                        schedule = SubscriptionRequestSchedule.objects.create(
+                            request=req,
+                            day_of_week=day_code,
+                            is_off_day=True
+                        )
 
             messages.success(request, "تم إرسال الطلب وتجميد المبلغ بنجاح.")
             return redirect("student:dashboard")

@@ -34,3 +34,9 @@ class RegisterForm(UserCreationForm):
 
         # 🔥 ترتيب المدن أبجديًا عربي
         self.fields['city'].queryset = self.fields['city'].queryset.order_by('name_ar')
+        
+        # 🔥 هنا تحطها (هذا السطر المهم)
+        self.fields['role'].choices = [
+            ('student', 'طالب'),
+            ('driver', 'سائق'),
+        ]

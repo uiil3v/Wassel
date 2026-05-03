@@ -317,41 +317,58 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
+
 @transaction.atomic
 def withdraw_wallet(user, amount):
 
     amount = Decimal(amount)
 
-    # 🔴 تحقق من صحة المبلغ
     if amount <= 0:
         raise ValidationError("المبلغ غير صالح.")
 
-    # 🔴 تأكد من وجود المحفظة
     wallet = user.wallet
 
-    # 🔥 احسب المبلغ المسموح سحبه (حسب التقدم)
+    # ===================================
+    # 🔥 الطالب → سحب مباشر من الرصيد
+    # ===================================
+    if user.role == "student":
+
+        if wallet.balance < amount:
+            raise ValidationError("رصيدك غير كافي.")
+
+        wallet.balance -= amount
+        wallet.save()
+
+        Transaction.objects.create(
+            wallet=wallet,
+            type="withdraw",
+            amount=amount,
+            status="completed"
+        )
+
+        return  # 🔥 مهم جدًا عشان ما يكمل للكود تحت
+
+    # ===================================
+    # 🚗 السائق → لوجك التقدم (نفس حقك)
+    # ===================================
+
     withdrawable = calculate_driver_withdrawable(user)
 
-    # 🔥 احسب كم سحب سابقًا
     already_withdrawn = wallet.transactions.filter(
         type="withdraw"
     ).aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
 
-    # 🔥 المبلغ المتبقي للسحب
     available_to_withdraw = max(
         withdrawable - already_withdrawn,
         Decimal("0.00")
     )
 
-    # ❌ منع سحب أكثر من المسموح
     if amount > available_to_withdraw:
         raise ValidationError("لا يمكنك سحب هذا المبلغ حالياً.")
 
-    # ❌ منع سحب أكثر من الرصيد الفعلي
     if wallet.balance < amount:
         raise ValidationError("رصيدك غير كافي.")
 
-    # ✅ تنفيذ السحب
     wallet.balance -= amount
     wallet.save()
 
@@ -361,8 +378,6 @@ def withdraw_wallet(user, amount):
         amount=amount,
         status="completed"
     )
-  
-  
   
    
     

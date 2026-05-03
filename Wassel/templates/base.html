@@ -344,12 +344,6 @@
 
                         {% if user.role == "driver" %}
 
-                            <li>
-                                <a class="dropdown-item" href="{% url 'driver:profile' %}">
-                                    <i class="bi bi-person me-2"></i>
-                                    ملفي الشخصي
-                                </a>
-                            </li>
 
                             <li>
                                 <a class="dropdown-item" href="{% url 'driver:dashboard' %}">
@@ -359,13 +353,6 @@
                             </li>
 
                         {% elif user.role == "student" %}
-
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="bi bi-person me-2"></i>
-                                    ملفي الشخصي
-                                </a>
-                            </li>
 
                             <li>
                                 <a class="dropdown-item" href="{% url 'student:dashboard' %}">

@@ -125,4 +125,35 @@
 
 </form>
 
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+
+    const rows = document.querySelectorAll(".schedule-row");
+
+    for (let row of rows) {
+
+        let pickup = row.querySelector('input[name$="_pickup"]');
+        let ret = row.querySelector('input[name$="_return"]');
+        let off = row.querySelector('input[type="checkbox"]');
+
+        if (!off.checked && pickup.value && ret.value) {
+
+            if (ret.value <= pickup.value) {
+                alert("❌ وقت العودة لازم يكون بعد وقت الذهاب");
+                e.preventDefault();
+                return;
+            }
+        }
+
+        // 🔥 منع ترك الحقول فاضية بدون إجازة
+        if (!off.checked && (!pickup.value || !ret.value)) {
+            alert("يجب تحديد وقت الذهاب والعودة او اختيار اجازة");
+            e.preventDefault();
+            return;
+        }
+    }
+
+});
+</script>
+
 {% endblock %}

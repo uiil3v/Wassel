@@ -12,6 +12,9 @@ def register_view(request):
 
         if form.is_valid():
             user = form.save(commit=False)
+            
+            if user.role not in ["student", "driver"]:
+                user.role = "student"
 
             # الحالة الافتراضية للحساب
             user.status = "active"
