@@ -103,12 +103,17 @@
 
     <div class="info-row">
         <span>تاريخ البداية</span>
-        <span>{{ req.subscription.start_date }}</span>
+        <span>{{ req.subscription.start_date|date:"d/m/Y" }}</span>
     </div>
 
     <div class="info-row">
         <span>تاريخ النهاية</span>
-        <span>{{ req.subscription.end_date }}</span>
+        <span>{{ req.subscription.end_date|date:"d/m/Y" }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ الانضمام</span>
+        <span>{{ req.joined_at|date:"d/m/Y" }}</span>
     </div>
 
     {% if req.status == "approved" or req.status == "pending" %}
