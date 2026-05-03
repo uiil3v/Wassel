@@ -1,1 +1,38 @@
+# 🔒 Environment
 .env
+.env.*
+
+# 🐍 Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 📦 Virtual Environment
+venv/
+env/
+ENV/
+
+# 🧠 Django
+db.sqlite3
+*.log
+staticfiles/
+
+# 📁 Media (اختياري إذا تستخدم Cloudinary)
+media/
+
+# 🛠 VS Code
+.vscode/
+
+# 💻 OS Files
+.DS_Store
+Thumbs.db
+
+# 🧪 Migrations (اختياري - لا تحذفه إذا مشروعك شغال عليه)
+# */migrations/*
+# !*/migrations/__init__.py
+
+# 🚀 Build / Deploy
+*.gz
+*.tar
+*.zip
