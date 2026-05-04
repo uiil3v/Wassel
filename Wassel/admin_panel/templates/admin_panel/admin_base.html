@@ -168,6 +168,12 @@
             المستخدمين
         </a>
 
+        <a href="{% url 'admin_panel:subscriptions' %}"
+        class="driver-link {% if 'subscription' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-box-seam me-2"></i>
+            الاشتراكات
+        </a>
+
         <!-- Requests -->
         <a href="{% url 'admin_panel:requests' %}"
            class="driver-link {% if 'request' in request.resolver_match.url_name %}active{% endif %}">
@@ -176,11 +182,13 @@
         </a>
 
         <!-- Payments -->
+        {% if request.user.admin_level == 1 %}
         <a href="{% url 'admin_panel:payments' %}"
-           class="driver-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
+        class="driver-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
             <i class="bi bi-cash-stack me-2"></i>
             المدفوعات
         </a>
+        {% endif %}
 
         <!-- Notifications -->
         <a href="{% url 'admin_panel:notifications' %}"
@@ -219,15 +227,22 @@
             المستخدمين
         </a>
 
+        <a href="{% url 'admin_panel:subscriptions' %}"
+        class="driver-link {% if 'subscription' in request.resolver_match.url_name %}active{% endif %}">
+            الاشتراكات
+        </a>
+
         <a href="{% url 'admin_panel:requests' %}"
            class="driver-link {% if 'request' in request.resolver_match.url_name %}active{% endif %}">
             الطلبات
         </a>
 
+        {% if request.user.admin_level == 1 %}
         <a href="{% url 'admin_panel:payments' %}"
-           class="driver-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
+        class="driver-link {% if 'payment' in request.resolver_match.url_name %}active{% endif %}">
             المدفوعات
         </a>
+        {% endif %}
 
         <a href="{% url 'admin_panel:notifications' %}"
            class="driver-link {% if 'notification' in request.resolver_match.url_name %}active{% endif %}">

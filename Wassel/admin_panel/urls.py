@@ -20,4 +20,10 @@ urlpatterns = [
     path("payments/", views.payments_view, name="payments"),
     path("notifications/send/", views.send_notification_view, name="send_notification"),
     path("notifications/", views.notifications_list, name="notifications"),
+    
+    path("subscriptions/", views.subscriptions_list, name="subscriptions"),
+    path("subscriptions/<int:pk>/", views.subscription_detail, name="subscription_detail"),
+    path("subscriptions/<int:pk>/deactivate/", views.deactivate_subscription, name="deactivate_subscription"),
+    path("subscriptions/<int:pk>/activate/", views.activate_subscription, name="activate_subscription"),
+    path("subscription-requests/<int:pk>/", views.subscription_request_detail, name="subscription_request_detail"),
 ]

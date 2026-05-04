@@ -72,19 +72,16 @@
 <div class="col-md-6">
     <label class="form-label">إرسال إلى</label>
     <select name="target" class="form-select" id="targetSelect">
-        <option value="all">🌍 جميع المستخدمين</option>
-        <option value="student">🎓 الطلاب</option>
-        <option value="driver">🚗 السائقين</option>
-        <option value="admin">🛠 الأدمن</option>
-        <option value="user">👤 مستخدم محدد</option>
+        {% if request.user.admin_level == 1 %}
+            <option value="all">🌍 جميع المستخدمين</option>
+            <option value="student">🎓 الطلاب</option>
+            <option value="driver">🚗 السائقين</option>
+            <option value="admin">🛠 الأدمن</option>
+        {% endif %}
+        <option value="user" {% if request.user.admin_level == 2 %}selected{% endif %}>
+            👤 مستخدم محدد
+        </option>
     </select>
-</div>
-
-<!-- Message -->
-<div class="col-12">
-    <label class="form-label">نص الرسالة</label>
-    <textarea name="message" class="form-control" rows="4"
-              placeholder="اكتب محتوى الإشعار هنا..." required></textarea>
 </div>
 
 <!-- User Select -->
@@ -100,6 +97,15 @@
         </select>
     </div>
 </div>
+
+<!-- Message -->
+<div class="col-12">
+    <label class="form-label">نص الرسالة</label>
+    <textarea name="message" class="form-control" rows="4"
+              placeholder="اكتب محتوى الإشعار هنا..." required></textarea>
+</div>
+
+
 
 <!-- Button -->
 <div class="col-12 text-end">
@@ -127,5 +133,10 @@ targetSelect.addEventListener("change", function() {
     }
 });
 </script>
+{% if request.user.admin_level == 2 %}
+<script>
+    document.getElementById("userSelectBox").style.display = "block";
+</script>
+{% endif %}
 
 {% endblock %}

@@ -1,0 +1,224 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.detail-card {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.info-row span:first-child {
+    color: #777;
+}
+
+/* ===== Status ===== */
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #e6f4ea;
+    color: #1e7e34;
+}
+
+.status-badge.inactive {
+    background: #fdecea;
+    color: #c82333;
+}
+
+.status-badge.full {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* ===== Students ===== */
+.student-row {
+    padding: 18px;
+    border-radius: 20px;
+    background: #faf9f6;
+    margin-bottom: 15px;
+    transition: 0.3s ease;
+}
+
+.student-row:hover {
+    transform: translateY(-4px);
+}
+</style>
+
+<h3 class="fw-bold mb-4">📦 تفاصيل الاشتراك</h3>
+
+<!-- ================= DETAILS ================= -->
+
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-3">بيانات السائق</h5>
+
+    <div class="info-row">
+        <span>الاسم</span>
+        <span>{{ subscription.driver.user.full_name }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>الهاتف</span>
+        <span>{{ subscription.driver.user.phone }}</span>
+    </div>
+
+    <hr>
+
+    <h5 class="fw-bold mb-3">تفاصيل الاشتراك</h5>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ subscription.neighborhood }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السعر</span>
+        <span>{{ subscription.price }} ر.س</span>
+    </div>
+
+    <div class="info-row">
+        <span>المدة</span>
+        <span>{{ subscription.get_duration_display }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>المقاعد</span>
+        <span>{{ subscription.available_seats }} / {{ subscription.seats }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ البداية</span>
+        <span>{{ subscription.start_date|date:"d/m/Y" }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ النهاية</span>
+        <span>{{ subscription.end_date|date:"d/m/Y" }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>الحالة</span>
+        <span>
+            {% if subscription.status == "active" %}
+                <span class="badge status-badge active">نشط</span>
+
+            {% elif subscription.status == "inactive" %}
+                <span class="badge status-badge inactive">موقوف</span>
+
+            {% elif subscription.status == "full" %}
+                <span class="badge status-badge full">ممتلئ</span>
+            {% endif %}
+        </span>
+    </div>
+
+</div>
+
+<!-- ================= ACTION ================= -->
+
+<div class="detail-card text-center">
+
+    {% if subscription.status == "active" %}
+
+        <a href="{% url 'admin_panel:deactivate_subscription' subscription.id %}"
+           class="btn btn-danger px-5">
+            إيقاف الاشتراك 🚫
+        </a>
+
+    {% elif subscription.status == "inactive" %}
+
+        <a href="{% url 'admin_panel:activate_subscription' subscription.id %}"
+           class="btn btn-success px-5">
+            إعادة التفعيل ✅
+        </a>
+
+    {% elif subscription.status == "full" %}
+
+        <span class="text-muted">
+            الاشتراك ممتلئ
+        </span>
+
+    {% endif %}
+
+</div>
+
+<!-- ================= PENDING ================= -->
+
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-4">📥 الطلبات الجديدة</h5>
+
+    {% if pending_requests %}
+
+        {% for req in pending_requests %}
+        <div class="student-row d-flex justify-content-between align-items-center">
+
+            <div>
+                <div class="fw-bold">{{ req.student.user.full_name }}</div>
+                <div class="text-muted small">{{ req.student.neighborhood }}</div>
+            </div>
+
+            <div>
+                <a href="{% url 'admin_panel:subscription_request_detail' req.id %}"
+                   class="btn btn-outline-dark btn-sm">
+                    عرض التفاصيل
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <p class="text-muted">لا توجد طلبات حالياً.</p>
+    {% endif %}
+
+</div>
+
+<!-- ================= APPROVED ================= -->
+
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-4">👨‍🎓 الطلاب المشتركين</h5>
+
+    {% if approved_requests %}
+
+        {% for req in approved_requests %}
+        <div class="student-row d-flex justify-content-between align-items-center">
+
+            <div>
+                <div class="fw-bold">{{ req.student.user.full_name }}</div>
+                <div class="text-muted small">
+                    مشترك منذ {{ req.decision_date|date:"d/m/Y" }}
+                </div>
+            </div>
+
+            <div>
+                <a href="{% url 'admin_panel:subscription_request_detail' req.id %}"
+                   class="btn btn-outline-dark btn-sm">
+                    عرض التفاصيل
+                </a>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <p class="text-muted">لا يوجد طلاب مشتركين حالياً.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

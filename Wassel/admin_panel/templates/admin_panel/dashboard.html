@@ -118,10 +118,12 @@
     <div class="stat-number text-success">{{ completed_requests }}</div>
 </div>
 
+{% if total_earnings is not None %}
 <div class="stat-card">
     <div class="stat-title">الأرباح</div>
     <div class="stat-number text-success">{{ total_earnings }} ريال</div>
 </div>
+{% endif %}
 
 
 </div>

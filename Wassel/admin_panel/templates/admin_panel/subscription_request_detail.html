@@ -1,0 +1,229 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+.detail-card {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.info-row span:first-child {
+    color: #777;
+}
+
+/* ===== Status Badge ===== */
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* طلب */
+.pending { background: #fff3cd; color: #856404; }
+.approved { background: #e6f4ea; color: #1e7e34; }
+.rejected { background: #fdecea; color: #c82333; }
+
+/* اشتراك */
+.active { background: #e6f4ea; color: #1e7e34; }
+.inactive { background: #fdecea; color: #c82333; }
+.full { background: #fff3cd; color: #856404; }
+
+/* ===== Schedule ===== */
+.schedule-row {
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.day-name {
+    font-weight: 600;
+}
+
+.time-box {
+    display: flex;
+    gap: 20px;
+}
+
+.time-item {
+    background: #f7f7f7;
+    padding: 6px 12px;
+    border-radius: 10px;
+}
+</style>
+
+<h3 class="fw-bold mb-4">👨‍🎓 تفاصيل الطالب المشترك</h3>
+
+<!-- ================= STATUS ================= -->
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-3">📌 حالة الطلب</h5>
+
+    {% if req.status == "pending" %}
+        <span class="status-badge pending">قيد الانتظار</span>
+
+    {% elif req.status == "approved" %}
+        <span class="status-badge approved">مقبول</span>
+
+    {% elif req.status == "rejected" %}
+        <span class="status-badge rejected">مرفوض</span>
+    {% endif %}
+
+</div>
+
+<!-- ================= REQUEST INFO ================= -->
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-3">📄 بيانات الطلب</h5>
+
+    <div class="info-row">
+        <span>تاريخ الطلب</span>
+        <span>{{ req.request_date|date:"Y-m-d H:i" }}</span>
+    </div>
+
+    {% if req.decision_date %}
+    <div class="info-row">
+        <span>تاريخ اتخاذ القرار</span>
+        <span>{{ req.decision_date|date:"Y-m-d H:i" }}</span>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ================= SUBSCRIPTION INFO ================= -->
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-3">📦 تفاصيل الاشتراك</h5>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ req.subscription.neighborhood }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>النوع</span>
+        <span>{{ req.subscription.get_duration_display }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السعر</span>
+        <span>{{ req.subscription.price }} ر.س</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ البداية</span>
+        <span>{{ req.subscription.start_date|date:"Y-m-d" }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>تاريخ النهاية</span>
+        <span>{{ req.subscription.end_date|date:"Y-m-d" }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>حالة الاشتراك</span>
+        <span>
+            {% if req.subscription.status == "active" %}
+                <span class="status-badge active">نشط</span>
+
+            {% elif req.subscription.status == "inactive" %}
+                <span class="status-badge inactive">موقوف</span>
+
+            {% elif req.subscription.status == "full" %}
+                <span class="status-badge full">ممتلئ</span>
+            {% endif %}
+        </span>
+    </div>
+
+</div>
+
+<!-- ================= STUDENT INFO ================= -->
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-3">👤 بيانات الطالب</h5>
+
+    <div class="info-row">
+        <span>الاسم</span>
+        <span>{{ req.student.user.full_name }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>الإيميل</span>
+        <span>{{ req.student.user.email }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>رقم الجوال</span>
+        <span>{{ req.student.user.phone }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>الجامعة</span>
+        <span>{{ req.student.university_name }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>الحي</span>
+        <span>{{ req.student.neighborhood }}</span>
+    </div>
+
+    {% if req.student.location_url %}
+    <div class="info-row">
+        <span>الموقع</span>
+        <a href="{{ req.student.location_url }}" target="_blank"
+           class="btn btn-outline-secondary btn-sm">
+            فتح الخريطة
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ================= SCHEDULE ================= -->
+<div class="detail-card">
+
+    <h5 class="fw-bold mb-3">📅 الجدول الأسبوعي</h5>
+
+    {% if schedule %}
+
+        {% for day in schedule %}
+        <div class="schedule-row d-flex justify-content-between align-items-center">
+
+            <div class="day-name">
+                {{ day.get_day_of_week_display }}
+            </div>
+
+            <div class="time-box">
+
+                {% if day.is_off_day %}
+                    <span class="badge bg-danger">إجازة</span>
+                {% else %}
+                    <div class="time-item">
+                        ذهاب: {{ day.pickup_time|time:"H:i" }}
+                    </div>
+                    <div class="time-item">
+                        عودة: {{ day.return_time|time:"H:i" }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <p class="text-muted">لا يوجد جدول.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

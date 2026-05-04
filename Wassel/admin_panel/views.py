@@ -51,6 +51,8 @@ from django.db.models import Q
 from notifications.models import Notification
 
 
+
+
 @admin_required(levels=[1, 2])
 def dashboard(request):
 
@@ -66,10 +68,13 @@ def dashboard(request):
     ).count()
 
     # 💰 مجموع الأرباح (مو count!)
-    total_earnings = Transaction.objects.filter(
-        type="commission",
-        status="completed"
-    ).aggregate(total=Sum("amount"))["total"] or 0
+    if request.user.admin_level == 1:
+        total_earnings = Transaction.objects.filter(
+            type="commission",
+            status="completed"
+        ).aggregate(total=Sum("amount"))["total"] or 0
+    else:
+        total_earnings = None
 
     # ===============================
     # Latest Requests
@@ -97,6 +102,9 @@ def dashboard(request):
     }
 
     return render(request, "admin_panel/dashboard.html", context)
+
+
+
 
 
 @admin_required(levels=[1, 2])
@@ -331,23 +339,38 @@ def user_detail(request, pk):
 
     return render(request, "admin_panel/user_detail.html", context)
 
-@admin_required(levels=[1])
+@admin_required(levels=[1, 2])
 def ban_user(request, pk):
     user = get_object_or_404(User, id=pk)
+
+    # ❌ منع حظر الأدمن
+    if user.role == "admin":
+        messages.error(request, "لا يمكنك حظر مشرف.")
+        return redirect("admin_panel:user_detail", pk=pk)
+
     user.status = "banned"
     user.save()
+
+    messages.success(request, "تم حظر المستخدم 🚫")
     return redirect("admin_panel:user_detail", pk=pk)
-
-@admin_required(levels=[1])
-def activate_user(request, pk):
-    user = get_object_or_404(User, id=pk)
-    user.status = "active"
-    user.save()
-    return redirect("admin_panel:user_detail", pk=pk)
-
-
 
 @admin_required(levels=[1, 2])
+def activate_user(request, pk):
+    user = get_object_or_404(User, id=pk)
+
+    if user.role == "admin":
+        messages.error(request, "لا يمكنك تعديل مشرف.")
+        return redirect("admin_panel:user_detail", pk=pk)
+
+    user.status = "active"
+    user.save()
+
+    messages.success(request, "تم تفعيل المستخدم ✅")
+    return redirect("admin_panel:user_detail", pk=pk)
+
+
+
+@admin_required(levels=[1])
 def payments_view(request):
 
     transactions = Transaction.objects.select_related("wallet__user").order_by("-created_at")
@@ -419,7 +442,6 @@ def payments_view(request):
     return render(request, "admin_panel/payments.html", context)
 
 
-
 @admin_required(levels=[1, 2])
 def send_notification_view(request):
 
@@ -433,7 +455,16 @@ def send_notification_view(request):
 
         selected_user = None
 
-        if target == "user" and user_id:
+        # 🔥 إذا Manager → يجبر يكون User فقط
+        if request.user.admin_level == 2:
+            target = "user"
+
+        # 🔥 تحقق اختيار المستخدم
+        if target == "user":
+            if not user_id:
+                messages.error(request, "يجب اختيار مستخدم.")
+                return redirect("admin_panel:send_notification")
+
             selected_user = User.objects.get(id=user_id)
 
         send_notification(
@@ -449,8 +480,6 @@ def send_notification_view(request):
     return render(request, "admin_panel/send_notification.html", {
         "users": users
     })
-    
-
 
 @admin_required(levels=[1, 2])
 def notifications_list(request):
@@ -505,3 +534,159 @@ def notifications_list(request):
     }
 
     return render(request, "admin_panel/notifications.html", context)
+
+
+from django.db.models import Q
+from subscriptions.models import Subscription
+
+@admin_required(levels=[1, 2])
+def subscriptions_list(request):
+
+    # ================= GET PARAMETERS =================
+    search_query = request.GET.get("search", "").strip()
+    duration = request.GET.get("duration", "")
+    min_price = request.GET.get("min_price", "")
+    max_price = request.GET.get("max_price", "")
+    sort = request.GET.get("sort", "")
+
+    # ================= BASE QUERY =================
+    subscriptions = Subscription.objects.select_related(
+        "driver__user"
+    )
+
+    # 🔥 هنا الفرق عن الطالب:
+    # ❌ ما نحط:
+    # status="active"
+    # available_seats__gt=0
+    # driver__user__city=request.user.city
+
+    # ================= SEARCH =================
+    if search_query:
+        subscriptions = subscriptions.filter(
+            Q(neighborhood__icontains=search_query) |
+            Q(driver__user__first_name__icontains=search_query) |
+            Q(driver__user__last_name__icontains=search_query)
+        )
+
+    # ================= DURATION FILTER =================
+    if duration:
+        subscriptions = subscriptions.filter(duration=duration)
+
+    # ================= PRICE FILTER =================
+    if min_price:
+        try:
+            subscriptions = subscriptions.filter(price__gte=float(min_price))
+        except ValueError:
+            pass
+
+    if max_price:
+        try:
+            subscriptions = subscriptions.filter(price__lte=float(max_price))
+        except ValueError:
+            pass
+
+    # ================= SORTING =================
+    if sort == "price_asc":
+        subscriptions = subscriptions.order_by("price")
+    elif sort == "price_desc":
+        subscriptions = subscriptions.order_by("-price")
+    elif sort == "seats":
+        subscriptions = subscriptions.order_by("-available_seats")
+    else:
+        subscriptions = subscriptions.order_by("-created_at")
+
+    # ================= RESULTS COUNT =================
+    results_count = subscriptions.count()
+
+    # ================= CONTEXT =================
+    context = {
+        "subscriptions": subscriptions,
+        "search_query": search_query,
+        "duration": duration,
+        "min_price": min_price,
+        "max_price": max_price,
+        "sort": sort,
+        "results_count": results_count,
+    }
+
+    return render(request, "admin_panel/subscriptions.html", context)
+
+
+
+from subscriptions.models import Subscription
+
+@admin_required(levels=[1, 2])
+def subscription_detail(request, pk):
+
+    subscription = get_object_or_404(Subscription, id=pk)
+
+    pending_requests = subscription.requests.filter(
+        status="pending"
+    ).select_related("student__user")
+
+    approved_requests = subscription.requests.filter(
+        status="approved"
+    ).select_related("student__user")
+
+    context = {
+        "subscription": subscription,
+        "pending_requests": pending_requests,
+        "approved_requests": approved_requests,
+    }
+
+    return render(request, "admin_panel/subscription_detail.html", context)
+    
+    
+@admin_required(levels=[1, 2])
+def deactivate_subscription(request, pk):
+
+    subscription = get_object_or_404(Subscription, id=pk)
+
+    # 🔥 تأكد إنه active
+    if subscription.status != "active":
+        messages.warning(request, "الاشتراك موقوف بالفعل.")
+        return redirect("admin_panel:subscription_detail", pk=pk)
+
+    subscription.deactivate()
+
+    messages.success(request, "تم إيقاف الاشتراك بنجاح 🚫")
+
+    return redirect("admin_panel:subscription_detail", pk=pk)
+
+
+@admin_required(levels=[1, 2])
+def activate_subscription(request, pk):
+
+    subscription = get_object_or_404(Subscription, id=pk)
+
+    if subscription.status == "active":
+        messages.warning(request, "الاشتراك مفعل بالفعل.")
+        return redirect("admin_panel:subscription_detail", pk=pk)
+
+    # 🔥 نرجعه active
+    subscription.status = "active"
+    subscription.save()
+
+    messages.success(request, "تم إعادة تفعيل الاشتراك ✅")
+
+    return redirect("admin_panel:subscription_detail", pk=pk)
+
+
+
+@admin_required(levels=[1, 2])
+def subscription_request_detail(request, pk):
+
+    req = get_object_or_404(
+        SubscriptionRequest.objects.select_related(
+            "student__user",
+            "subscription__driver__user"
+        ),
+        id=pk
+    )
+
+    schedule = req.schedule.all().order_by("day_of_week")
+
+    return render(request, "admin_panel/subscription_request_detail.html", {
+        "req": req,
+        "schedule": schedule
+    })
