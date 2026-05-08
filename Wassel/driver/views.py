@@ -563,10 +563,16 @@ def driver_schedule(request):
 
     profile = request.user.driver_profile
 
+
     approved_requests = SubscriptionRequest.objects.filter(
         subscription__driver=profile,
-        status="approved"
-    ).prefetch_related("schedule", "student__user", "subscription")
+        status="approved",
+        subscription__end_date__gte=timezone.now().date()
+    ).prefetch_related(
+        "schedule",
+        "student__user",
+        "subscription"
+    )
 
     weekly_schedule = defaultdict(list)
 

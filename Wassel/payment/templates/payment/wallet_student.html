@@ -120,8 +120,8 @@
 
             <thead>
                 <tr>
-                    <th>النوع</th>
                     <th>المبلغ</th>
+                    <th>النوع</th>
                     <th>الحالة</th>
                     <th>التاريخ</th>
                 </tr>
@@ -130,20 +130,6 @@
             <tbody>
                 {% for tx in transactions %}
                 <tr>
-
-                    <td>
-                        {% if tx.type == "deposit" %}
-                            <span class="badge bg-success-subtle text-success transaction-badge">إيداع</span>
-                        {% elif tx.type == "withdraw" %}
-                            <span class="badge bg-danger-subtle text-danger transaction-badge">سحب</span>
-                        {% elif tx.type == "freeze" %}
-                            <span class="badge bg-info-subtle text-info transaction-badge">تجميد</span>
-                        {% elif tx.type == "refund" %}
-                            <span class="badge bg-primary-subtle text-primary transaction-badge">استرجاع</span>
-                        {% elif tx.type == "commission" %}
-                            <span class="badge bg-warning-subtle text-warning transaction-badge">عمولة</span>
-                        {% endif %}
-                    </td>
 
                     <td class="fw-bold">
 
@@ -160,13 +146,29 @@
                     </td>
 
                     <td>
+                        {% if tx.type == "deposit" %}
+                            <span class="badge bg-success-subtle text-success transaction-badge">إيداع</span>
+                        {% elif tx.type == "withdraw" %}
+                            <span class="badge bg-danger-subtle text-danger transaction-badge">سحب</span>
+                        {% elif tx.type == "freeze" %}
+                            <span class="badge bg-info-subtle text-info transaction-badge">تجميد</span>
+                        {% elif tx.type == "refund" %}
+                            <span class="badge bg-primary-subtle text-primary transaction-badge">استرجاع</span>
+                        {% elif tx.type == "commission" %}
+                            <span class="badge bg-warning-subtle text-warning transaction-badge">عمولة</span>
+                        {% endif %}
+                    </td>
+
+                    
+
+                    <td>
                         <span class="badge bg-success-subtle text-success transaction-badge">
                             {{ tx.get_status_display }}
                         </span>
                     </td>
 
                     <td>
-                        {{ tx.created_at|date:"d M Y - h:i A" }}
+                        {{ tx.created_at|date:"d/m/Y - h:i" }}
                     </td>
 
                 </tr>

@@ -121,6 +121,29 @@ class Subscription(models.Model):
 
         # نشط
         return "active"
+    
+    # -------------------------
+    # Check Remaining Percentage
+    # -------------------------
+    def can_accept_requests(self):
+
+        today = timezone.now().date()
+
+        # إذا منتهي
+        if self.end_date <= today:
+            return False
+
+        total_days = (self.end_date - self.start_date).days
+
+        if total_days <= 0:
+            return False
+
+        remaining_days = (self.end_date - today).days
+
+        remaining_ratio = remaining_days / total_days
+
+        # 🔥 أقل من 30%
+        return remaining_ratio > 0.30
 
 
 # ==========================================

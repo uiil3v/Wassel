@@ -26,7 +26,10 @@ from datetime import datetime
 
 from reviews.models import Review
 
+from .decorators import student_profile_completed_required
+
 @login_required
+@student_profile_completed_required
 def student_dashboard(request):
 
     if request.user.role != "student":
@@ -70,6 +73,7 @@ def student_dashboard(request):
 
 
 @login_required
+@student_profile_completed_required
 def my_subscriptions(request):
 
     if request.user.role != "student":
@@ -120,6 +124,7 @@ def my_subscriptions(request):
 
 
 @login_required
+@student_profile_completed_required
 def student_subscription_detail(request, req_id):
 
     if request.user.role != "student":
@@ -146,6 +151,7 @@ def student_subscription_detail(request, req_id):
 
 
 @login_required
+@student_profile_completed_required
 def available_subscriptions(request):
 
     if request.user.role != "student":
@@ -159,12 +165,13 @@ def available_subscriptions(request):
     sort = request.GET.get("sort", "")
 
     # ================= BASE QUERY =================
+    
     subscriptions = Subscription.objects.filter(
         status="active",
         available_seats__gt=0,
+        end_date__gte=timezone.now().date(),
         driver__user__city=request.user.city
-    ).select_related("driver__user")
-
+    )
     # ================= SEARCH =================
     if search_query:
         subscriptions = subscriptions.filter(
@@ -219,6 +226,7 @@ def available_subscriptions(request):
 
 
 @login_required
+@student_profile_completed_required
 def subscription_detail_view(request, sub_id):
 
     if request.user.role != "student":
@@ -250,6 +258,7 @@ def subscription_detail_view(request, sub_id):
 
 
 @login_required
+@student_profile_completed_required
 def create_request(request, sub_id):
 
     if request.user.role != "student":
@@ -263,6 +272,19 @@ def create_request(request, sub_id):
         status="active",
         driver__user__city=request.user.city
     )
+    
+    # 🔥 منع الاشتراك إذا قرب ينتهي
+    if not subscription.can_accept_requests():
+        
+        messages.error(
+            request,
+            "هذا الاشتراك على وشك الانتهاء او منتهي بالفعل."
+        )
+
+        return redirect(
+            "student:subscription_detail_view",
+            sub_id=sub_id
+        )
 
     today = timezone.now().date()
     if profile.subscription_requests.filter(
@@ -341,6 +363,7 @@ def create_request(request, sub_id):
 
 
 @login_required
+@student_profile_completed_required
 def cancel_request(request, req_id):
 
     if request.user.role != "student":

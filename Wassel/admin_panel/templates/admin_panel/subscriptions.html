@@ -153,6 +153,37 @@
                         <option value="semester" {% if duration == "semester" %}selected{% endif %}>فصلي</option>
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">
+                        حالة الاشتراك
+                    </label>
+
+                    <select name="status" class="form-select">
+
+                        <option value="">الكل</option>
+
+                        <option value="active"
+                            {% if status_filter == "active" %}selected{% endif %}>
+                            نشط
+                        </option>
+
+                        <option value="expired"
+                            {% if status_filter == "expired" %}selected{% endif %}>
+                            منتهي
+                        </option>
+
+                        <option value="full"
+                            {% if status_filter == "full" %}selected{% endif %}>
+                            ممتلئ
+                        </option>
+
+                        <option value="inactive"
+                            {% if status_filter == "inactive" %}selected{% endif %}>
+                            موقوف
+                        </option>
+
+                    </select>
+                </div>
 
                 <div class="col-md-3">
                     <label class="form-label small text-muted">السعر من</label>
@@ -193,7 +224,7 @@
             تم العثور على <strong>{{ results_count }}</strong> اشتراك
         </div>
 
-        {% if search_query or duration or min_price or max_price or sort %}
+        {% if search_query or duration or status_filter or min_price or max_price or sort %}
         <a href="{% url 'admin_panel:subscriptions' %}"
            class="btn btn-wassel-outline btn-sm">
             إعادة تعيين

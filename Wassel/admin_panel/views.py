@@ -571,6 +571,8 @@ def notifications_list(request):
 from django.db.models import Q
 from subscriptions.models import Subscription
 
+
+
 @admin_required(levels=[1, 2])
 def subscriptions_list(request):
 
@@ -580,6 +582,7 @@ def subscriptions_list(request):
     min_price = request.GET.get("min_price", "")
     max_price = request.GET.get("max_price", "")
     sort = request.GET.get("sort", "")
+    status_filter = request.GET.get("status", "")
 
     # ================= BASE QUERY =================
     subscriptions = Subscription.objects.select_related(
@@ -603,6 +606,20 @@ def subscriptions_list(request):
     # ================= DURATION FILTER =================
     if duration:
         subscriptions = subscriptions.filter(duration=duration)
+        
+    # ================= STATUS FILTER =================
+    if status_filter:
+
+        filtered_subscriptions = []
+
+        for sub in subscriptions:
+
+            if sub.current_status == status_filter:
+                filtered_subscriptions.append(sub)
+
+        subscriptions = Subscription.objects.filter(
+            id__in=[sub.id for sub in filtered_subscriptions]
+        )
 
     # ================= PRICE FILTER =================
     if min_price:
@@ -639,6 +656,7 @@ def subscriptions_list(request):
         "max_price": max_price,
         "sort": sort,
         "results_count": results_count,
+        "status_filter": status_filter,
     }
 
     return render(request, "admin_panel/subscriptions.html", context)

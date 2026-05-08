@@ -202,12 +202,16 @@
 
     <div class="info-row">
         <span>تاريخ البداية</span>
-        <span>{{ subscription.start_date }}</span>
+        <span dir="ltr">
+            {{ subscription.start_date|date:"d/m/Y" }}
+        </span>
     </div>
 
     <div class="info-row">
         <span>تاريخ النهاية</span>
-        <span>{{ subscription.end_date }}</span>
+        <span dir="ltr">
+            {{ subscription.end_date|date:"d/m/Y" }}
+        </span>
     </div>
 
 </div>

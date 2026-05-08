@@ -503,6 +503,16 @@
 
                     </div>
 
+                    <div class="small text-muted mb-2">
+
+                        مرتبط باشتراك:
+                        {{ review.subscription_request.subscription.neighborhood }}
+
+                        -
+                        {{ review.subscription_request.subscription.get_duration_display }}
+
+                    </div>
+
                     {% if review.comment %}
 
                         <div class="review-comment">

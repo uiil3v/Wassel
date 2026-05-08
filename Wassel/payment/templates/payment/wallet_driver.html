@@ -114,8 +114,8 @@
 
             <thead>
                 <tr>
-                    <th>النوع</th>
                     <th>المبلغ</th>
+                    <th>النوع</th>
                     <th>الحالة</th>
                     <th>التاريخ</th>
                 </tr>
@@ -124,6 +124,10 @@
             <tbody>
                 {% for tx in transactions %}
                 <tr>
+
+                    <td class="fw-bold">
+                        {{ tx.amount }} ر.س
+                    </td>
 
                     <td>
                         {% if tx.type == "deposit" %}
@@ -139,9 +143,7 @@
                         {% endif %}
                     </td>
 
-                    <td class="fw-bold">
-                        {{ tx.amount }} ر.س
-                    </td>
+                    
 
                     <td>
                         <span class="badge bg-success-subtle text-success transaction-badge">
@@ -149,8 +151,8 @@
                         </span>
                     </td>
 
-                    <td>
-                        {{ tx.created_at|date:"d M Y - h:i A" }}
+                    <td >
+                        {{ tx.created_at|date:"d/m/Y - h:i" }}
                     </td>
 
                 </tr>

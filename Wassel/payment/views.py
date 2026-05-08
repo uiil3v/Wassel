@@ -10,10 +10,36 @@ from decimal import Decimal
 
 
 
+
+
 @login_required
 def wallet_view(request):
 
     wallet = request.user.wallet
+    
+    # 🔥 منع الطالب إذا ماكمل بياناته
+    if request.user.role == "student":
+
+        profile = getattr(
+            request.user,
+            "student_profile",
+            None
+        )
+
+        required_fields = [
+            profile.university_name,
+            profile.gender,
+            profile.neighborhood,
+        ]
+
+        if not profile or any(not field for field in required_fields):
+
+            messages.warning(
+                request,
+                "يرجى إكمال ملفك الشخصي أولاً."
+            )
+
+            return redirect("student:profile")
 
     is_driver_blocked = False
 
