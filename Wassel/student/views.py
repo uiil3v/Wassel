@@ -24,6 +24,8 @@ from payment.models import Transaction
 
 from datetime import datetime
 
+from reviews.models import Review
+
 @login_required
 def student_dashboard(request):
 
@@ -97,6 +99,13 @@ def my_subscriptions(request):
             if sub.subscription.end_date >= today:
                 active.append(sub)
             else:
+                already_reviewed = Review.objects.filter(
+                    reviewer=request.user,
+                    subscription_request=sub
+                ).exists()
+
+                sub.already_reviewed = already_reviewed
+
                 expired.append(sub)
 
     context = {

@@ -219,10 +219,30 @@
 
             <h6 class="fw-bold mb-0">{{ sub.neighborhood }}</h6>
 
-            {% if sub.status == "active" %}
-                <span class="badge bg-success">نشط</span>
+            {% if sub.current_status == "active" %}
+
+                <span class="badge bg-success">
+                    نشط
+                </span>
+
+            {% elif sub.current_status == "expired" %}
+
+                <span class="badge bg-danger">
+                    منتهي
+                </span>
+
+            {% elif sub.current_status == "full" %}
+
+                <span class="badge bg-warning text-dark">
+                    ممتلئ
+                </span>
+
             {% else %}
-                <span class="badge bg-secondary">موقوف</span>
+
+                <span class="badge bg-secondary">
+                    موقوف
+                </span>
+
             {% endif %}
 
         </div>

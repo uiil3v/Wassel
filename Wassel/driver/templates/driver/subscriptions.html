@@ -78,12 +78,30 @@
                 </div>
 
                 <div>
-                    {% if sub.status == "active" %}
-                        <span class="badge bg-success sub-status-badge">نشط</span>
-                    {% elif sub.status == "full" %}
-                        <span class="badge bg-warning text-dark sub-status-badge">ممتلئ</span>
+                    {% if sub.current_status == "active" %}
+
+                        <span class="badge bg-success sub-status-badge">
+                            نشط
+                        </span>
+
+                    {% elif sub.current_status == "expired" %}
+
+                        <span class="badge bg-danger sub-status-badge">
+                            منتهي
+                        </span>
+
+                    {% elif sub.current_status == "full" %}
+
+                        <span class="badge bg-warning text-dark sub-status-badge">
+                            ممتلئ
+                        </span>
+
                     {% else %}
-                        <span class="badge bg-secondary sub-status-badge">غير نشط</span>
+
+                        <span class="badge bg-secondary sub-status-badge">
+                            غير نشط
+                        </span>
+
                     {% endif %}
                 </div>
             </div>

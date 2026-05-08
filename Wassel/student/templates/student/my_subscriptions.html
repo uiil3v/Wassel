@@ -159,6 +159,21 @@
                 <span>{{ req.subscription.end_date }}</span>
             </div>
 
+            {% if not req.already_reviewed %}
+            <div class="mt-3 text-end">
+                <a href="{% url 'reviews:create_review' req.id %}"
+                class="btn btn-dark btn-sm rounded-pill px-3">
+                    قيّم السائق ⭐
+                </a>
+            </div>
+            {% else %}
+
+            <div class="mt-3 text-success fw-bold">
+                تم إضافة تقييمك ✅
+            </div>
+
+            {% endif %}
+
         </div>
     </div>
     {% endfor %}

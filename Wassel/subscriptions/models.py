@@ -101,6 +101,26 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.neighborhood} - {self.driver.user.email}"
+    
+    @property
+    def current_status(self):
+
+        today = timezone.now().date()
+
+        # منتهي
+        if self.end_date < today:
+            return "expired"
+
+        # ممتلئ
+        if self.available_seats <= 0:
+            return "full"
+
+        # غير نشط
+        if self.status == "inactive":
+            return "inactive"
+
+        # نشط
+        return "active"
 
 
 # ==========================================

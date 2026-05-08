@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'payment.apps.PaymentConfig',
     'admin_panel.apps.AdminPanelConfig',
     "notifications",
+    "reviews",
     'cloudinary',
     'cloudinary_storage',
     'whitenoise.runserver_nostatic',

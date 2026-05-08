@@ -1,0 +1,271 @@
+
+{% extends "student/base_student.html" %}
+
+{% block student_content %}
+
+<style>
+
+.review-card {
+    background: white;
+    border-radius: 35px;
+    padding: 40px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
+}
+
+.review-header {
+    margin-bottom: 35px;
+}
+
+.review-user-box {
+    background: var(--light-bg);
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.review-user-name {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.review-user-role {
+    color: var(--soft-color);
+    font-size: 0.95rem;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    border-radius: 18px;
+    padding: 14px 18px;
+    border: 1px solid #e5ddd0;
+    transition: 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.15rem rgba(200, 169, 81, 0.2);
+}
+
+.review-submit-btn {
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 500;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.info-row span:first-child {
+    color: var(--soft-color);
+}
+
+/* ===== Google Stars ===== */
+
+.google-stars {
+    display: flex;
+    gap: 10px;
+    font-size: 2rem;
+    margin-top: 15px;
+}
+
+.star {
+    cursor: pointer;
+    color: #d6d6d6;
+    transition: 0.2s ease;
+}
+
+.star.active {
+    color: #f4c542;
+}
+
+.star:hover {
+    transform: scale(1.12);
+}
+
+.rating-text {
+    color: var(--soft-color);
+    font-size: 0.95rem;
+    margin-top: 10px;
+}
+
+</style>
+
+
+<div class="review-card">
+
+    <!-- ===== Header ===== -->
+    <div class="review-header">
+
+        <h3 class="fw-bold mb-2">
+            إضافة تقييم ⭐
+        </h3>
+
+        <p class="text-muted mb-0">
+            شارك تجربتك لمساعدة المستخدمين الآخرين وتعزيز الموثوقية.
+        </p>
+
+    </div>
+
+
+    <!-- ===== Reviewed User ===== -->
+    <div class="review-user-box">
+
+        <div class="review-user-name">
+            {{ reviewed_user.get_full_name }}
+        </div>
+
+        <div class="review-user-role mt-1">
+
+            {% if reviewed_user.role == "driver" %}
+                سائق
+            {% else %}
+                طالب
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ===== Subscription Info ===== -->
+    <div class="review-user-box">
+
+        <h6 class="fw-bold mb-4">
+            تفاصيل الاشتراك
+        </h6>
+
+        <div class="info-row">
+            <span>الحي</span>
+            <span>{{ subscription_request.subscription.neighborhood }}</span>
+        </div>
+
+        <div class="info-row">
+            <span>السعر</span>
+            <span>{{ subscription_request.price_snapshot }} ر.س</span>
+        </div>
+
+        <div class="info-row">
+            <span>تاريخ البداية</span>
+            <span>
+                {{ subscription_request.subscription.start_date|date:"d/m/Y" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span>تاريخ النهاية</span>
+            <span>
+                {{ subscription_request.subscription.end_date|date:"d/m/Y" }}
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- ===== Form ===== -->
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <!-- Rating -->
+        <div class="mb-4">
+
+            <label class="form-label">
+                التقييم
+            </label>
+
+            {{ form.rating }}
+
+            <div class="google-stars">
+
+                <i class="bi bi-star-fill star" data-value="1"></i>
+                <i class="bi bi-star-fill star" data-value="2"></i>
+                <i class="bi bi-star-fill star" data-value="3"></i>
+                <i class="bi bi-star-fill star" data-value="4"></i>
+                <i class="bi bi-star-fill star" data-value="5"></i>
+
+            </div>
+
+            <div class="rating-text">
+                اختر تقييمك
+            </div>
+
+        </div>
+
+
+        <!-- Comment -->
+        <div class="mb-4">
+
+            <label class="form-label">
+                التعليق
+            </label>
+
+            {{ form.comment }}
+
+        </div>
+
+
+        <!-- Submit -->
+        <div class="text-end">
+
+            <button type="submit"
+                    class="btn btn-accent review-submit-btn">
+
+                إرسال التقييم
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+const stars = document.querySelectorAll(".star");
+const ratingInput = document.getElementById("id_rating");
+
+const ratingTexts = {
+    1: "سيئ جدًا",
+    2: "سيئ",
+    3: "جيد",
+    4: "ممتاز",
+    5: "رائع جدًا"
+};
+
+stars.forEach(star => {
+
+    star.addEventListener("click", () => {
+
+        const value = star.dataset.value;
+
+        ratingInput.value = value;
+
+        stars.forEach(s => {
+            s.classList.remove("active");
+        });
+
+        stars.forEach(s => {
+            if (s.dataset.value <= value) {
+                s.classList.add("active");
+            }
+        });
+
+        document.querySelector(".rating-text").innerText =
+            ratingTexts[value];
+    });
+
+});
+
+</script>
+
+{% endblock %}
+

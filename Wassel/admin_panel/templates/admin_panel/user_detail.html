@@ -78,24 +78,38 @@
     <div class="section-title">📌 البيانات الأساسية</div>
 
 
-<p><strong>الاسم:</strong> {{ user_obj.full_name }}</p>
-<p><strong>الإيميل:</strong> {{ user_obj.email }}</p>
-<p><strong>الجوال:</strong> {{ user_obj.phone }}</p>
+    <p><strong>الاسم:</strong> {{ user_obj.full_name }}</p>
+    <p><strong>الإيميل:</strong> {{ user_obj.email }}</p>
+    <p><strong>الجوال:</strong> {{ user_obj.phone }}</p>
 
-<p>
-    <strong>الدور:</strong>
-    <span class="badge-role {{ user_obj.role }}">
-        {{ user_obj.get_role_display }}
-    </span>
-</p>
+    <p>
+        <strong>الدور:</strong>
+        <span class="badge-role {{ user_obj.role }}">
+            {{ user_obj.get_role_display }}
+        </span>
+    </p>
 
-<p>
-    <strong>الحالة:</strong>
-    <span class="badge-role {{ user_obj.status }}">
-        {{ user_obj.get_status_display }}
-    </span>
-</p>
+    <p>
+        <strong>الحالة:</strong>
+        <span class="badge-role {{ user_obj.status }}">
+            {{ user_obj.get_status_display }}
+        </span>
+    </p>
 
+
+    <hr class="my-4">
+
+    <div class="text-center">
+
+        <a href="{% url 'accounts:public_profile' user_obj.id %}"
+           class="btn btn-dark px-4 rounded-pill">
+
+            <i class="bi bi-person-badge me-2"></i>
+            عرض الملف الشخصي العام
+
+        </a>
+
+    </div>
 
 </div>
 

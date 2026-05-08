@@ -3,6 +3,7 @@
 {% block admin_content %}
 
 <style>
+
 .detail-card {
     background: white;
     border-radius: 30px;
@@ -11,17 +12,40 @@
     margin-bottom: 25px;
 }
 
+.section-title {
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+/* ================= INFO ROW ================= */
+
 .info-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    align-items: center;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.info-row:last-child {
+    border-bottom: none;
 }
 
 .info-row span:first-child {
     color: #777;
+    font-weight: 500;
 }
 
-/* ===== Status Badge ===== */
+.info-row span:last-child {
+    font-weight: 600;
+    color: #222;
+}
+
+/* ================= STATUS BADGES ================= */
+
 .status-badge {
     padding: 8px 16px;
     border-radius: 20px;
@@ -29,61 +53,210 @@
     font-weight: 600;
 }
 
-/* طلب */
-.pending { background: #fff3cd; color: #856404; }
-.approved { background: #e6f4ea; color: #1e7e34; }
-.rejected { background: #fdecea; color: #c82333; }
+/* الطلب */
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
 
-/* اشتراك */
-.active { background: #e6f4ea; color: #1e7e34; }
-.inactive { background: #fdecea; color: #c82333; }
-.full { background: #fff3cd; color: #856404; }
+.approved {
+    background: #e6f4ea;
+    color: #1e7e34;
+}
 
-/* ===== Schedule ===== */
+.rejected {
+    background: #fdecea;
+    color: #c82333;
+}
+
+/* الاشتراك */
+.active {
+    background: #e6f4ea;
+    color: #1e7e34;
+}
+
+.inactive {
+    background: #fdecea;
+    color: #c82333;
+}
+
+.full {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* ================= PROFILE BOX ================= */
+
+.profile-box {
+    background: #f8f7f4;
+    border-radius: 22px;
+    padding: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    text-decoration: none;
+    color: inherit;
+
+    transition: 0.3s ease;
+
+    margin-bottom: 20px;
+}
+
+.profile-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.profile-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-avatar {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+
+    background: var(--accent-color);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 26px;
+}
+
+.profile-name {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.profile-meta {
+    color: #777;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.profile-action {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* ================= SCHEDULE ================= */
+
 .schedule-row {
-    padding: 15px 0;
+    padding: 18px 0;
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
+.schedule-row:last-child {
+    border-bottom: none;
+}
+
 .day-name {
-    font-weight: 600;
+    font-weight: 700;
+    color: #222;
+    font-size: 15px;
 }
 
 .time-box {
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .time-item {
-    background: #f7f7f7;
-    padding: 6px 12px;
-    border-radius: 10px;
+    background: #f8f7f4;
+    padding: 10px 16px;
+    border-radius: 16px;
+    min-width: 110px;
 }
+
+.time-label {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.time-value {
+    font-weight: 700;
+    color: #222;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .profile-box {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .profile-left {
+        flex-direction: column;
+    }
+
+    .schedule-row {
+        flex-direction: column;
+    }
+
+}
+
 </style>
 
-<h3 class="fw-bold mb-4">👨‍🎓 تفاصيل الطالب المشترك</h3>
+<h3 class="fw-bold mb-4">
+    📄 تفاصيل طلب الاشتراك
+</h3>
 
 <!-- ================= STATUS ================= -->
+
 <div class="detail-card">
 
-    <h5 class="fw-bold mb-3">📌 حالة الطلب</h5>
+    <div class="section-title">
+        📌 حالة الطلب
+    </div>
 
     {% if req.status == "pending" %}
-        <span class="status-badge pending">قيد الانتظار</span>
+
+        <span class="status-badge pending">
+            قيد الانتظار
+        </span>
 
     {% elif req.status == "approved" %}
-        <span class="status-badge approved">مقبول</span>
+
+        <span class="status-badge approved">
+            مقبول
+        </span>
 
     {% elif req.status == "rejected" %}
-        <span class="status-badge rejected">مرفوض</span>
+
+        <span class="status-badge rejected">
+            مرفوض
+        </span>
+
     {% endif %}
 
 </div>
 
 <!-- ================= REQUEST INFO ================= -->
+
 <div class="detail-card">
 
-    <h5 class="fw-bold mb-3">📄 بيانات الطلب</h5>
+    <div class="section-title">
+        📄 بيانات الطلب
+    </div>
 
     <div class="info-row">
         <span>تاريخ الطلب</span>
@@ -100,9 +273,12 @@
 </div>
 
 <!-- ================= SUBSCRIPTION INFO ================= -->
+
 <div class="detail-card">
 
-    <h5 class="fw-bold mb-3">📦 تفاصيل الاشتراك</h5>
+    <div class="section-title">
+        📦 تفاصيل الاشتراك
+    </div>
 
     <div class="info-row">
         <span>الحي</span>
@@ -131,30 +307,77 @@
 
     <div class="info-row">
         <span>حالة الاشتراك</span>
+
         <span>
-            {% if req.subscription.status == "active" %}
-                <span class="status-badge active">نشط</span>
 
-            {% elif req.subscription.status == "inactive" %}
-                <span class="status-badge inactive">موقوف</span>
+            {% if req.subscription.current_status == "active" %}
 
-            {% elif req.subscription.status == "full" %}
-                <span class="status-badge full">ممتلئ</span>
+                <span class="status-badge active">
+                    نشط
+                </span>
+
+            {% elif req.subscription.current_status == "expired" %}
+
+                <span class="status-badge rejected">
+                    منتهي
+                </span>
+
+            {% elif req.subscription.current_status == "full" %}
+
+                <span class="status-badge full">
+                    ممتلئ
+                </span>
+
+            {% else %}
+
+                <span class="status-badge inactive">
+                    غير نشط
+                </span>
+
             {% endif %}
+
         </span>
+
     </div>
 
 </div>
 
 <!-- ================= STUDENT INFO ================= -->
+
 <div class="detail-card">
 
-    <h5 class="fw-bold mb-3">👤 بيانات الطالب</h5>
-
-    <div class="info-row">
-        <span>الاسم</span>
-        <span>{{ req.student.user.full_name }}</span>
+    <div class="section-title">
+        👤 بيانات الطالب
     </div>
+
+    <a href="{% url 'accounts:public_profile' req.student.user.id %}"
+       class="profile-box">
+
+        <div class="profile-left">
+
+            <div class="profile-avatar">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+
+                <div class="profile-name">
+                    {{ req.student.user.full_name }}
+                </div>
+
+                <div class="profile-meta">
+                    طالب جامعي
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="profile-action">
+            عرض الملف الشخصي
+        </div>
+
+    </a>
 
     <div class="info-row">
         <span>الإيميل</span>
@@ -178,50 +401,172 @@
 
     {% if req.student.location_url %}
     <div class="info-row">
+
         <span>الموقع</span>
-        <a href="{{ req.student.location_url }}" target="_blank"
+
+        <a href="{{ req.student.location_url }}"
+           target="_blank"
            class="btn btn-outline-secondary btn-sm">
+
             فتح الخريطة
+
         </a>
+
     </div>
     {% endif %}
 
 </div>
 
-<!-- ================= SCHEDULE ================= -->
+<!-- ================= DRIVER INFO ================= -->
+
 <div class="detail-card">
 
-    <h5 class="fw-bold mb-3">📅 الجدول الأسبوعي</h5>
+    <div class="section-title">
+        🚗 بيانات السائق
+    </div>
 
-    {% if schedule %}
+    <a href="{% url 'accounts:public_profile' req.subscription.driver.user.id %}"
+       class="profile-box">
 
-        {% for day in schedule %}
-        <div class="schedule-row d-flex justify-content-between align-items-center">
+        <div class="profile-left">
 
-            <div class="day-name">
-                {{ day.get_day_of_week_display }}
+            <div class="profile-avatar">
+                <i class="bi bi-person-fill"></i>
             </div>
 
-            <div class="time-box">
+            <div>
 
-                {% if day.is_off_day %}
-                    <span class="badge bg-danger">إجازة</span>
-                {% else %}
-                    <div class="time-item">
-                        ذهاب: {{ day.pickup_time|time:"H:i" }}
-                    </div>
-                    <div class="time-item">
-                        عودة: {{ day.return_time|time:"H:i" }}
-                    </div>
-                {% endif %}
+                <div class="profile-name">
+                    {{ req.subscription.driver.user.full_name }}
+                </div>
+
+                <div class="profile-meta">
+
+                    {% if req.subscription.driver.verification_status == "approved" %}
+                        سائق موثق ✅
+                    {% else %}
+                        سائق غير موثق
+                    {% endif %}
+
+                </div>
 
             </div>
 
         </div>
+
+        <div class="profile-action">
+            عرض الملف الشخصي
+        </div>
+
+    </a>
+
+    <div class="info-row">
+        <span>الإيميل</span>
+        <span>{{ req.subscription.driver.user.email }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>رقم الجوال</span>
+        <span>{{ req.subscription.driver.user.phone }}</span>
+    </div>
+
+    <div class="info-row">
+        <span>السيارة</span>
+        <span>{{ req.subscription.driver.vehicle_model }}</span>
+    </div>
+
+</div>
+
+<!-- ================= SCHEDULE ================= -->
+
+<div class="detail-card">
+
+    <div class="section-title">
+        📅 الجدول الأسبوعي
+    </div>
+
+    {% if schedule %}
+
+        {% for day in schedule %}
+
+        <div class="schedule-row">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+
+                <!-- Day -->
+                <div class="day-name mb-2 mb-md-0">
+                    {{ day.get_day_of_week_display }}
+                </div>
+
+                <!-- Times -->
+                <div>
+
+                    {% if day.is_off_day %}
+
+                        <span class="badge bg-danger">
+                            إجازة
+                        </span>
+
+                    {% else %}
+
+                    <div class="time-box">
+
+                        <!-- Pickup -->
+
+                        <div class="time-item">
+
+                            <span class="time-label">
+                                ذهاب
+                            </span>
+
+                            <div class="time-value">
+
+                                {% with pickup=day.pickup_time|time:"h:i A" %}
+                                    {{ pickup|cut:"AM"|cut:"PM" }}
+                                    {% if "AM" in pickup %} ص {% else %} م {% endif %}
+                                {% endwith %}
+
+                            </div>
+
+                        </div>
+
+                        <!-- Return -->
+
+                        <div class="time-item">
+
+                            <span class="time-label">
+                                عودة
+                            </span>
+
+                            <div class="time-value">
+
+                                {% with ret=day.return_time|time:"h:i A" %}
+                                    {{ ret|cut:"AM"|cut:"PM" }}
+                                    {% if "AM" in ret %} ص {% else %} م {% endif %}
+                                {% endwith %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
         {% endfor %}
 
     {% else %}
-        <p class="text-muted">لا يوجد جدول.</p>
+
+        <p class="text-muted mb-0">
+            لا يوجد جدول أسبوعي.
+        </p>
+
     {% endif %}
 
 </div>

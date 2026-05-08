@@ -20,6 +20,96 @@
     .info-row span:first-child {
         color: var(--soft-color);
     }
+
+    .driver-profile-box {
+    background: var(--light-bg);
+    border-radius: 25px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    transition: 0.3s ease;
+}
+
+.driver-profile-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+}
+
+.driver-profile-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.driver-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+
+    background: var(--accent-color);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+}
+
+.driver-name {
+    font-weight: 700;
+    color: #222;
+}
+
+.driver-meta {
+    color: var(--soft-color);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.driver-profile-action {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.driver-profile-box {
+    background: var(--light-bg);
+    border-radius: 25px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    transition: 0.3s ease;
+
+    border: 1px solid rgba(0,0,0,0.03);
+
+    cursor: pointer;
+}
+
+.driver-profile-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+}
+
+.driver-profile-action {
+    color: var(--accent-color);
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    transition: 0.3s ease;
+}
+
+.driver-profile-box:hover .driver-profile-action {
+    transform: translateX(-5px);
+}
 </style>
 
 
@@ -34,20 +124,58 @@
             {% endif %}
     </div>
 
-    <!-- ===== Driver Info ===== -->
-    <h6 class="fw-bold mb-3">بيانات السائق</h6>
 
-    <div class="info-row">
-        <span>الاسم</span>
-        <span>{{ subscription.driver.user.get_full_name }}</span>
+<!-- ===== Driver Info ===== -->
+<h6 class="fw-bold mb-3">
+    بيانات السائق
+</h6>
+
+<a href="{% url 'accounts:public_profile' subscription.driver.user.id %}"
+   class="text-decoration-none">
+
+    <div class="driver-profile-box">
+
+        <div class="driver-profile-left">
+
+            <div class="driver-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+            <div>
+
+                <div class="driver-name">
+                    {{ subscription.driver.user.get_full_name }}
+                </div>
+
+                <div class="driver-meta">
+
+                    {% if subscription.driver.average_rating %}
+                        ⭐ {{ subscription.driver.average_rating|floatformat:2 }}
+                    {% endif %}
+
+                    •
+
+                    {% if subscription.driver.verification_status == "approved" %}
+                        موثق ✅
+                    {% else %}
+                        غير موثق
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="driver-profile-action">
+            عرض الملف الشخصي
+            <i class="bi bi-arrow-left-short"></i>
+        </div>
+
     </div>
 
-    <div class="info-row">
-        <span>الهاتف</span>
-        <span>{{ subscription.driver.user.phone }}</span>
-    </div>
+</a>
 
-    <hr>
 
     <!-- ===== Subscription Info ===== -->
     <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>

@@ -252,15 +252,47 @@ def request_detail(request, pk):
 
     driver = req.subscription.driver
 
+    # ===== Weekly Schedule =====
+
+    ORDER = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+    ]
+
+    schedule_qs = req.schedule.all()
+
+    schedule_dict = {
+        s.day_of_week: s
+        for s in schedule_qs
+    }
+
+    sorted_schedule = [
+        schedule_dict[day]
+        for day in ORDER
+        if day in schedule_dict
+    ]
+
     context = {
         "req": req,
         "driver": driver,
         "student": req.student,
+        "schedule": sorted_schedule,
     }
 
-    return render(request, "admin_panel/request_detail.html", context)
-
-
+    return render(
+        request,
+        "admin_panel/request_detail.html",
+        context
+    )
+    
+    
+    
+    
 @admin_required(levels=[1, 2])
 def driver_detail(request, pk):
 
@@ -671,8 +703,6 @@ def activate_subscription(request, pk):
 
     return redirect("admin_panel:subscription_detail", pk=pk)
 
-
-
 @admin_required(levels=[1, 2])
 def subscription_request_detail(request, pk):
 
@@ -684,9 +714,39 @@ def subscription_request_detail(request, pk):
         id=pk
     )
 
-    schedule = req.schedule.all().order_by("day_of_week")
+    # ===== ترتيب الأيام =====
 
-    return render(request, "admin_panel/subscription_request_detail.html", {
-        "req": req,
-        "schedule": schedule
-    })
+    ORDER = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+    ]
+
+    schedule_qs = req.schedule.all()
+
+    schedule_dict = {
+        s.day_of_week: s
+        for s in schedule_qs
+    }
+
+    sorted_schedule = [
+        schedule_dict[day]
+        for day in ORDER
+        if day in schedule_dict
+    ]
+
+    return render(
+        request,
+        "admin_panel/subscription_request_detail.html",
+        {
+            "req": req,
+            "schedule": sorted_schedule
+        }
+    )
+    
+    
+    

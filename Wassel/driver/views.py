@@ -45,7 +45,7 @@ def driver_dashboard(request):
 
     subscriptions = Subscription.objects.filter(driver=profile)
 
-    active_subscriptions = subscriptions.filter(status="active").count()
+    active_subscriptions = sum(1 for sub in subscriptions if sub.current_status == "active")
 
     new_requests = SubscriptionRequest.objects.filter(
         subscription__driver=profile,

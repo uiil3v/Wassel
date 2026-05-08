@@ -32,6 +32,16 @@ class StudentProfile(models.Model):
         max_length=10,
         choices=GENDER_CHOICES
     )
+    
+    average_rating = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        default=0
+    )
+
+    reviews_count = models.PositiveIntegerField(
+        default=0
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
