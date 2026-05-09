@@ -159,8 +159,12 @@
     <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
 
     <div class="info-row">
-        <span>الحي</span>
-        <span>{{ req.subscription.neighborhood }}</span>
+        <span>المدينة / الحي</span>
+        <span>
+            {{ req.subscription.driver.user.city.name_ar }}
+            -
+            {{ req.subscription.neighborhood }}
+        </span>
     </div>
 
 <div class="info-row">
@@ -241,8 +245,12 @@
 </div>
 
 <div class="info-row">
-    <span>الحي</span>
-    <span>{{ req.student.neighborhood }}</span>
+    <span>المدينة / الحي</span>
+    <span>
+        {{ req.student.user.city.name_ar }}
+        -
+        {{ req.student.neighborhood }}
+    </span>
 </div>
 
     {% if req.student.location_url %}

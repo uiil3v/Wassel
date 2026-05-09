@@ -587,6 +587,7 @@ def driver_schedule(request):
 
             weekly_schedule[day_name].append({
                 "student": req.student.user.get_full_name(),
+                "city": req.student.user.city.name_ar,
                 "neighborhood": req.subscription.neighborhood,
                 "pickup": s.pickup_time,
                 "return": s.return_time,

@@ -70,8 +70,48 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold mb-0">تفاصيل اشتراكك</h4>
-        <span class="badge bg-success">نشط</span>
-    </div>
+        {% if req.status == "pending" %}
+
+            <span class="badge bg-warning text-dark">
+                قيد الانتظار
+            </span>
+
+        {% elif req.status == "rejected" %}
+
+            <span class="badge bg-danger">
+                مرفوض
+            </span>
+
+        {% elif req.status == "cancelled" %}
+
+            <span class="badge bg-secondary">
+                ملغي
+            </span>
+
+        {% elif req.status == "approved" %}
+
+            {% if req.subscription.current_status == "expired" %}
+
+                <span class="badge bg-dark">
+                    منتهي
+                </span>
+
+            {% elif req.subscription.current_status == "inactive" %}
+
+                <span class="badge bg-secondary">
+                    موقوف
+                </span>
+
+            {% else %}
+
+                <span class="badge bg-success">
+                    نشط
+                </span>
+
+            {% endif %}
+
+        {% endif %}
+            </div>
 
     <!-- ===== Driver Info ===== -->
     <h6 class="fw-bold mt-4 mb-3">بيانات السائق</h6>
@@ -116,7 +156,7 @@
         <span>{{ req.joined_at|date:"d/m/Y" }}</span>
     </div>
 
-    {% if req.status == "approved" or req.status == "pending" %}
+    {% if req.status == "pending" or req.status == "approved" and req.subscription.current_status != "expired" and req.subscription.current_status != "inactive" %}
     <hr>
 
     <div class="text-start mt-4">

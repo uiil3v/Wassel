@@ -142,7 +142,7 @@
             <tr>
                 <th>الطالب</th>
                 <th>السائق</th>
-                <th>الحي</th>
+                <th>الاشتراك</th>
                 <th>الحالة</th>
             </tr>
         </thead>
@@ -153,7 +153,11 @@
             <tr>
                 <td>{{ req.student.user.full_name }}</td>
                 <td>{{ req.subscription.driver.user.full_name }}</td>
-                <td>{{ req.subscription.neighborhood }}</td>
+                <td>
+                    {{ req.subscription.driver.user.city.name_ar }}
+                    -
+                    {{ req.subscription.neighborhood }}
+                </td>
 
                 <td>
                     {% if req.status == "pending" %}

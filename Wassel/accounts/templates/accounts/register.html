@@ -150,6 +150,31 @@ label {
 
 }
 
+.password-wrapper {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    color: #888;
+    font-size: 18px;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--accent-color);
+}
+
 </style>
 {% endblock %}
 
@@ -261,22 +286,58 @@ label {
 
                                 <!-- Password -->
                                 <div class="col-md-6 mb-4">
+
                                     <label>كلمة المرور</label>
-                                    <input type="password" name="password1"
-                                           class="premium-input {% if form.password1.errors %}input-error{% endif %}">
+
+                                    <div class="password-wrapper">
+
+                                        <input type="password"
+                                            name="password1"
+                                            id="password1"
+                                            class="premium-input pe-5 {% if form.password1.errors %}input-error{% endif %}">
+
+                                        <button type="button"
+                                                class="password-toggle"
+                                                onclick="togglePassword('password1', this)">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </button>
+
+                                    </div>
+
                                     {% for error in form.password1.errors %}
                                         <div class="error-text">{{ error }}</div>
                                     {% endfor %}
+
                                 </div>
 
                                 <!-- Confirm Password -->
                                 <div class="col-md-6 mb-4">
+
                                     <label>تأكيد كلمة المرور</label>
-                                    <input type="password" name="password2"
-                                           class="premium-input {% if form.password2.errors %}input-error{% endif %}">
+
+                                    <div class="password-wrapper">
+
+                                        <input type="password"
+                                            name="password2"
+                                            id="password2"
+                                            class="premium-input pe-5 {% if form.password2.errors %}input-error{% endif %}">
+
+                                        <button type="button"
+                                                class="password-toggle"
+                                                onclick="togglePassword('password2', this)">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </button>
+
+                                    </div>
+
                                     {% for error in form.password2.errors %}
                                         <div class="error-text">{{ error }}</div>
                                     {% endfor %}
+
                                 </div>
 
                             </div>
@@ -298,5 +359,25 @@ label {
         </div>
     </div>
 </section>
+
+<script>
+
+function togglePassword(inputId, button) {
+
+    const input = document.getElementById(inputId);
+
+    const type = input.getAttribute("type") === "password"
+        ? "text"
+        : "password";
+
+    input.setAttribute("type", type);
+
+    button.innerHTML = type === "password"
+        ? '<i class="bi bi-eye"></i>'
+        : '<i class="bi bi-eye-slash"></i>';
+
+}
+
+</script>
 
 {% endblock %}

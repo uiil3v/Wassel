@@ -30,7 +30,9 @@ class StudentProfile(models.Model):
 
     gender = models.CharField(
         max_length=10,
-        choices=GENDER_CHOICES
+        choices=GENDER_CHOICES,
+        blank=True,
+        null=True
     )
     
     average_rating = models.DecimalField(

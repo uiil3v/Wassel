@@ -130,7 +130,7 @@
             <thead>
                 <tr>
                     <th>الطالب</th>
-                    <th>المسار</th>
+                    <th>الاشتراك</th>
                     <th>الحالة</th>
                     <th>التاريخ</th>
                 </tr>
@@ -141,7 +141,11 @@
                 {% for req in last_requests %}
                 <tr>
                     <td>{{ req.student.user.full_name }}</td>
-                    <td>{{ req.subscription.neighborhood }}</td>
+                    <td>
+                        {{ req.subscription.driver.user.city.name_ar }}
+                        -
+                        {{ req.subscription.neighborhood }}
+                    </td>
 
                   <td>
                     <span class="badge 

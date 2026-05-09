@@ -138,7 +138,6 @@ def student_subscription_detail(request, req_id):
         ).prefetch_related("schedule"),
         id=req_id,
         student=profile,
-        status="approved"
     )
 
     context = {
@@ -434,7 +433,12 @@ def student_profile(request):
 
         # ===== تحديث بيانات الطالب =====
         profile.university_name = request.POST.get("university_name")
-        profile.gender = request.POST.get("gender")
+        gender = request.POST.get("gender")
+        if not gender:
+            messages.error(request, "يرجى اختيار الجنس.")
+            return redirect("student:profile")
+
+        profile.gender = gender
         profile.neighborhood = request.POST.get("neighborhood")
         profile.location_url = request.POST.get("location_url")
 

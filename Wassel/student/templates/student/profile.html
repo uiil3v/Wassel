@@ -89,11 +89,28 @@
             </div>
 
             <div class="col-md-6 mb-3">
+
                 <label>الجنس</label>
+
                 <select name="gender" class="premium-input">
-                    <option value="male" {% if profile.gender == "male" %}selected{% endif %}>ذكر</option>
-                    <option value="female" {% if profile.gender == "female" %}selected{% endif %}>أنثى</option>
+
+                    <option value=""
+                        {% if not profile.gender %}selected{% endif %}>
+                        اختر الجنس
+                    </option>
+
+                    <option value="male"
+                        {% if profile.gender == "male" %}selected{% endif %}>
+                        ذكر
+                    </option>
+
+                    <option value="female"
+                        {% if profile.gender == "female" %}selected{% endif %}>
+                        أنثى
+                    </option>
+
                 </select>
+
             </div>
         </div>
     </div>

@@ -36,7 +36,7 @@
 <div class="detail-card">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold">{{ subscription.neighborhood }}</h4>
+        <h4 class="fw-bold">{{ subscription.driver.user.city.name_ar }} - {{ subscription.neighborhood }}</h4>
 
         {% if subscription.current_status == "active" %}
 
