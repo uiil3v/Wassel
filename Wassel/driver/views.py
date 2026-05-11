@@ -211,7 +211,7 @@ def create_subscription(request):
         neighborhood = request.POST.get("neighborhood")
         price = request.POST.get("price")
         seats = request.POST.get("seats")
-        duration = request.POST.get("duration")  # monthly / quarterly
+        duration = request.POST.get("duration")  # monthly / semester
         start_date = request.POST.get("start_date")
         end_date = request.POST.get("end_date")
         notes = request.POST.get("notes")
@@ -222,7 +222,7 @@ def create_subscription(request):
             return redirect("driver:create_subscription")
 
         # 🔥 تحقق من النوع
-        if duration not in ["monthly", "quarterly"]:
+        if duration not in ["monthly", "semester"]:
             messages.error(request, "❌ نوع الاشتراك غير صحيح")
             return redirect("driver:create_subscription")
 
@@ -254,7 +254,7 @@ def create_subscription(request):
                 end_date_obj = start_date_obj + timedelta(days=30)
 
 
-            elif duration == "quarterly":
+            elif duration == "semester":
 
                 # 🟡 لو ما حدد → 90 يوم
                 if not end_date:

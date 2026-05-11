@@ -132,6 +132,25 @@
     <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
 
     <div class="info-row">
+        <span>نوع الاشتراك</span>
+
+        {% if req.subscription.duration == "monthly" %}
+            <span>شهري</span>
+
+        {% elif req.subscription.duration == "semester" %}
+            <span>فصلي</span>
+
+        {% else %}
+            <span>-</span>
+        {% endif %}
+    </div>
+
+    <div class="info-row">
+        <span>المدينة</span>
+        <span>{{ req.subscription.driver.user.city.name_ar }}</span>
+    </div>
+
+    <div class="info-row">
         <span>الحي</span>
         <span>{{ req.subscription.neighborhood }}</span>
     </div>
