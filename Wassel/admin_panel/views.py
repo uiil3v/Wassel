@@ -1,53 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
-
 from accounts.models import User
 from driver.models import DriverProfile
 from student.models import StudentProfile
 from subscriptions.models import SubscriptionRequest
 from payment.models import Transaction
-
 from .decorators import admin_required
-
-from subscriptions.models import SubscriptionRequest
-
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-
-from subscriptions.models import SubscriptionRequest
-from driver.models import DriverProfile
-
-from .decorators import admin_required
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-
-from subscriptions.models import SubscriptionRequest
-from driver.models import DriverProfile
-
-from .decorators import admin_required
-
-from django.shortcuts import render
-from accounts.models import User
 from django.db.models import Q
-from .decorators import admin_required
-
-from django.shortcuts import render, get_object_or_404
-from accounts.models import User
-from .decorators import admin_required
-
-
-from payment.models import Transaction
-from django.db.models import Sum
-from .decorators import admin_required
-
-from payment.models import Transaction
-from django.db.models import Sum, Q
-from .decorators import admin_required
-
 from notifications.utils import send_notification
-
-from django.db.models import Q
 from notifications.models import Notification
 
 
@@ -55,10 +16,7 @@ from notifications.models import Notification
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
-
-    # ===============================
     # Stats
-    # ===============================
     users_count = User.objects.count()
     drivers_count = DriverProfile.objects.count()
     students_count = StudentProfile.objects.count()
@@ -67,7 +25,7 @@ def dashboard(request):
         status="pending"
     ).count()
 
-    # 💰 مجموع الأرباح (مو count!)
+    # مجموع الأرباح (مو count!)
     if request.user.admin_level == 1:
         total_earnings = Transaction.objects.filter(
             type="commission",
@@ -76,9 +34,7 @@ def dashboard(request):
     else:
         total_earnings = None
 
-    # ===============================
     # Latest Requests
-    # ===============================
     latest_requests = SubscriptionRequest.objects.select_related(
         "student__user",
         "subscription__driver__user"
@@ -88,9 +44,7 @@ def dashboard(request):
         status="approved"
     ).count()
 
-    # ===============================
     # Context
-    # ===============================
     context = {
         "users_count": users_count,
         "drivers_count": drivers_count,
@@ -124,9 +78,8 @@ def requests_list(request):
 @admin_required(levels=[1, 2])
 def requests_list(request):
 
-    # =========================
+
     # Filters
-    # =========================
     request_status = request.GET.get("status")
     driver_status = request.GET.get("driver_status")
 
@@ -153,16 +106,15 @@ def requests_list(request):
     return render(request, "admin_panel/requests.html", context)
 
 
-# =========================
-# Actions - Requests
-# =========================
+
+
 
 @admin_required(levels=[1, 2])
 def approve_request(request, pk):
     obj = get_object_or_404(SubscriptionRequest, id=pk)
     obj.approve()
 
-    # 🔔 Notification
+    # Notification
     send_notification(
         title="تم قبول طلبك",
         message="تم قبول طلب الاشتراك بنجاح ✅",
@@ -180,7 +132,7 @@ def reject_request(request, pk):
     obj = get_object_or_404(SubscriptionRequest, id=pk)
     obj.reject()
 
-    # 🔔 Notification
+    # Notification
     send_notification(
         title="تم رفض طلبك",
         message="تم رفض طلب الاشتراك ❌",
@@ -192,9 +144,7 @@ def reject_request(request, pk):
     messages.error(request, "تم رفض الطلب ❌")
     return redirect("admin_panel:requests")
 
-# =========================
-# Actions - Drivers
-# =========================
+
 
 
 @admin_required(levels=[1, 2])
@@ -202,7 +152,7 @@ def approve_driver(request, pk):
     driver = get_object_or_404(DriverProfile, id=pk)
     driver.approve()
 
-    # 🔔 Notification
+    # Notification
     send_notification(
         title="تم اعتماد حسابك كسائق",
         message="تم توثيق حسابك بنجاح 🚗 يمكنك الآن استقبال الطلبات",
@@ -225,7 +175,7 @@ def reject_driver(request, pk):
 
         driver.reject(reason)
 
-        # 🔔 Notification
+        # Notification
         send_notification(
             title="تم رفض طلب التوثيق",
             message=f"تم رفض طلبك ❌ السبب: {reason}",

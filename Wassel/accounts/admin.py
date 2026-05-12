@@ -11,14 +11,14 @@ class CustomUserAdmin(UserAdmin):
         "full_name",
         "phone",
         "role",
-        "admin_level",  # 🔥 الجديد
+        "admin_level",  
         "status",
         "is_staff",
     )
 
     list_filter = (
         "role",
-        "admin_level",  # 🔥 الجديد
+        "admin_level", 
         "status",
         "is_staff",
     )
@@ -35,7 +35,7 @@ class CustomUserAdmin(UserAdmin):
         ("الصلاحيات", {
             "fields": (
                 "role",
-                "admin_level",  # 🔥 الجديد
+                "admin_level",  
                 "status",
                 "is_staff",
                 "is_superuser",
@@ -58,7 +58,7 @@ class CustomUserAdmin(UserAdmin):
                 "last_name",
                 "phone",
                 "role",
-                "admin_level",  # 🔥 الجديد
+                "admin_level",  
                 "status",
                 "password1",
                 "password2"

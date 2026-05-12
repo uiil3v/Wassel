@@ -31,7 +31,7 @@ def register_view(request):
             # تسجيل الدخول مباشرة بعد التسجيل
             login(request, user)
 
-            # إذا كان سائق → يروح يكمل بياناته
+            # إذا كان سائق؟ يروح يكمل بياناته
             if user.role == "driver":
                 messages.warning(request, "يرجى إكمال بياناتك أولاً.")
                 return redirect("driver:profile")
@@ -53,14 +53,14 @@ def register_view(request):
 
 def login_view(request):
     if request.method == "POST":
-        email = request.POST.get("email")   # 🔥 بدل username
+        email = request.POST.get("email")   
         password = request.POST.get("password")
 
         user = authenticate(request, email=email, password=password)
 
         if user is not None:
 
-            # 🔒 منع المحظورين
+            # المحظور ممنوع من استخدام المنصه 
             if user.status == "banned":
                 messages.error(request, "حسابك محظور.")
                 return redirect("accounts:login")
@@ -100,7 +100,6 @@ def public_profile_view(request, user_id):
 
     # ===== Driver =====
     if user_obj.role == "driver":
-
         driver_profile = getattr(
             user_obj,
             "driver_profile",
@@ -122,10 +121,6 @@ def public_profile_view(request, user_id):
         "student_profile": student_profile,
         "reviews": reviews,
     }
-
-        # =========================
-    # اختيار الـ template حسب المستخدم الحالي
-    # =========================
 
     if request.user.is_authenticated:
 

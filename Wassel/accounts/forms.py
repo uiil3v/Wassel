@@ -19,7 +19,7 @@ class RegisterForm(UserCreationForm):
             'last_name',
             'email',
             'phone',
-            'city',          # 🔥 أضفنا المدينة هنا
+            'city',        
             'role',
             'password1',
             'password2'
@@ -32,10 +32,10 @@ class RegisterForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # 🔥 ترتيب المدن أبجديًا عربي
+  
         self.fields['city'].queryset = self.fields['city'].queryset.order_by('name_ar')
         
-        # 🔥 هنا تحطها (هذا السطر المهم)
+  
         self.fields['role'].choices = [
             ('student', 'طالب'),
             ('driver', 'سائق'),

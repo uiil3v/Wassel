@@ -12,7 +12,7 @@ class CustomUserManager(BaseUserManager):
 
         email = self.normalize_email(email)
 
-        # 🔥 تأكد أن المدينة موجودة للمستخدم العادي
+
         if not extra_fields.get("city"):
             raise ValueError("City is required")
 
@@ -27,7 +27,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("status", "active")
         extra_fields.setdefault("role", "admin")
-        extra_fields.setdefault("admin_level", 1)  # 🔥 هذا المهم
+        extra_fields.setdefault("admin_level", 1)  
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -49,12 +49,12 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractUser):
 
-    username = None  # حذفنا username رسميًا
+    username = None  
 
     ROLE_CHOICES = (
         ('student', 'طالب'),
         ('driver', 'سائق'),
-        ('admin', 'مشرف'),  # 🔥 الجديد
+        ('admin', 'مشرف'),  
     )
 
     STATUS_CHOICES = (
@@ -109,7 +109,7 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
 
-    # 🔥 حذفنا city من هنا عشان ما يطلبها createsuperuser
+
     REQUIRED_FIELDS = ["first_name", "last_name", "phone"]
 
     objects = CustomUserManager()
