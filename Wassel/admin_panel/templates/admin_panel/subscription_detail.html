@@ -243,10 +243,14 @@
                     منتهي
                 </span>
 
-            {% elif subscription.current_status == "inactive" %}
+            {% elif subscription.current_status == "inactive_by_admin" %}
+                <span class="badge bg-danger">
+                    موقوف من الإدارة
+                </span>
 
-                <span class="badge status-badge inactive">
-                    موقوف
+            {% elif subscription.current_status == "inactive_by_driver" %}
+                <span class="badge bg-secondary">
+                    موقوف بواسطة السائق
                 </span>
 
             {% elif subscription.current_status == "full" %}
@@ -265,24 +269,31 @@
 
 <div class="detail-card text-center">
 
-    {% if subscription.status == "active" %}
+
+    {% if subscription.current_status == "active" or subscription.current_status == "full" %}
 
         <a href="{% url 'admin_panel:deactivate_subscription' subscription.id %}"
-           class="btn btn-danger px-5">
+        class="btn btn-danger px-5">
             إيقاف الاشتراك 🚫
         </a>
 
-    {% elif subscription.status == "inactive" %}
+    {% elif subscription.status == "inactive_by_admin" %}
 
         <a href="{% url 'admin_panel:activate_subscription' subscription.id %}"
-           class="btn btn-success px-5">
+        class="btn btn-success px-5">
             إعادة التفعيل ✅
         </a>
 
-    {% elif subscription.status == "full" %}
+    {% elif subscription.status == "inactive_by_driver" %}
+
+        <div class="alert alert-warning mb-0">
+            هذا الاشتراك موقوف بواسطة السائق، ولا يمكن للإدارة تفعيله.
+        </div>
+
+    {% elif subscription.current_status == "expired" %}
 
         <span class="text-muted">
-            الاشتراك ممتلئ
+            الاشتراك منتهي
         </span>
 
     {% endif %}

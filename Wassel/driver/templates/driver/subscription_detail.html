@@ -38,30 +38,23 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold">{{ subscription.driver.user.city.name_ar }} - {{ subscription.neighborhood }}</h4>
 
-        {% if subscription.current_status == "active" %}
-
-            <span class="badge bg-success">
-                نشط
-            </span>
+       {% if subscription.current_status == "active" %}
+            <span class="badge bg-success">نشط</span>
 
         {% elif subscription.current_status == "expired" %}
-
-            <span class="badge bg-danger">
-                منتهي
-            </span>
+            <span class="badge bg-danger">منتهي</span>
 
         {% elif subscription.current_status == "full" %}
+            <span class="badge bg-warning text-dark">ممتلئ</span>
 
-            <span class="badge bg-warning text-dark">
-                ممتلئ
-            </span>
+        {% elif subscription.current_status == "inactive_by_admin" %}
+            <span class="badge bg-danger">موقوف من الإدارة</span>
+
+        {% elif subscription.current_status == "inactive_by_driver" %}
+            <span class="badge bg-secondary">موقوف بواسطتك</span>
 
         {% else %}
-
-            <span class="badge bg-secondary">
-                غير نشط
-            </span>
-
+            <span class="badge bg-secondary">غير نشط</span>
         {% endif %}
     </div>
 
@@ -98,9 +91,40 @@
     </div>
     <hr class="my-4">
 
+    {% if subscription.current_status == "inactive_by_admin" %}
+
+        <div class="alert alert-danger text-center">
+            تم إيقاف هذا الاشتراك من قبل الإدارة، ولا يمكنك تفعيله أو استقبال طلبات جديدة عليه.
+        </div>
+
+    {% elif subscription.current_status == "active" or subscription.current_status == "full" %}
+
+        <div class="text-center mb-3">
+            <form method="post" action="{% url 'driver:deactivate_subscription' subscription.id %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-danger px-4"
+                        onclick="return confirm('هل أنت متأكد من إيقاف الاشتراك؟');">
+                    إيقاف الاشتراك مؤقتًا
+                </button>
+            </form>
+        </div>
+
+    {% elif subscription.current_status == "inactive_by_driver" %}
+
+        <div class="text-center mb-3">
+            <form method="post" action="{% url 'driver:activate_subscription' subscription.id %}">
+                {% csrf_token %}
+                <button class="btn btn-success px-4">
+                    تفعيل الاشتراك
+                </button>
+            </form>
+        </div>
+
+    {% endif %}
+
     <div class="text-center">
 
-        {% if not pending_requests and not approved_requests %}
+        {% if not pending_requests and not approved_requests and subscription.current_status != "inactive_by_admin" %}
 
         <form method="post" action="{% url 'driver:delete_subscription' subscription.id %}">
             {% csrf_token %}
@@ -127,7 +151,17 @@
 <!-- القسم 2: الطلبات Pending -->
 <!-- ========================= -->
 
+
+
 <div class="detail-card">
+
+    {% if subscription.current_status == "inactive_by_admin" %}
+
+        <div class="alert alert-danger">
+            لا يمكنك قبول طلبات جديدة لأن الاشتراك موقوف من الإدارة.
+        </div>
+
+    {% endif %}
 
     <h5 class="section-title">الطلبات الجديدة</h5>
 

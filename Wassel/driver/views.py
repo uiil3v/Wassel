@@ -490,6 +490,16 @@ def approve_request(request, req_id):
     if request.method == "POST":
 
         try:
+            if req.subscription.status == "inactive_by_admin":
+                messages.error(
+                    request,
+                    "لا يمكنك قبول الطلبات لاشتراك موقوف من الإدارة."
+                )
+
+                return redirect(
+                    "driver:subscription_detail",
+                    sub_id=req.subscription.id
+                )
             with transaction.atomic():
                 req.approve()  # الموافقة الأصلية
                 approve_subscription_payment(req)  # 🔥 تحويل الأموال
@@ -500,6 +510,109 @@ def approve_request(request, req_id):
             messages.error(request, str(e))
 
     return redirect("driver:subscription_detail", sub_id=req.subscription.id)
+
+
+
+@login_required
+@driver_verified_required
+def deactivate_subscription(request, sub_id):
+
+    profile = request.user.driver_profile
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=sub_id,
+        driver=profile
+    )
+
+    # إذا موقف إداريًا
+    if subscription.status == "inactive_by_admin":
+
+        messages.error(
+            request,
+            "لا يمكنك التحكم باشتراك موقوف من الإدارة."
+        )
+
+        return redirect(
+            "driver:subscription_detail",
+            sub_id=sub_id
+        )
+
+    # إذا موقف مسبقًا
+    if subscription.status == "inactive_by_driver":
+
+        messages.warning(
+            request,
+            "الاشتراك موقوف بالفعل."
+        )
+
+        return redirect(
+            "driver:subscription_detail",
+            sub_id=sub_id
+        )
+
+    subscription.deactivate_by_driver()
+
+    messages.success(
+        request,
+        "تم إيقاف الاشتراك بنجاح 🚫"
+    )
+
+    return redirect(
+        "driver:subscription_detail",
+        sub_id=sub_id
+    )
+    
+
+@login_required
+@driver_verified_required
+def activate_subscription(request, sub_id):
+
+    profile = request.user.driver_profile
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=sub_id,
+        driver=profile
+    )
+
+    # موقف إداريًا
+    if subscription.status == "inactive_by_admin":
+
+        messages.error(
+            request,
+            "لا يمكنك تفعيل اشتراك موقوف من الإدارة."
+        )
+
+        return redirect(
+            "driver:subscription_detail",
+            sub_id=sub_id
+        )
+
+    # مفعل أصلًا
+    if subscription.current_status == "active":
+
+        messages.warning(
+            request,
+            "الاشتراك مفعل بالفعل."
+        )
+
+        return redirect(
+            "driver:subscription_detail",
+            sub_id=sub_id
+        )
+
+    subscription.activate()
+
+    messages.success(
+        request,
+        "تم تفعيل الاشتراك بنجاح ✅"
+    )
+
+    return redirect(
+        "driver:subscription_detail",
+        sub_id=sub_id
+    )
 
 
 @login_required

@@ -18,9 +18,10 @@ class Subscription(models.Model):
     )
 
     STATUS_CHOICES = (
-        ("active", "Active"),
-        ("inactive", "Inactive"),
-        ("full", "Full"),
+        ("active", "نشط"),
+        ("inactive_by_driver", "موقوف بواسطة السائق"),
+        ("inactive_by_admin", "موقوف بواسطة الإدارة"),
+        ("full", "ممتلئ"),
     )
 
     driver = models.ForeignKey(
@@ -95,8 +96,23 @@ class Subscription(models.Model):
 
         self.save()
 
-    def deactivate(self):
-        self.status = "inactive"
+    def deactivate_by_admin(self):
+        self.status = "inactive_by_admin"
+        self.save()
+
+
+    def deactivate_by_driver(self):
+        self.status = "inactive_by_driver"
+        self.save()
+
+
+    def activate(self):
+
+        if self.available_seats <= 0:
+            self.status = "full"
+        else:
+            self.status = "active"
+
         self.save()
 
     def __str__(self):
@@ -111,13 +127,17 @@ class Subscription(models.Model):
         if self.end_date < today:
             return "expired"
 
+        # موقوف إداريًا
+        if self.status == "inactive_by_admin":
+            return "inactive_by_admin"
+
+        # موقوف بواسطة السائق
+        if self.status == "inactive_by_driver":
+            return "inactive_by_driver"
+
         # ممتلئ
         if self.available_seats <= 0:
             return "full"
-
-        # غير نشط
-        if self.status == "inactive":
-            return "inactive"
 
         # نشط
         return "active"
@@ -208,7 +228,7 @@ class SubscriptionRequest(models.Model):
         if self.status != "pending":
             raise ValidationError("Only pending requests can be approved.")
 
-        if self.subscription.status != "active":
+        if self.subscription.current_status != "active":
             raise ValidationError("Subscription is not active.")
 
         if self.subscription.available_seats <= 0:

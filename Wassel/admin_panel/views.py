@@ -109,43 +109,6 @@ def requests_list(request):
 
 
 
-@admin_required(levels=[1, 2])
-def approve_request(request, pk):
-    obj = get_object_or_404(SubscriptionRequest, id=pk)
-    obj.approve()
-
-    # Notification
-    send_notification(
-        title="تم قبول طلبك",
-        message="تم قبول طلب الاشتراك بنجاح ✅",
-        target="user",
-        user=obj.student.user,
-        notification_type="system"
-    )
-
-    messages.success(request, "تم قبول الطلب ✅")
-    return redirect("admin_panel:requests")
-
-
-@admin_required(levels=[1, 2])
-def reject_request(request, pk):
-    obj = get_object_or_404(SubscriptionRequest, id=pk)
-    obj.reject()
-
-    # Notification
-    send_notification(
-        title="تم رفض طلبك",
-        message="تم رفض طلب الاشتراك ❌",
-        target="user",
-        user=obj.student.user,
-        notification_type="system"
-    )
-
-    messages.error(request, "تم رفض الطلب ❌")
-    return redirect("admin_panel:requests")
-
-
-
 
 @admin_required(levels=[1, 2])
 def approve_driver(request, pk):
@@ -642,14 +605,25 @@ def deactivate_subscription(request, pk):
 
     subscription = get_object_or_404(Subscription, id=pk)
 
-    # 🔥 تأكد إنه active
-    if subscription.status != "active":
-        messages.warning(request, "الاشتراك موقوف بالفعل.")
-        return redirect("admin_panel:subscription_detail", pk=pk)
+    # إذا موقوف إداريًا بالفعل
+    if subscription.status == "inactive_by_admin":
 
-    subscription.deactivate()
+        messages.warning(
+            request,
+            "الاشتراك موقوف بالفعل من الإدارة."
+        )
 
-    messages.success(request, "تم إيقاف الاشتراك بنجاح 🚫")
+        return redirect(
+            "admin_panel:subscription_detail",
+            pk=pk
+        )
+
+    subscription.deactivate_by_admin()
+
+    messages.success(
+        request,
+        "تم إيقاف الاشتراك من قبل الإدارة 🚫"
+    )
 
     return redirect("admin_panel:subscription_detail", pk=pk)
 
@@ -659,13 +633,23 @@ def activate_subscription(request, pk):
 
     subscription = get_object_or_404(Subscription, id=pk)
 
-    if subscription.status == "active":
+    if subscription.current_status == "active":
         messages.warning(request, "الاشتراك مفعل بالفعل.")
         return redirect("admin_panel:subscription_detail", pk=pk)
+    
+    if subscription.status == "inactive_by_driver":
 
-    # 🔥 نرجعه active
-    subscription.status = "active"
-    subscription.save()
+        messages.error(
+            request,
+            "هذا الاشتراك موقوف بواسطة السائق."
+        )
+
+        return redirect(
+            "admin_panel:subscription_detail",
+            pk=pk
+        )
+
+    subscription.activate()
 
     messages.success(request, "تم إعادة تفعيل الاشتراك ✅")
 
