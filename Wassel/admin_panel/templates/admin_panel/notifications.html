@@ -100,10 +100,15 @@
     </div>
 
     <div class="notification-meta">
-        👤 {{ n.user.email }} |
-        🎯 {{ n.get_target_display }} |
-        🏷️ {{ n.get_notification_type_display }} |
-        {{ n.created_at|date:"Y-m-d H:i" }}
+👤 إلى: {{ n.user.email }} |
+{% if n.notification_type == "admin" %}
+    🛠️ بواسطة: {{ n.sent_by.full_name|default:"مشرف" }} |
+{% else %}
+    ⚙️ بواسطة: النظام |
+{% endif %}
+🎯 {{ n.get_target_display }} |
+🏷️ {{ n.get_notification_type_display }} |
+{{ n.created_at|date:"Y-m-d H:i" }}
     </div>
 
 </div>

@@ -455,21 +455,25 @@ def student_profile(request):
     return render(request, "student/profile.html", context)
 
 
+
 @login_required
 def student_notifications(request):
     if request.user.role != "student":
-        return redirect("main")
+        return redirect("main:index")
 
     notifications = Notification.objects.filter(
         user=request.user
     ).order_by("-created_at")
 
+    unread_count = notifications.filter(
+        is_read=False
+    ).count()
+
     context = {
-        "notifications": notifications
+        "notifications": notifications,
+        "unread_count": unread_count,
     }
 
     return render(request, "student/notifications.html", context)
-
-
 
 

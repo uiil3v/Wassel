@@ -409,6 +409,15 @@
                             {{ profile_user.city }}
                         </div>
                     </div>
+                    
+
+                    <div class="info-item">
+                        <div class="info-label">في المنصة منذ</div>
+
+                        <div class="info-value">
+                            {{ profile_user.date_joined|date:"d/m/Y" }}
+                        </div>
+                    </div>
 
                     <div class="info-item">
                         <div class="info-label">الحالة</div>
@@ -451,6 +460,14 @@
 
                         <div class="info-value">
                             {{ profile_user.city }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">في المنصة منذ</div>
+
+                        <div class="info-value">
+                            {{ profile_user.date_joined|date:"d/m/Y" }}
                         </div>
                     </div>
 

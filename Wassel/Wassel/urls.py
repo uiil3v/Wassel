@@ -27,4 +27,5 @@ urlpatterns = [
     path("", include("payment.urls")),
     path("admin-panel/", include("admin_panel.urls")),
     path("reviews/", include("reviews.urls")),
+    path("notifications/", include("notifications.urls")),
 ]

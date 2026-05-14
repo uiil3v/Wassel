@@ -196,6 +196,13 @@ class SubscriptionRequest(models.Model):
         choices=STATUS_CHOICES,
         default="pending"
     )
+    
+    request_code = models.CharField(
+        max_length=20,
+        unique=True,
+        blank=True,
+        null=True
+    )
 
     request_date = models.DateTimeField(auto_now_add=True)
     decision_date = models.DateTimeField(blank=True, null=True)
@@ -280,6 +287,17 @@ class SubscriptionRequest(models.Model):
         self.status = "cancelled"
         self.decision_date = timezone.now()
         self.save()
+        
+    def generate_request_code(self):
+        year = timezone.now().year
+        return f"WSL-{year}-{self.id:06d}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if not self.request_code:
+            self.request_code = self.generate_request_code()
+            super().save(update_fields=["request_code"])
 
     def get_status(self):
         return self.status

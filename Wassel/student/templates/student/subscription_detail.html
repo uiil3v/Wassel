@@ -175,6 +175,11 @@
         <span>{{ req.joined_at|date:"d/m/Y" }}</span>
     </div>
 
+    <div class="info-row">
+        <span>رقم الطلب</span>
+        <span>{{ req.request_code }}</span>
+    </div>
+
     {% if req.status == "pending" or req.status == "approved" and req.subscription.current_status != "expired" and req.subscription.current_status != "inactive" %}
     <hr>
 

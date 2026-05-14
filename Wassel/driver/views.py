@@ -638,14 +638,19 @@ def reject_request(request, req_id):
 @login_required
 def driver_notifications(request):
     if request.user.role != "driver":
-        return redirect("main")
+        return redirect("main:index")
 
     notifications = Notification.objects.filter(
         user=request.user
     ).order_by("-created_at")
 
+    unread_count = notifications.filter(
+        is_read=False
+    ).count()
+
     context = {
-        "notifications": notifications
+        "notifications": notifications,
+        "unread_count": unread_count,
     }
 
     return render(request, "driver/notifications.html", context)

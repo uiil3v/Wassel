@@ -24,6 +24,14 @@ class Notification(models.Model):
         blank=True,
         related_name="notifications"
     )
+    
+    sent_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sent_notifications"
+    )
 
     title = models.CharField(max_length=255)
     message = models.TextField()

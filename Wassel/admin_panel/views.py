@@ -365,16 +365,16 @@ def payments_view(request):
         status="completed"
     ).aggregate(total=Sum("amount"))["total"] or 0
 
-    total_withdrawals = transactions.filter(
-        type="withdraw",
+    paid_subscriptions_count = Transaction.objects.filter(
+        type="commission",
         status="completed"
-    ).aggregate(total=Sum("amount"))["total"] or 0
+    ).count()
 
     context = {
         "transactions": transactions,
         "total_transactions": total_transactions,
         "total_earnings": total_earnings,
-        "total_withdrawals": total_withdrawals,
+        "paid_subscriptions_count": paid_subscriptions_count,
 
         # مهم عشان نحافظ على القيم في الفورم
         "search": search,
@@ -417,7 +417,8 @@ def send_notification_view(request):
             message=message,
             target=target,
             user=selected_user,
-            notification_type="admin"
+            notification_type="admin",
+            sent_by=request.user
         )
 
         messages.success(request, "تم إرسال الإشعار بنجاح 🔔")
@@ -429,7 +430,7 @@ def send_notification_view(request):
 @admin_required(levels=[1, 2])
 def notifications_list(request):
 
-    notifications = Notification.objects.select_related("user").order_by("-created_at")
+    notifications = Notification.objects.select_related("user", "sent_by").order_by("-created_at")
 
     # ======================
     # Search

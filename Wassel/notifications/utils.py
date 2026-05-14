@@ -1,7 +1,7 @@
 from .models import Notification
 from accounts.models import User
 
-def send_notification(title, message, target="user", user=None, notification_type="system"):
+def send_notification(title, message, target="user", user=None, notification_type="system", sent_by=None):
 
 
     # 👤 إرسال لمستخدم معين
@@ -11,7 +11,8 @@ def send_notification(title, message, target="user", user=None, notification_typ
             title=title,
             message=message,
             target="user",
-            notification_type=notification_type
+            notification_type=notification_type,
+            sent_by=sent_by
         )
 
     # 👥 كل الطلاب
@@ -23,7 +24,8 @@ def send_notification(title, message, target="user", user=None, notification_typ
                 title=title,
                 message=message,
                 target="student",
-                notification_type=notification_type
+                notification_type=notification_type,
+                sent_by=sent_by
             ) for u in users
         ])
 
@@ -36,7 +38,8 @@ def send_notification(title, message, target="user", user=None, notification_typ
                 title=title,
                 message=message,
                 target="driver",
-                notification_type=notification_type
+                notification_type=notification_type,
+                sent_by=sent_by
             ) for u in users
         ])
 
@@ -49,7 +52,8 @@ def send_notification(title, message, target="user", user=None, notification_typ
                 title=title,
                 message=message,
                 target="admin",
-                notification_type=notification_type
+                notification_type=notification_type,
+                sent_by=sent_by
             ) for u in users
         ])
 
@@ -62,7 +66,8 @@ def send_notification(title, message, target="user", user=None, notification_typ
                 title=title,
                 message=message,
                 target="all",
-                notification_type=notification_type
+                notification_type=notification_type,
+                sent_by=sent_by
             ) for u in users
         ])
 

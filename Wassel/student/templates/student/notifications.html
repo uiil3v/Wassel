@@ -36,27 +36,81 @@
     border-right: 5px solid #0d6efd;
     background: #f4f8ff;
 }
+
+.actions-box {
+    background: white;
+    border-radius: 25px;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+}
 </style>
 
-<h3 class="mb-4 fw-bold">🔔 الإشعارات</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">🔔 الإشعارات</h3>
+
+    <span class="badge bg-primary">
+        غير مقروءة: {{ unread_count }}
+    </span>
+</div>
+
+{% if notifications %}
+<div class="actions-box d-flex flex-wrap gap-2 justify-content-end">
+
+    <form method="post" action="{% url 'notifications:mark_all_read' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-primary btn-sm">
+            تحديد الكل كمقروء
+        </button>
+    </form>
+
+    <form method="post" action="{% url 'notifications:delete_all' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm"
+                onclick="return confirm('هل أنت متأكد من حذف جميع الإشعارات؟');">
+            حذف جميع الإشعارات
+        </button>
+    </form>
+
+</div>
+{% endif %}
 
 {% for n in notifications %}
 
 <div class="notification-card {% if not n.is_read %}unread{% endif %}">
 
+    <div class="notification-title">
+        {{ n.title }}
+    </div>
 
-<div class="notification-title">
-    {{ n.title }}
-</div>
+    <div class="notification-message">
+        {{ n.message }}
+    </div>
 
-<div class="notification-message">
-    {{ n.message }}
-</div>
+    <div class="notification-date">
+        {{ n.created_at|date:"Y-m-d H:i" }}
+    </div>
 
-<div class="notification-date">
-    {{ n.created_at|date:"Y-m-d H:i" }}
-</div>
+    <div class="mt-3 d-flex gap-2 flex-wrap">
 
+        {% if not n.is_read %}
+        <form method="post" action="{% url 'notifications:mark_read' n.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-success btn-sm">
+                تمت القراءة
+            </button>
+        </form>
+        {% endif %}
+
+        <form method="post" action="{% url 'notifications:delete' n.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('هل تريد حذف هذا الإشعار؟');">
+                حذف
+            </button>
+        </form>
+
+    </div>
 
 </div>
 
