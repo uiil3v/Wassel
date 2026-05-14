@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20px;
+        }
+
+        :root {
+            --primary-color: #e8dfd1;
+            --dark-color: #4a3f35;
+            --soft-color: #8c7b6b;
+            --accent-color: #c8a951;
+            --light-bg: #f9f7f3;
+            --border-color: #e6ddd1;
+            --white: #ffffff;
+            --success: #2f7d52;
+            --danger: #a94442;
+            --muted: #7b6f65;
+        }
+
+        body {
+            font-family: DejaVu Sans;
+            direction: rtl;
+            background: var(--light-bg);
+            color: var(--dark-color);
+            font-size: 12px;
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        .document {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            position: relative;
+            min-height: 1040px;
+            overflow: hidden;
+        }
+
+        .document::before {
+            content: "وصْـــــل";
+            position: absolute;
+            top: 405px;
+            right: 95px;
+            font-size: 105px;
+            color: rgba(200, 169, 81, 0.055);
+            font-weight: bold;
+            z-index: 0;
+        }
+
+        .document::after {
+            content: "";
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            left: 18px;
+            bottom: 18px;
+            border: 1px solid rgba(200, 169, 81, 0.35);
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .top-strip {
+            height: 9px;
+            background: var(--accent-color);
+            margin: -24px -24px 20px -24px;
+        }
+
+        .header {
+            background: #fbfaf7;
+            border: 1px solid var(--border-color);
+            border-bottom: 3px solid var(--accent-color);
+            padding: 22px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-small {
+            color: var(--soft-color);
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .platform-name {
+            font-size: 46px;
+            font-weight: bold;
+            color: var(--dark-color);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .platform-subtitle {
+            color: var(--soft-color);
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .contract-title {
+            display: inline-block;
+            background: var(--dark-color);
+            color: white;
+            border: 1px solid var(--accent-color);
+            padding: 8px 34px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .meta-row {
+            margin-top: 16px;
+        }
+
+        .meta-chip {
+            display: inline-block;
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 7px 14px;
+            border-radius: 20px;
+            margin: 3px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .status-box {
+            margin-top: 12px;
+            display: inline-block;
+            padding: 7px 22px;
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-active {
+            background: #edf8f1;
+            color: var(--success);
+            border-color: #b7dec6;
+        }
+
+        .status-completed {
+            background: #f7f0dc;
+            color: #8a6b18;
+            border-color: #e3c86a;
+        }
+
+        .status-cancelled {
+            background: #fff0ef;
+            color: var(--danger);
+            border-color: #e3b7b5;
+        }
+
+        .intro-box {
+            background: #fffdf9;
+            border: 1px solid var(--border-color);
+            border-right: 5px solid var(--accent-color);
+            padding: 14px 16px;
+            margin-bottom: 19px;
+            color: var(--soft-color);
+            font-size: 11.8px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+            border-right: 5px solid var(--accent-color);
+            padding-right: 10px;
+        }
+
+        .card {
+            background: #fffdf9;
+            border: 1px solid var(--border-color);
+            padding: 13px 15px;
+        }
+
+        .two-columns {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 10px 0;
+        }
+
+        .two-columns td {
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 7px 5px;
+            vertical-align: top;
+            border-bottom: 1px solid #f0e8dd;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .label {
+            width: 27%;
+            color: var(--soft-color);
+            font-weight: bold;
+            font-size: 11.5px;
+        }
+
+        .value {
+            color: var(--dark-color);
+            font-weight: 500;
+            font-size: 11.7px;
+        }
+
+        .subscription-table .label {
+            width: 20%;
+        }
+
+        .subscription-table .value {
+            width: 30%;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--border-color);
+        }
+
+        .schedule-table th {
+            background: var(--dark-color);
+            color: white;
+            padding: 10px;
+            font-size: 11.8px;
+            border: 1px solid var(--dark-color);
+        }
+
+        .schedule-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            color: var(--dark-color);
+        }
+
+        .schedule-table tbody tr:nth-child(even) {
+            background: #fbfaf7;
+        }
+
+        .notes-box {
+            background: #fbfaf7;
+            border: 1px solid var(--border-color);
+            border-right: 5px solid var(--accent-color);
+            padding: 15px 17px;
+            color: var(--dark-color);
+            font-size: 11.7px;
+        }
+
+        .legal-list {
+            margin: 8px 0 0;
+            padding-right: 18px;
+            color: var(--soft-color);
+            font-size: 11px;
+        }
+
+        .legal-list li {
+            margin-bottom: 3px;
+        }
+
+        .verification-box {
+            margin-top: 12px;
+            background: white;
+            border: 1px dashed var(--accent-color);
+            padding: 10px 12px;
+            color: var(--soft-color);
+            font-size: 11px;
+        }
+
+        .signature-section {
+            margin-top: 34px;
+            page-break-inside: avoid;
+        }
+
+        .signature-grid {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 14px 0;
+        }
+
+        .signature-box {
+            width: 50%;
+            text-align: center;
+            background: #fffdf9;
+            border: 1px solid var(--border-color);
+            padding: 16px 12px;
+        }
+
+        .signature-title {
+            font-weight: bold;
+            color: var(--dark-color);
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .seal {
+            display: inline-block;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            line-height: 1.4;
+            padding-top: 15px;
+            font-size: 10.5px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .signature-line {
+            border-top: 1px solid var(--accent-color);
+            padding-top: 8px;
+            color: var(--soft-color);
+            font-size: 11px;
+            width: 82%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .footer {
+            margin-top: 28px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--soft-color);
+            font-size: 10.8px;
+        }
+
+        .footer strong {
+            color: var(--dark-color);
+        }
+
+        .footer-code {
+            margin-top: 6px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="document">
+<div class="top-strip"></div>
+
+<div class="content">
+
+    <div class="header">
+
+        <div class="header-small">
+            وثيقة رقمية صادرة من النظام
+        </div>
+
+        <div class="platform-name">
+            وصْـــــل
+        </div>
+
+        <div class="platform-subtitle">
+            منصة رقمية لتنظيم اشتراكات النقل الجامعي الآمن
+        </div>
+
+        <div class="contract-title">
+            عقد اشتراك نقل إلكتروني
+        </div>
+
+        <div class="meta-row">
+            <span class="meta-chip">
+                رقم العقد: {{ contract.contract_number }}
+            </span>
+
+            <span class="meta-chip">
+                تاريخ الإنشاء: {{ contract.created_at|date:"Y-m-d h:i A" }}
+            </span>
+
+            <span class="meta-chip">
+                رقم الطلب: {{ contract.subscription_request.request_code }}
+            </span>
+        </div>
+
+        {% if contract.status == "active" %}
+            <div class="status-box status-active">العقد نشط</div>
+        {% elif contract.status == "completed" %}
+            <div class="status-box status-completed">العقد مكتمل</div>
+        {% elif contract.status == "cancelled" %}
+            <div class="status-box status-cancelled">العقد ملغي</div>
+        {% endif %}
+
+    </div>
+
+    <div class="intro-box">
+        تم إنشاء هذا العقد إلكترونياً عبر منصة وصل لتوثيق وتنظيم علاقة اشتراك النقل بين الطالب والسائق،
+        وفقاً للبيانات المعتمدة داخل المنصة، وبما يضمن وضوح تفاصيل الاشتراك، وجدول النقل، وحالة العقد.
+    </div>
+
+    <table class="two-columns">
+        <tr>
+            <td>
+                <div class="section">
+                    <div class="section-title">بيانات الطالب</div>
+
+                    <div class="card">
+                        <table class="info-table">
+                            <tr>
+                                <td class="label">الاسم</td>
+                                <td class="value">{{ contract.subscription_request.student.user.full_name }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">الجنس</td>
+                                <td class="value">{{ contract.subscription_request.student.get_gender_display }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">البريد</td>
+                                <td class="value">{{ contract.subscription_request.student.user.email }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">الجوال</td>
+                                <td class="value">{{ contract.subscription_request.student.user.phone }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">المدينة</td>
+                                <td class="value">{{ contract.subscription_request.student.user.city.name_ar }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">الجامعة</td>
+                                <td class="value">{{ contract.subscription_request.student.university_name }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <div class="section">
+                    <div class="section-title">بيانات السائق</div>
+
+                    <div class="card">
+                        <table class="info-table">
+                            <tr>
+                                <td class="label">الاسم</td>
+                                <td class="value">{{ contract.subscription_request.subscription.driver.user.full_name }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">الجنس</td>
+                                <td class="value">{{ contract.subscription_request.subscription.driver.get_gender_display }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">البريد</td>
+                                <td class="value">{{ contract.subscription_request.subscription.driver.user.email }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">الجوال</td>
+                                <td class="value">{{ contract.subscription_request.subscription.driver.user.phone }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">المدينة</td>
+                                <td class="value">{{ contract.subscription_request.subscription.driver.user.city.name_ar }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="label">المركبة</td>
+                                <td class="value">{{ contract.subscription_request.subscription.driver.vehicle_model }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section">
+        <div class="section-title">بيانات الاشتراك</div>
+
+        <div class="card">
+            <table class="info-table subscription-table">
+                <tr>
+                    <td class="label">الحي</td>
+                    <td class="value">{{ contract.subscription_request.subscription.neighborhood }}</td>
+
+                    <td class="label">سعر الاشتراك</td>
+                    <td class="value">{{ contract.subscription_request.price_snapshot }} ريال</td>
+                </tr>
+
+                <tr>
+                    <td class="label">نوع الاشتراك</td>
+                    <td class="value">{{ contract.subscription_request.subscription.get_duration_display }}</td>
+
+                    <td class="label">رقم الطلب</td>
+                    <td class="value">{{ contract.subscription_request.request_code }}</td>
+                </tr>
+
+                <tr>
+                    <td class="label">تاريخ البداية</td>
+                    <td class="value">{{ contract.subscription_request.subscription.start_date }}</td>
+
+                    <td class="label">تاريخ النهاية</td>
+                    <td class="value">{{ contract.subscription_request.subscription.end_date }}</td>
+                </tr>
+
+                <tr>
+                    <td class="label">تاريخ الانضمام</td>
+                    <td class="value" colspan="3">
+                        {{ contract.subscription_request.joined_at|date:"Y-m-d h:i A" }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">جدول النقل الأسبوعي</div>
+
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>اليوم</th>
+                    <th>وقت الذهاب</th>
+                    <th>وقت العودة</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for day in contract.subscription_request.schedule.all %}
+                    <tr>
+                        <td>{{ day.get_day_of_week_display }}</td>
+
+                        <td>
+                            {% if day.pickup_time %}
+                                {{ day.pickup_time|time:"h:i A" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if day.return_time %}
+                                {{ day.return_time|time:"h:i A" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">بنود وملاحظات العقد</div>
+
+        <div class="notes-box">
+            يقر الطرفان بأن هذا العقد تم إنشاؤه إلكترونياً عبر منصة وصل لتنظيم اشتراك النقل بين الطالب والسائق،
+            وأن جميع البيانات الواردة في هذا المستند تمثل التفاصيل المعتمدة داخل النظام وقت إنشاء العقد.
+
+            <ul class="legal-list">
+                <li>يعد هذا العقد مرجعاً رقمياً لتفاصيل الاشتراك وجدول النقل والحالة الحالية للعقد.</li>
+                <li>يلتزم الطرفان بالبيانات والمواعيد الموضحة في هذا المستند حسب ما هو معتمد داخل المنصة.</li>
+                <li>أي تعديل أو إلغاء يتم توثيقه داخل النظام ويظهر أثره في حالة العقد.</li>
+            </ul>
+
+            <div class="verification-box">
+                تم توثيق هذه الوثيقة رقمياً داخل منصة وصل، ويمكن الرجوع إليها من خلال سجل العقود في حساب المستخدم.
+            </div>
+
+            {% if contract.status == "cancelled" %}
+                <br>
+                <strong>تم إلغاء هذا العقد بتاريخ:</strong>
+                {{ contract.cancelled_at|date:"Y-m-d h:i A" }}
+
+                {% if contract.cancellation_reason %}
+                    <br><br>
+                    <strong>سبب الإلغاء:</strong>
+                    {{ contract.cancellation_reason }}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="signature-section">
+        <table class="signature-grid">
+            <tr>
+                <td class="signature-box">
+                    <div class="signature-title">اعتماد منصة وصل</div>
+
+                    <div class="seal">
+                        موثق<br>
+                        إلكترونياً
+                    </div>
+
+                    <div class="signature-line">
+                        ختم وتوثيق إلكتروني
+                    </div>
+                </td>
+
+                <td class="signature-box">
+                    <div class="signature-title">قبول أطراف العقد</div>
+
+                    <div class="seal">
+                        موافقة<br>
+                        رقمية
+                    </div>
+
+                    <div class="signature-line">
+                        موافقة إلكترونية على بيانات العقد
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <strong>منصة وصل</strong> — هذا العقد تم إنشاؤه إلكترونياً ويعتبر مرجعاً رقمياً محفوظاً داخل النظام.
+        <div class="footer-code">
+            رقم العقد: {{ contract.contract_number }}
+        </div>
+    </div>
+
+</div>
+</div>
+
+</body>
+</html>

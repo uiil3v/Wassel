@@ -401,4 +401,33 @@
 
 </div>
 
+{% if req.contract %}
+
+<div class="detail-card text-center">
+
+    <h5 class="fw-bold mb-3">
+        📄 العقد الإلكتروني
+    </h5>
+
+    <p class="text-muted mb-4">
+        يمكن للإدارة تحميل العقد الإلكتروني الخاص بهذا الطلب.
+    </p>
+
+    <a
+        href="{% url 'contracts:download_contract_pdf' req.contract.id %}"
+        class="action-btn"
+        style="
+            background:#111827;
+            color:white;
+        "
+    >
+
+        📥 تحميل العقد PDF
+
+    </a>
+
+</div>
+
+{% endif %}
+
 {% endblock %}

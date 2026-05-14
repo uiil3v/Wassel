@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'admin_panel.apps.AdminPanelConfig',
     "notifications",
     "reviews",
+    "contracts",
     'cloudinary',
     'cloudinary_storage',
     'whitenoise.runserver_nostatic',

@@ -384,6 +384,7 @@
 
 {% if req.status == "approved" and req.subscription.current_status == "expired" %}
 
+
 <div class="detail-card text-center">
 
     <h5 class="fw-bold mb-3">
@@ -398,6 +399,31 @@
        class="btn btn-accent px-5">
 
         ⭐ تقييم الطالب
+
+    </a>
+
+</div>
+
+{% endif %}
+
+{% if req.contract %}
+
+<div class="detail-card text-center">
+
+    <h5 class="fw-bold mb-3">
+        📄 العقد الإلكتروني
+    </h5>
+
+    <p class="text-muted mb-4">
+        يمكنك تحميل العقد الإلكتروني الخاص بهذا الاشتراك.
+    </p>
+
+    <a
+        href="{% url 'contracts:download_contract_pdf' req.contract.id %}"
+        class="btn btn-dark px-5"
+    >
+
+        📥 تحميل العقد PDF
 
     </a>
 

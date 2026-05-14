@@ -20,6 +20,8 @@ from .decorators import driver_verified_required
 from datetime import datetime, timedelta
 from django.utils import timezone
 
+from contracts.services import create_transport_contract
+
 
 
 
@@ -617,8 +619,10 @@ def approve_request(request, req_id):
                     sub_id=req.subscription.id
                 )
             with transaction.atomic():
-                req.approve()  # الموافقة الأصلية
-                approve_subscription_payment(req)  # 🔥 تحويل الأموال
+                req.approve()
+                approve_subscription_payment(req)
+                # 🔥 إنشاء العقد الإلكتروني
+                create_transport_contract(req)
 
             messages.success(request, "تمت الموافقة وتحويل المبلغ بنجاح.")
 

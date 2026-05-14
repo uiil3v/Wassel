@@ -1,0 +1,405 @@
+{% if request.user.role == "student" %}
+    {% extends "student/base_student.html" %}
+{% elif request.user.role == "driver" %}
+    {% extends "driver/base_driver.html" %}
+{% elif request.user.role == "admin" %}
+    {% extends "admin_panel/admin_base.html" %}
+{% endif %}
+
+{% block content %}
+{% block student_content %}
+{% block driver_content %}
+{% block admin_content %}
+
+<style>
+
+.contracts-header {
+    margin-bottom: 35px;
+}
+
+.contracts-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.contracts-subtitle {
+    color: #6b7280;
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+.contract-card {
+    background: white;
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+    transition: 0.3s;
+    margin-bottom: 25px;
+    border: 1px solid #f3f4f6;
+}
+
+.contract-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+}
+
+.contract-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.contract-number {
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.contract-date {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.contract-status {
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-completed {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.contract-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.info-box {
+    background: #f9fafb;
+    border-radius: 20px;
+    padding: 18px;
+}
+
+.info-label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.schedule-wrapper {
+    margin-top: 20px;
+}
+
+.schedule-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.schedule-table thead {
+    background: #111827;
+    color: white;
+}
+
+.schedule-table th,
+.schedule-table td {
+    padding: 14px;
+    text-align: center;
+}
+
+.schedule-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.schedule-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.empty-contracts {
+    background: white;
+    padding: 60px 30px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+}
+
+.empty-contracts h4 {
+    font-weight: 800;
+    margin-top: 20px;
+}
+
+.empty-contracts p {
+    color: #6b7280;
+    margin-top: 10px;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #111827;
+    color: white;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.download-btn:hover {
+    background: #000;
+    color: white;
+}
+
+</style>
+
+<div class="container py-4">
+
+    <div class="contracts-header">
+
+        <div class="contracts-title">
+            📄 العقود الإلكترونية
+        </div>
+
+        <div class="contracts-subtitle">
+            جميع العقود المرتبطة باشتراكات النقل الخاصة بك.
+        </div>
+
+    </div>
+
+    {% if contracts %}
+
+        {% for contract in contracts %}
+
+            <div class="contract-card">
+
+                <div class="contract-top">
+
+                    <div>
+
+                        <div class="contract-number">
+                            {{ contract.contract_number }}
+                        </div>
+
+                        <div class="contract-date">
+                            تم الإنشاء بتاريخ
+                            {{ contract.created_at|date:"Y-m-d h:i A" }}
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        {% if contract.status == "active" %}
+                            <span class="contract-status status-active">
+                                نشط
+                            </span>
+
+                        {% elif contract.status == "completed" %}
+                            <span class="contract-status status-completed">
+                                مكتمل
+                            </span>
+
+                        {% elif contract.status == "cancelled" %}
+                            <span class="contract-status status-cancelled">
+                                ملغي
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="contract-grid">
+
+                    <div class="info-box">
+                        <div class="info-label">
+                            الطالب
+                        </div>
+
+                        <div class="info-value">
+                            {{ contract.subscription_request.student.user.full_name }}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">
+                            السائق
+                        </div>
+
+                        <div class="info-value">
+                            {{ contract.subscription_request.subscription.driver.user.full_name }}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">
+                            الحي
+                        </div>
+
+                        <div class="info-value">
+                            {{ contract.subscription_request.subscription.neighborhood }}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">
+                            قيمة الاشتراك
+                        </div>
+
+                        <div class="info-value">
+                            {{ contract.subscription_request.price_snapshot }} ريال
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">
+                            بداية الاشتراك
+                        </div>
+
+                        <div class="info-value">
+                            {{ contract.subscription_request.subscription.start_date }}
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-label">
+                            نهاية الاشتراك
+                        </div>
+
+                        <div class="info-value">
+                            {{ contract.subscription_request.subscription.end_date }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="schedule-wrapper">
+
+                    <div class="schedule-title">
+                        🗓 جدول النقل
+                    </div>
+
+                    <table class="schedule-table">
+
+                        <thead>
+                            <tr>
+                                <th>اليوم</th>
+                                <th>وقت الذهاب</th>
+                                <th>وقت العودة</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for day in contract.subscription_request.schedule.all %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ day.get_day_of_week_display }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if day.pickup_time %}
+                                            {{ day.pickup_time|time:"h:i A" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if day.return_time %}
+                                            {{ day.return_time|time:"h:i A" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="mt-4">
+
+                    <a
+                    href="{% url 'contracts:download_contract_pdf' contract.id %}"
+                    class="download-btn"
+                >
+                        📥 تحميل PDF
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-contracts">
+
+            <div style="font-size: 70px;">
+                📄
+            </div>
+
+            <h4>
+                لا توجد عقود حالياً
+            </h4>
+
+            <p>
+                سيتم إنشاء العقود تلقائياً بعد قبول الاشتراكات.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+{% endblock %}
+{% endblock %}
+{% endblock %}

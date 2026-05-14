@@ -302,6 +302,9 @@ class SubscriptionRequest(models.Model):
         self.decision_date = timezone.now()
         self.save()
         
+        if hasattr(self, "contract"):
+            self.contract.cancel()
+        
     def generate_request_code(self):
         year = timezone.now().year
         return f"WSL-{year}-{self.id:06d}"
