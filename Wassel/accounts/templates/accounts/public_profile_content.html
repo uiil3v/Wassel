@@ -409,6 +409,26 @@
                             {{ profile_user.city }}
                         </div>
                     </div>
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+                            الجنس
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if driver_profile.gender == "male" %}
+                                ذكر
+                            {% elif driver_profile.gender == "female" %}
+                                أنثى
+                            {% else %}
+                                غير محدد
+                            {% endif %}
+
+                        </div>
+
+                    </div>
                     
 
                     <div class="info-item">

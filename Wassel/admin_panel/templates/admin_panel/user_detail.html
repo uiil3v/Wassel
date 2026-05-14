@@ -238,12 +238,16 @@
             </div>
         </div>
 
+        
+
         <div class="info-box">
             <div class="info-label">الحالة</div>
             <div class="info-value">
                 {{ user_obj.get_status_display }}
             </div>
         </div>
+
+        
 
         <!-- ===== Student ===== -->
 
@@ -305,6 +309,28 @@
         {% if user_obj.role == "driver" and driver %}
 
         <div class="info-box">
+
+    <div class="info-label">
+        الجنس
+    </div>
+
+    <div class="info-value">
+
+        {% if driver.gender == "male" %}
+            ذكر
+        {% elif driver.gender == "female" %}
+            أنثى
+        {% else %}
+            غير محدد
+        {% endif %}
+
+    </div>
+
+</div>
+
+        
+
+        <div class="info-box">
             <div class="info-label">السيارة</div>
             <div class="info-value">
                 {{ driver.vehicle_model }}
@@ -317,6 +343,8 @@
                 {{ driver.get_verification_status_display }}
             </div>
         </div>
+
+        
 
         {% endif %}
 

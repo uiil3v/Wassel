@@ -18,6 +18,11 @@ class DriverProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="driver_profile"
     )
+    
+    GENDER_CHOICES = (
+        ("male", "ذكر"),
+        ("female", "أنثى"),
+    )
 
     # ===== Driver Documents =====
     id_document_image = CloudinaryField(
@@ -72,6 +77,13 @@ class DriverProfile(models.Model):
 
     vehicle_model = models.CharField(
         max_length=100,
+        blank=True,
+        null=True
+    )
+    
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
         blank=True,
         null=True
     )

@@ -100,6 +100,17 @@
 
 
 <p><strong>الاسم:</strong> {{ driver.user.full_name }}</p>
+<p>
+    <strong>الجنس:</strong>
+
+    {% if driver.gender == "male" %}
+        ذكر
+    {% elif driver.gender == "female" %}
+        أنثى
+    {% else %}
+        غير محدد
+    {% endif %}
+</p>
 <p><strong>البريد:</strong> {{ driver.user.email }}</p>
 <p><strong>الجوال:</strong> {{ driver.user.phone }}</p>
 

@@ -139,6 +139,8 @@ def driver_profile(request):
 
         # ===== بيانات السائق =====
         profile.vehicle_model = request.POST.get("vehicle_model")
+        
+        profile.gender = request.POST.get("gender")
 
         # ملفات
         for field in [
@@ -169,7 +171,7 @@ def driver_profile(request):
             profile.vehicle_side_image,
         ])
 
-        if profile.vehicle_model and documents_complete:
+        if profile.vehicle_model and profile.gender and documents_complete:
             profile.verification_status = "pending"
             messages.success(request, "تم إرسال بياناتك للمراجعة.")
         else:
