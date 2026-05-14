@@ -124,6 +124,21 @@
 
     <div class="text-center">
 
+        {% if subscription.can_edit %}
+
+            <div class="mb-3">
+
+                <a href="{% url 'driver:edit_subscription' subscription.id %}"
+                class="btn btn-outline-primary px-4">
+
+                    ✏️ تعديل الاشتراك
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
         {% if not pending_requests and not approved_requests and subscription.current_status != "inactive_by_admin" %}
 
         <form method="post" action="{% url 'driver:delete_subscription' subscription.id %}">

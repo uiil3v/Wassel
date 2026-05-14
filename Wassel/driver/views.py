@@ -299,6 +299,122 @@ def create_subscription(request):
 
 
 
+@login_required
+@driver_verified_required
+def edit_subscription(request, sub_id):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    profile = request.user.driver_profile
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=sub_id,
+        driver=profile
+    )
+
+    # 🔒 منع التعديل
+    if not subscription.can_edit:
+
+        messages.error(
+            request,
+            "لا يمكنك تعديل الاشتراك بعد وجود طلبات أو طلاب."
+        )
+
+        return redirect(
+            "driver:subscription_detail",
+            sub_id=sub_id
+        )
+
+    if request.method == "POST":
+
+        neighborhood = request.POST.get("neighborhood")
+        price = request.POST.get("price")
+        seats = request.POST.get("seats")
+        duration = request.POST.get("duration")
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        notes = request.POST.get("notes")
+
+        try:
+
+            start_date_obj = datetime.strptime(
+                start_date,
+                "%Y-%m-%d"
+            ).date()
+
+            # =========================
+            # شهري
+            # =========================
+
+            if duration == "monthly":
+
+                end_date_obj = start_date_obj + timedelta(days=30)
+
+            # =========================
+            # فصلي
+            # =========================
+
+            else:
+
+                if not end_date:
+
+                    end_date_obj = (
+                        start_date_obj +
+                        timedelta(days=90)
+                    )
+
+                else:
+
+                    end_date_obj = datetime.strptime(
+                        end_date,
+                        "%Y-%m-%d"
+                    ).date()
+
+            # =========================
+            # تحديث البيانات
+            # =========================
+
+            subscription.neighborhood = neighborhood
+            subscription.price = price
+            subscription.seats = seats
+            subscription.available_seats = seats
+            subscription.duration = duration
+            subscription.start_date = start_date_obj
+            subscription.end_date = end_date_obj
+            subscription.notes = notes
+
+            subscription.save()
+
+            messages.success(
+                request,
+                "تم تعديل الاشتراك بنجاح ✨"
+            )
+
+            return redirect(
+                "driver:subscription_detail",
+                sub_id=sub_id
+            )
+
+        except ValueError:
+
+            messages.error(
+                request,
+                "صيغة التاريخ غير صحيحة."
+            )
+
+    context = {
+        "subscription": subscription,
+        "is_edit": True,
+    }
+
+    return render(
+        request,
+        "driver/create_subscription.html",
+        context
+    )
+
 
 @login_required
 @driver_verified_required

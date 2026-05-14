@@ -16,6 +16,7 @@ urlpatterns = [
     path("requests/<int:req_id>/reject/", views.reject_request, name="reject_request"),
     path("requests/", views.driver_requests, name="requests"),
     path("notifications/", views.driver_notifications, name="notifications"),
+    path("subscriptions/<int:sub_id>/edit/", views.edit_subscription, name="edit_subscription"),
     path("subscriptions/delete/<int:sub_id>/", views.delete_subscription, name="delete_subscription"),
     path("schedule/", views.driver_schedule, name="schedule"),
 ]

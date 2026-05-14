@@ -164,6 +164,20 @@ class Subscription(models.Model):
 
         # 🔥 أقل من 30%
         return remaining_ratio > 0.30
+    
+    
+    @property
+    def can_edit(self):
+
+        has_students = self.requests.filter(
+            status="approved"
+        ).exists()
+
+        has_pending = self.requests.filter(
+            status="pending"
+        ).exists()
+
+        return not has_students and not has_pending
 
 
 # ==========================================

@@ -58,6 +58,7 @@ def student_dashboard(request):
     if not active_request:
         available_subscriptions = Subscription.objects.filter(
             status="active",
+            driver__user__status="active",
             driver__user__city=request.user.city
         ).select_related("driver__user")[:6]
 
@@ -167,6 +168,7 @@ def available_subscriptions(request):
     
     subscriptions = Subscription.objects.filter(
         status="active",
+        driver__user__status="active",
         available_seats__gt=0,
         end_date__gte=timezone.now().date(),
         driver__user__city=request.user.city
@@ -237,7 +239,8 @@ def subscription_detail_view(request, sub_id):
         Subscription.objects.select_related("driver__user"),
         id=sub_id,
         status="active",
-        driver__user__city=request.user.city   # 🔥 حماية المدينة
+        driver__user__status="active",
+        driver__user__city=request.user.city
     )
 
     today = timezone.now().date()

@@ -34,7 +34,15 @@
 
 <div class="form-card">
 
-    <h3 class="mb-4">إنشاء اشتراك جديد</h3>
+    <h3 class="mb-4">
+
+        {% if is_edit %}
+            تعديل الاشتراك
+        {% else %}
+            إنشاء اشتراك جديد
+        {% endif %}
+
+    </h3>
 
     <form method="POST">
         {% csrf_token %}
@@ -43,49 +51,88 @@
 
             <div class="col-md-6 mb-3">
                 <label>الحي</label>
-                <input type="text" name="neighborhood" class="premium-input" required>
+                <input type="text"
+                name="neighborhood"
+                class="premium-input"
+                value="{{ subscription.neighborhood }}"
+                required>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>السعر (ر.س)</label>
-                <input type="number" step="0.01" name="price" class="premium-input" required>
+                <input type="number"
+                step="0.01"
+                name="price"
+                class="premium-input"
+                value="{{ subscription.price }}"
+                required>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>عدد المقاعد</label>
-                <input type="number" name="seats" class="premium-input" required>
+                <input type="number"
+                name="seats"
+                class="premium-input"
+                value="{{ subscription.seats }}"
+                required>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>نوع الاشتراك</label>
                 <select name="duration" class="premium-input">
-                    <option value="monthly">شهري</option>
-                    <option value="quarterly">فصلي</option>
+
+                    <option value="monthly"
+                        {% if subscription.duration == "monthly" %}
+                            selected
+                        {% endif %}>
+                        شهري
+                    </option>
+
+                    <option value="semester"
+                        {% if subscription.duration == "semester" %}
+                            selected
+                        {% endif %}>
+                        فصلي
+                    </option>
+
                 </select>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>تاريخ البداية</label>
-                <input type="date" name="start_date" class="premium-input" required>
+                <input type="date"
+                name="start_date"
+                class="premium-input"
+                value="{{ subscription.start_date|date:'Y-m-d' }}"
+                required>
 
                 <small id="end-date-preview" style="display:none; color:#888;"></small>
             </div>
 
             <div class="col-md-6 mb-3">
                 <label>تاريخ النهاية</label>
-                <input type="date" name="end_date" class="premium-input">
+                <input type="date"
+                name="end_date"
+                class="premium-input"
+                value="{{ subscription.end_date|date:'Y-m-d' }}">
             </div>
 
             <div class="col-12 mb-4">
                 <label>ملاحظات (اختياري)</label>
-                <textarea name="notes" rows="3" class="premium-input"></textarea>
+                <textarea name="notes"
+                rows="3"
+                class="premium-input">{{ subscription.notes }}</textarea>
             </div>
 
         </div>
 
         <div class="text-end">
             <button type="submit" class="btn btn-accent px-5 py-2">
-                إنشاء الاشتراك
+               {% if is_edit %}
+                    حفظ التعديلات
+                {% else %}
+                    إنشاء الاشتراك
+                {% endif %}
             </button>
         </div>
 
@@ -133,7 +180,7 @@ function updateEndDate() {
     }
 
     // 🔵 اشتراك فصلي
-    else if (duration === "quarterly") {
+    else if (duration === "semester") {
 
         start.setDate(start.getDate() + 90);
 
