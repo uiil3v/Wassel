@@ -144,7 +144,7 @@
             <div class="col-md-6 mb-3">
                 <label>رابط الموقع (Google Maps)</label>
                 <input type="url" name="location_url"
-                       value="{{ profile.location_url }}"
+                       value="{{ profile.location_url|default:'' }}"
                        class="premium-input"
                        dir="ltr"
                        style="direction:ltr;text-align:left;">

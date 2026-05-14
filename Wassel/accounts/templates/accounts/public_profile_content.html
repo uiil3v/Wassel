@@ -497,11 +497,64 @@
                     <div class="review-top">
 
                         <div class="review-user">
-                            {{ review.reviewer.get_full_name }}
+
+                            {% if review.is_anonymous and review.reviewer.role == "student" %}
+                                طالب مجهول
+                            {% else %}
+                                {{ review.reviewer.get_full_name }}
+                            {% endif %}
+
                         </div>
 
-                        <div class="review-date">
-                            {{ review.created_at|date:"d/m/Y" }}
+                        <div class="text-end">
+
+                            <div class="review-date mb-2">
+                                {{ review.created_at|date:"d/m/Y" }}
+                            </div>
+
+                            {% if review.updated_at %}
+
+                                <div class="small text-muted mb-2">
+                                    تم تعديل التقييم
+                                </div>
+
+                            {% endif %}
+
+                            {% if request.user == review.reviewer %}
+
+                                <div class="d-flex gap-2 justify-content-end flex-wrap">
+
+                                    {% if review.can_edit %}
+
+                                        <a href="{% url 'reviews:edit_review' review.id %}"
+                                        class="btn btn-sm btn-outline-primary rounded-pill">
+
+                                            <i class="bi bi-pencil"></i>
+                                            تعديل
+
+                                        </a>
+
+                                    {% endif %}
+
+                                    <form method="POST"
+                                        action="{% url 'reviews:delete_review' review.id %}">
+
+                                        {% csrf_token %}
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger rounded-pill">
+
+                                            <i class="bi bi-trash"></i>
+                                            حذف
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            {% endif %}
+
                         </div>
 
                     </div>

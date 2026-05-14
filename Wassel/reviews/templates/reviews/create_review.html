@@ -104,11 +104,23 @@
     <div class="review-header">
 
         <h3 class="fw-bold mb-2">
-            إضافة تقييم ⭐
+
+            {% if is_edit %}
+                تعديل التقييم ✏️
+            {% else %}
+                إضافة تقييم ⭐
+            {% endif %}
+
         </h3>
 
         <p class="text-muted mb-0">
-            شارك تجربتك لمساعدة المستخدمين الآخرين وتعزيز الموثوقية.
+
+            {% if is_edit %}
+                يمكنك تعديل تقييمك طالما لم تنتهِ مدة التعديل.
+            {% else %}
+                شارك تجربتك لمساعدة المستخدمين الآخرين وتعزيز الموثوقية.
+            {% endif %}
+
         </p>
 
     </div>
@@ -210,6 +222,20 @@
 
         </div>
 
+        {% if request.user.role == "student" %}
+
+        <div class="form-check mb-4">
+
+            {{ form.is_anonymous }}
+
+            <label class="form-check-label me-2">
+                إخفاء اسمي عند عرض التقييم
+            </label>
+
+        </div>
+
+        {% endif %}
+
 
         <!-- Submit -->
         <div class="text-end">
@@ -217,7 +243,11 @@
             <button type="submit"
                     class="btn btn-accent review-submit-btn">
 
-                إرسال التقييم
+               {% if is_edit %}
+                    حفظ التعديلات
+                {% else %}
+                    إرسال التقييم
+                {% endif %}
 
             </button>
 
@@ -241,6 +271,26 @@ const ratingTexts = {
     5: "رائع جدًا"
 };
 
+// ===== Load Existing Rating (Edit Mode) =====
+
+const currentRating = ratingInput.value;
+
+if (currentRating) {
+
+    stars.forEach(s => {
+
+        if (s.dataset.value <= currentRating) {
+            s.classList.add("active");
+        }
+
+    });
+
+    document.querySelector(".rating-text").innerText =
+        ratingTexts[currentRating];
+}
+
+// ===== Click Stars =====
+
 stars.forEach(star => {
 
     star.addEventListener("click", () => {
@@ -254,13 +304,16 @@ stars.forEach(star => {
         });
 
         stars.forEach(s => {
+
             if (s.dataset.value <= value) {
                 s.classList.add("active");
             }
+
         });
 
         document.querySelector(".rating-text").innerText =
             ratingTexts[value];
+
     });
 
 });

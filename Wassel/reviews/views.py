@@ -5,6 +5,7 @@ from django.contrib import messages
 from subscriptions.models import SubscriptionRequest
 from .models import Review
 from .forms import ReviewForm
+from django.utils import timezone
 
 
 @login_required
@@ -88,3 +89,99 @@ def create_review(request, request_id):
 
     return render(request, "reviews/create_review.html", context)
 
+
+
+@login_required
+def edit_review(request, review_id):
+
+    review = get_object_or_404(
+        Review,
+        id=review_id,
+        reviewer=request.user
+    )
+
+    # انتهت مدة التعديل
+    if not review.can_edit:
+
+        messages.error(
+            request,
+            "انتهت مدة تعديل التقييم."
+        )
+
+        return redirect(
+            "accounts:public_profile",
+            user_id=review.reviewed_user.id
+        )
+
+    if request.method == "POST":
+
+        form = ReviewForm(
+            request.POST,
+            instance=review
+        )
+
+        if form.is_valid():
+
+            updated_review = form.save(commit=False)
+
+            # الطالب فقط يقدر يخفي اسمه
+            if request.user.role != "student":
+                updated_review.is_anonymous = False
+
+            updated_review.updated_at = timezone.now()
+
+            updated_review.save()
+
+            messages.success(
+                request,
+                "تم تعديل التقييم بنجاح."
+            )
+
+            return redirect(
+                "accounts:public_profile",
+                user_id=review.reviewed_user.id
+            )
+
+    else:
+
+        form = ReviewForm(instance=review)
+
+    context = {
+        "form": form,
+        "review": review,
+        "reviewed_user": review.reviewed_user,
+        "subscription_request": review.subscription_request,
+        "is_edit": True,
+    }
+
+    return render(
+        request,
+        "reviews/create_review.html",
+        context
+    )
+
+
+@login_required
+def delete_review(request, review_id):
+
+    review = get_object_or_404(
+        Review,
+        id=review_id,
+        reviewer=request.user
+    )
+
+    reviewed_user_id = review.reviewed_user.id
+
+    if request.method == "POST":
+
+        review.delete()
+
+        messages.success(
+            request,
+            "تم حذف التقييم."
+        )
+
+    return redirect(
+        "accounts:public_profile",
+        user_id=reviewed_user_id
+    )

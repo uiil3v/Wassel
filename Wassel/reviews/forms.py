@@ -1,4 +1,3 @@
-
 from django import forms
 from .models import Review
 
@@ -15,6 +14,7 @@ class ReviewForm(forms.ModelForm):
         fields = [
             "rating",
             "comment",
+            "is_anonymous",
         ]
 
         widgets = {
@@ -24,9 +24,13 @@ class ReviewForm(forms.ModelForm):
                 "rows": 4,
                 "placeholder": "اكتب تجربتك..."
             }),
+
+            "is_anonymous": forms.CheckboxInput(attrs={
+                "class": "form-check-input"
+            }),
         }
 
         labels = {
             "comment": "التعليق",
+            "is_anonymous": "إخفاء اسمي",
         }
-

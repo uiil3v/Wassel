@@ -44,8 +44,17 @@ class Review(models.Model):
         blank=True,
         null=True
     )
+    
+    is_anonymous = models.BooleanField(
+        default=False
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    updated_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -119,6 +128,15 @@ class Review(models.Model):
         super().delete(*args, **kwargs)
 
         update_user_rating(reviewed_user)
+        
+    @property
+    def can_edit(self):
+
+        limit_days = 7
+
+        diff = timezone.now() - self.created_at
+
+        return diff.days < limit_days
 
     def __str__(self):
         return f"{self.reviewer.email} → {self.reviewed_user.email} ({self.rating})"
