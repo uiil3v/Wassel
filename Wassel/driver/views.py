@@ -59,9 +59,7 @@ def driver_dashboard(request):
 
     students_count = approved_requests.count()
 
-    total_earnings = approved_requests.aggregate(
-        total=Sum("price_snapshot")
-    )["total"] or 0
+    total_earnings = request.user.wallet.balance
 
     # ===============================
     # آخر الطلبات 🔥

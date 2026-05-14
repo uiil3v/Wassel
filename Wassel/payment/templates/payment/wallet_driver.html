@@ -83,7 +83,7 @@
                 <i class="bi bi-cash-stack"></i>
             </div>
             <div class="wallet-number">
-                {{ wallet.balance|add:wallet.frozen_balance }} ر.س
+                {{ wallet.balance|floatformat:2 }} ر.س
             </div>
             <div class="wallet-label">إجمالي المحفظة</div>
         </div>

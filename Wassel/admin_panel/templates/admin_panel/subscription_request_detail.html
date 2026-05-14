@@ -345,6 +345,30 @@
 
     </div>
 
+    {% if req.subscription.notes %}
+
+    <hr>
+
+    <div class="mt-4">
+
+        <div class="section-title mb-3">
+            📝 ملاحظات السائق
+        </div>
+
+        <div class="p-3 rounded-4"
+             style="
+                background: #f8f7f4;
+                line-height: 1.9;
+             ">
+
+            {{ req.subscription.notes }}
+
+        </div>
+
+    </div>
+
+{% endif %}
+
 </div>
 
 <!-- ================= STUDENT INFO ================= -->

@@ -219,6 +219,30 @@
         </span>
     </div>
 
+    {% if subscription.notes %}
+
+        <hr class="my-4">
+
+        <div>
+
+            <h6 class="fw-bold mb-3">
+                ملاحظات السائق
+            </h6>
+
+            <div class="p-3 rounded-4"
+                style="
+                    background: var(--light-bg);
+                    line-height: 1.9;
+                ">
+
+                {{ subscription.notes }}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
 </div>
 
 

@@ -299,6 +299,30 @@
         <span>{{ req.request_code }}</span>
     </div>
 
+    {% if req.subscription.notes %}
+
+    <hr>
+
+    <div class="mt-4">
+
+        <h6 class="fw-bold mb-3">
+            ملاحظات السائق
+        </h6>
+
+        <div class="p-3 rounded-4"
+             style="
+                background: var(--light-bg);
+                line-height: 1.9;
+             ">
+
+            {{ req.subscription.notes }}
+
+        </div>
+
+    </div>
+
+{% endif %}
+
     {% if req.status == "pending" or req.status == "approved" and req.subscription.current_status != "expired" and req.subscription.current_status != "inactive" %}
     <hr>
 
