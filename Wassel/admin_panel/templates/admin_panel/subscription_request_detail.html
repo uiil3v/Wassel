@@ -410,6 +410,24 @@
     </div>
 
     <div class="info-row">
+
+        <span>الجنس</span>
+
+        <span>
+
+            {% if req.student.gender == "male" %}
+                ذكر
+            {% elif req.student.gender == "female" %}
+                أنثى
+            {% else %}
+                غير محدد
+            {% endif %}
+
+        </span>
+
+    </div>
+
+    <div class="info-row">
         <span>رقم الطلب</span>
         <span>{{ req.request_code }}</span>
     </div>

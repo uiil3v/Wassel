@@ -244,6 +244,25 @@
     <span>{{ req.student.university_name }}</span>
 </div>
 
+
+
+
+<div class="info-row">
+    <span>الجنس</span>
+
+    <span>
+
+        {% if req.student.gender == "male" %}
+            ذكر
+        {% elif req.student.gender == "female" %}
+            أنثى
+        {% else %}
+            غير محدد
+        {% endif %}
+
+    </span>
+</div>
+
 <div class="info-row">
     <span>المدينة / الحي</span>
     <span>
@@ -267,7 +286,6 @@
         </a>
     </div>
     {% endif %}
-
 </div>
 
 

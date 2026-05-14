@@ -257,6 +257,26 @@
         </div>
 
         <div class="info-box">
+
+            <div class="info-label">
+                الجنس
+            </div>
+
+            <div class="info-value">
+
+                {% if student.gender == "male" %}
+                    ذكر
+                {% elif student.gender == "female" %}
+                    أنثى
+                {% else %}
+                    غير محدد
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="info-box">
             <div class="info-label">الحي</div>
             <div class="info-value">
                 {{ student.neighborhood }}

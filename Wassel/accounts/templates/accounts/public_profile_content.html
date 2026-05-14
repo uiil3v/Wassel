@@ -310,10 +310,10 @@
 
             <div class="profile-badge">
 
-                {% if driver_profile and driver_profile.verification_status == "approved" %}
-                    موثق ✅
+                {% if profile_user.status == "active" %}
+                    حساب نشط ✅
                 {% else %}
-                    عضو في منصة وصل
+                    الحساب موقوف 🚫
                 {% endif %}
 
             </div>
@@ -439,27 +439,43 @@
 
                 {% if student_profile %}
 
-                    <div class="info-item">
-                        <div class="info-label">الجامعة</div>
-
-                        <div class="info-value">
-                            {{ student_profile.university_name }}
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">الحي</div>
-
-                        <div class="info-value">
-                            {{ student_profile.neighborhood }}
-                        </div>
-                    </div>
+                
 
                     <div class="info-item">
                         <div class="info-label">المدينة</div>
 
                         <div class="info-value">
                             {{ profile_user.city }}
+                        </div>
+                    </div>
+
+
+
+                    <div class="info-item">
+
+                        <div class="info-label">
+                            الجنس
+                        </div>
+
+                        <div class="info-value">
+
+                            {% if student_profile.gender == "male" %}
+                                ذكر
+                            {% elif student_profile.gender == "female" %}
+                                أنثى
+                            {% else %}
+                                غير محدد
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                                        <div class="info-item">
+                        <div class="info-label">الجامعة</div>
+
+                        <div class="info-value">
+                            {{ student_profile.university_name }}
                         </div>
                     </div>
 
