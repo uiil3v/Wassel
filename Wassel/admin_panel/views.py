@@ -11,6 +11,9 @@ from django.db.models import Q
 from notifications.utils import send_notification
 from notifications.models import Notification
 
+import csv
+from django.http import HttpResponse
+
 
 
 
@@ -385,6 +388,93 @@ def payments_view(request):
     }
 
     return render(request, "admin_panel/payments.html", context)
+
+
+
+@admin_required(levels=[1])
+def export_payments_csv(request):
+
+    transactions = Transaction.objects.select_related(
+        "wallet__user"
+    ).order_by("-created_at")
+
+    # ======================
+    # نفس الفلاتر الحالية
+    # ======================
+
+    search = request.GET.get("search")
+    type_filter = request.GET.get("type")
+    status_filter = request.GET.get("status")
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
+
+    # 🔍 Search
+    if search:
+        transactions = transactions.filter(
+            Q(wallet__user__first_name__icontains=search) |
+            Q(wallet__user__last_name__icontains=search) |
+            Q(wallet__user__email__icontains=search)
+        )
+
+    # 🎛️ Type
+    if type_filter and type_filter != "all":
+        transactions = transactions.filter(type=type_filter)
+
+    # 🎛️ Status
+    if status_filter and status_filter != "all":
+        transactions = transactions.filter(status=status_filter)
+
+    # 📅 Date From
+    if date_from:
+        transactions = transactions.filter(
+            created_at__date__gte=date_from
+        )
+
+    # 📅 Date To
+    if date_to:
+        transactions = transactions.filter(
+            created_at__date__lte=date_to
+        )
+
+    # ======================
+    # CSV Response
+    # ======================
+
+    response = HttpResponse(
+    content_type="text/csv; charset=utf-8"
+    )
+
+    response.write('\ufeff')
+
+    response[
+        "Content-Disposition"
+    ] = 'attachment; filename="payments.csv"'
+
+    writer = csv.writer(response)
+
+    # Header
+    writer.writerow([
+        "User",
+        "Email",
+        "Type",
+        "Amount",
+        "Status",
+        "Date",
+    ])
+
+    # Rows
+    for tx in transactions:
+
+        writer.writerow([
+            tx.wallet.user.full_name,
+            tx.wallet.user.email,
+            tx.get_type_display(),
+            f"{tx.amount:.2f}",
+            tx.get_status_display(),
+            tx.created_at.strftime("%d/%m/%Y %H:%M"),
+        ])
+
+    return response
 
 
 @admin_required(levels=[1, 2])

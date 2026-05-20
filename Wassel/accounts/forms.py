@@ -40,3 +40,15 @@ class RegisterForm(UserCreationForm):
             ('student', 'طالب'),
             ('driver', 'سائق'),
         ]
+        
+    def clean_phone(self):
+
+        phone = self.cleaned_data["phone"]
+
+        if User.objects.filter(phone=phone).exists():
+
+            raise forms.ValidationError(
+                "رقم الجوال مستخدم مسبقًا."
+            )
+
+        return phone

@@ -8,6 +8,9 @@ from payment.services import calculate_driver_withdrawable
 from django.db.models import Sum
 from decimal import Decimal
 
+import csv
+from django.http import HttpResponse
+
 
 
 
@@ -113,3 +116,46 @@ def wallet_view(request):
     }
 
     return render(request, template, context)
+
+
+
+@login_required
+def export_wallet_csv(request):
+
+    wallet = request.user.wallet
+
+    transactions = wallet.transactions.order_by(
+        "-created_at"
+    )
+
+    response = HttpResponse(
+        content_type="text/csv; charset=utf-8"
+    )
+
+    response.write('\ufeff')
+
+    response[
+        "Content-Disposition"
+    ] = 'attachment; filename="wallet_transactions.csv"'
+
+    writer = csv.writer(response)
+
+    # Header
+    writer.writerow([
+        "Type",
+        "Amount",
+        "Status",
+        "Date",
+    ])
+
+    # Rows
+    for tx in transactions:
+
+        writer.writerow([
+            tx.get_type_display(),
+            f"{tx.amount:.2f}",
+            tx.get_status_display(),
+            tx.created_at.strftime("%d/%m/%Y %H:%M"),
+        ])
+
+    return response

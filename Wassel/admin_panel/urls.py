@@ -16,6 +16,7 @@ urlpatterns = [
     path("users/<int:pk>/ban/", views.ban_user, name="ban_user"),
     path("users/<int:pk>/activate/", views.activate_user, name="activate_user"),
     path("payments/", views.payments_view, name="payments"),
+    path("payments/export/csv/", views.export_payments_csv, name="export_payments_csv"),
     path("notifications/send/", views.send_notification_view, name="send_notification"),
     path("notifications/", views.notifications_list, name="notifications"),
     
