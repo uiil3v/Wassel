@@ -11,6 +11,27 @@ from student.models import StudentProfile
 
 from reviews.models import Review
 
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+
+from .tokens import email_verification_token
+
+
+from django.core.mail import send_mail
+
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
+from django.urls import reverse
+
+from django.conf import settings
+
+from django.contrib.auth.decorators import login_required
+
+from django.utils import timezone
+from datetime import timedelta
+
+
 
 
 
@@ -26,19 +47,56 @@ def register_view(request):
 
             # الحالة الافتراضية للحساب
             user.status = "active"
+
             user.save()
 
-            # تسجيل الدخول مباشرة بعد التسجيل
-            login(request, user)
+            # =========================
+            # إنشاء رابط التفعيل
+            # =========================
 
-            # إذا كان سائق؟ يروح يكمل بياناته
-            if user.role == "driver":
-                messages.warning(request, "يرجى إكمال بياناتك أولاً.")
-                return redirect("driver:profile")
+            uid = urlsafe_base64_encode(
+                force_bytes(user.pk)
+            )
 
-            # إذا طالب
-            messages.success(request, "تم إنشاء الحساب بنجاح 🎉")
-            return redirect("main:index")
+            token = email_verification_token.make_token(
+                user
+            )
+
+            verification_url = request.build_absolute_uri(
+                reverse(
+                    "accounts:verify_email",
+                    kwargs={
+                        "uidb64": uid,
+                        "token": token
+                    }
+                )
+            )
+
+            # =========================
+            # إرسال الإيميل
+            # =========================
+
+            send_mail(
+                subject="تفعيل حسابك في وصل",
+
+                message=(
+                    f"مرحبًا {user.full_name}\n\n"
+                    f"اضغط الرابط التالي لتفعيل حسابك:\n\n"
+                    f"{verification_url}"
+                ),
+
+                from_email=settings.DEFAULT_FROM_EMAIL,
+
+                recipient_list=[user.email],
+            )
+
+
+            messages.success(
+                request,
+                "تم إنشاء الحساب. تحقق من بريدك الإلكتروني لتفعيل الحساب 📩"
+            )
+
+            return redirect("accounts:login")
 
         else:
             messages.error(request, "حدث خطأ أثناء التسجيل، يرجى مراجعة البيانات.")
@@ -49,6 +107,169 @@ def register_view(request):
     return render(request, "accounts/register.html", {"form": form})
 
 
+
+
+def verify_email_view(request, uidb64, token):
+
+    try:
+
+        uid = force_str(
+            urlsafe_base64_decode(uidb64)
+        )
+
+        user = User.objects.get(pk=uid)
+
+    except (
+        TypeError,
+        ValueError,
+        OverflowError,
+        User.DoesNotExist
+    ):
+
+        user = None
+
+    # =========================
+    # تحقق من التوكن
+    # =========================
+
+    if (
+        user is not None
+        and
+        email_verification_token.check_token(
+            user,
+            token
+        )
+    ):
+
+        user.email_verified = True
+        user.save()
+        
+        login(request, user)
+
+        messages.success(
+            request,
+            "تم تفعيل بريدك الإلكتروني بنجاح ✅"
+        )
+
+        return redirect("main:index")
+
+    # =========================
+    # رابط غير صالح
+    # =========================
+
+    messages.error(
+        request,
+        "رابط التفعيل غير صالح أو منتهي."
+    )
+
+    return redirect("accounts:login")
+
+
+@login_required
+def verify_email_notice_view(request):
+
+    # إذا فعل مسبقًا
+    if request.user.email_verified:
+        return redirect("main:index")
+
+    return render(
+        request,
+        "accounts/verify_email_notice.html"
+    )
+
+
+@login_required
+def resend_verification_email_view(request):
+
+    # إذا فعل مسبقًا
+    if request.user.email_verified:
+
+        messages.success(
+            request,
+            "بريدك الإلكتروني مفعل بالفعل."
+        )
+
+        return redirect("main:index")
+    
+    # =========================
+    # منع إعادة الإرسال قبل 10 دقائق
+    # =========================
+
+    if request.user.last_verification_email_sent:
+
+        time_passed = (
+            timezone.now()
+            -
+            request.user.last_verification_email_sent
+        )
+
+        if time_passed < timedelta(minutes=10):
+
+            remaining = 10 - int(
+                time_passed.total_seconds() // 60
+            )
+
+            messages.warning(
+                request,
+                f"يمكنك إعادة إرسال رابط التفعيل بعد {remaining} دقيقة."
+            )
+
+            return redirect(
+                "accounts:verify_email_notice"
+            )
+
+    # =========================
+    # إنشاء رابط جديد
+    # =========================
+
+    uid = urlsafe_base64_encode(
+        force_bytes(request.user.pk)
+    )
+
+    token = email_verification_token.make_token(
+        request.user
+    )
+
+    verification_url = request.build_absolute_uri(
+        reverse(
+            "accounts:verify_email",
+            kwargs={
+                "uidb64": uid,
+                "token": token
+            }
+        )
+    )
+
+    # =========================
+    # إرسال الإيميل
+    # =========================
+
+    send_mail(
+        subject="إعادة إرسال رابط التفعيل",
+
+        message=(
+            f"مرحبًا {request.user.full_name}\n\n"
+            f"اضغط الرابط التالي لتفعيل حسابك:\n\n"
+            f"{verification_url}"
+        ),
+
+        from_email=settings.DEFAULT_FROM_EMAIL,
+
+        recipient_list=[request.user.email],
+    )
+    
+    request.user.last_verification_email_sent = timezone.now()
+
+    request.user.save()
+
+    messages.success(
+        request,
+        "تم إرسال رابط تفعيل جديد إلى بريدك الإلكتروني 📩"
+    )
+
+    return redirect(
+        "accounts:verify_email_notice"
+    )
 
 
 def login_view(request):
@@ -64,6 +285,20 @@ def login_view(request):
             if user.status == "banned":
                 messages.error(request, "حسابك محظور.")
                 return redirect("accounts:login")
+            
+            # الحساب غير مفعل
+            if not user.email_verified:
+
+                login(request, user)
+
+                messages.warning(
+                    request,
+                    "يرجى تفعيل بريدك الإلكتروني أولاً."
+                )
+
+                return redirect(
+                    "accounts:verify_email_notice"
+                )
 
             login(request, user)
             messages.success(request, "تم تسجيل الدخول بنجاح 👋")

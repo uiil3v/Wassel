@@ -13,6 +13,7 @@ class CustomUserAdmin(UserAdmin):
         "role",
         "admin_level",  
         "status",
+        "email_verified",
         "is_staff",
     )
 
@@ -21,6 +22,7 @@ class CustomUserAdmin(UserAdmin):
         "admin_level", 
         "status",
         "is_staff",
+        "email_verified",
     )
 
     ordering = ("email",)
@@ -37,6 +39,7 @@ class CustomUserAdmin(UserAdmin):
                 "role",
                 "admin_level",  
                 "status",
+                "email_verified",
                 "is_staff",
                 "is_superuser",
                 "groups",

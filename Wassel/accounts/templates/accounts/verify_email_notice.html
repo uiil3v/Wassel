@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}
+تفعيل البريد الإلكتروني | وصل
+{% endblock %}
+
+{% block content %}
+
+<style>
+.verify-card {
+    background: white;
+    border-radius: 35px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    max-width: 650px;
+    margin: auto;
+    border: 1px solid rgba(200, 169, 81, 0.15);
+}
+
+.verify-icon {
+    width: 110px;
+    height: 110px;
+    background-color: rgba(200, 169, 81, 0.12);
+    color: #c8a951;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    margin: auto;
+}
+
+.verify-title {
+    font-weight: 700;
+    color: #4a3f35;
+    margin-top: 25px;
+}
+
+.verify-text {
+    color: #8c7b6b;
+    font-size: 18px;
+    line-height: 2;
+}
+
+.verify-btn {
+    background-color: #c8a951;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 14px 35px;
+    font-size: 18px;
+    transition: 0.3s ease;
+}
+
+.verify-btn:hover {
+    background-color: #b8953f;
+    transform: translateY(-2px);
+}
+
+.logout-link {
+    color: #b04b4b;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.logout-link:hover {
+    color: #8f2f2f;
+}
+</style>
+
+<div class="container py-5">
+
+    <div class="verify-card text-center">
+
+        <div class="verify-icon">
+            <i class="bi bi-envelope-check"></i>
+        </div>
+
+        <h1 class="verify-title">
+            تحقق من بريدك الإلكتروني
+        </h1>
+
+        <p class="verify-text mt-4">
+
+            أرسلنا رابط تفعيل إلى بريدك الإلكتروني.
+
+            يرجى فتح الرسالة والضغط على رابط التفعيل
+            حتى تتمكن من استخدام منصة وصل بشكل كامل.
+
+        </p>
+
+        <a href="{% url 'accounts:resend_verification' %}"
+           class="btn verify-btn mt-3">
+
+            إعادة إرسال رابط التفعيل
+
+        </a>
+
+        <div class="mt-4">
+
+            <a href="{% url 'accounts:logout' %}"
+               class="logout-link">
+
+                تسجيل الخروج
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -66,8 +66,11 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "accounts.middleware.EmailVerificationMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+PASSWORD_RESET_TIMEOUT = 900
 
 ROOT_URLCONF = "Wassel.urls"
 
@@ -154,5 +157,22 @@ if os.getenv("CLOUD_NAME"):
         api_key=os.getenv("API_KEY"),
         api_secret=os.getenv("API_SECRET"),
     )
+
+
+EMAIL_BACKEND = (
+    "Wassel.custom_email_backend.CustomEmailBackend"
+)
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
