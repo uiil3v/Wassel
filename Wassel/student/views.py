@@ -31,6 +31,12 @@ from .decorators import student_profile_completed_required
 
 from django.contrib.auth import logout
 
+
+from accounts.utils import (
+    send_email_change_confirmation
+)
+
+
 @login_required
 @student_profile_completed_required
 def student_dashboard(request):
@@ -417,11 +423,6 @@ def student_profile(request):
         new_phone = request.POST.get("phone")
         new_city_id = request.POST.get("city")
 
-        # تحقق أن الإيميل غير مستخدم
-        if User.objects.exclude(pk=request.user.pk).filter(email=new_email).exists():
-            messages.error(request, "البريد الإلكتروني مستخدم بالفعل.")
-            return redirect("student:profile")
-
         # ===== منع تغيير المدينة لو عنده اشتراك نشط =====
         has_active_request = profile.subscription_requests.filter(
             status__in=["pending", "approved"]
@@ -431,11 +432,56 @@ def student_profile(request):
             messages.error(request, "لا يمكنك تغيير المدينة أثناء وجود اشتراك نشط.")
             return redirect("student:profile")
 
+        # ===== تغيير البريد الإلكتروني =====
+        email_changed = (
+            new_email
+            and
+            new_email != request.user.email
+        )
+
+        if email_changed:
+
+            # تحقق أن البريد الجديد غير مستخدم
+            if User.objects.filter(
+                email=new_email
+            ).exclude(
+                pk=request.user.pk
+            ).exists():
+
+                messages.error(
+                    request,
+                    "البريد الإلكتروني مستخدم بالفعل."
+                )
+
+                return redirect("student:profile")
+
+            if User.objects.filter(
+                pending_email=new_email
+            ).exclude(
+                pk=request.user.pk
+            ).exists():
+
+                messages.error(
+                    request,
+                    "هذا البريد الإلكتروني قيد التأكيد لحساب آخر."
+                )
+
+                return redirect("student:profile")
+
+            request.user.pending_email = new_email
+
         # حفظ بيانات الحساب
-        request.user.email = new_email
         request.user.phone = new_phone
         request.user.city_id = new_city_id
         request.user.save()
+
+        # إرسال رابط التأكيد
+        if email_changed:
+
+            send_email_change_confirmation(
+                request.user,
+                request
+            )
 
         # ===== تحديث بيانات الطالب =====
         profile.university_name = request.POST.get("university_name")
@@ -450,7 +496,20 @@ def student_profile(request):
 
         profile.save()
 
-        messages.success(request, "تم حفظ التعديلات بنجاح 🎉")
+        if email_changed:
+
+            messages.success(
+                request,
+                "تم حفظ التعديلات وإرسال رابط تأكيد إلى البريد الإلكتروني الجديد."
+            )
+
+        else:
+
+            messages.success(
+                request,
+                "تم حفظ التعديلات بنجاح 🎉"
+            )
+
         return redirect("student:profile")
 
     context = {

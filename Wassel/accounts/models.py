@@ -86,6 +86,12 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     email = models.EmailField(unique=True)
+    
+    pending_email = models.EmailField(
+        unique=True,
+        null=True,
+        blank=True
+    )
 
     role = models.CharField(
         max_length=20,
@@ -113,6 +119,11 @@ class User(AbstractUser):
     )
     
     last_verification_email_sent = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+    
+    last_email_change_confirmation_sent = models.DateTimeField(
         null=True,
         blank=True
     )

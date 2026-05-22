@@ -25,6 +25,8 @@ from contracts.services import create_transport_contract
 from django.contrib.auth import logout
 
 
+from accounts.utils import send_email_change_confirmation
+
 
 
 @login_required
@@ -107,6 +109,16 @@ def driver_profile(request):
             messages.warning(request, "لا يمكنك التعديل أثناء المراجعة.")
             return redirect("driver:profile")
 
+
+
+        old_first_name = request.user.first_name
+        old_last_name = request.user.last_name
+        old_phone = request.user.phone
+        old_city_id = str(request.user.city_id)
+
+        old_vehicle_model = profile.vehicle_model
+        old_gender = profile.gender
+        
         # ===== بيانات الحساب =====
         request.user.first_name = request.POST.get("first_name")
         request.user.last_name = request.POST.get("last_name")
@@ -114,11 +126,64 @@ def driver_profile(request):
         new_email = request.POST.get("email")
         new_phone = request.POST.get("phone")
         new_city_id = request.POST.get("city")
+        
+        
 
-        # تحقق من تكرار الإيميل
-        if User.objects.exclude(pk=request.user.pk).filter(email=new_email).exists():
-            messages.error(request, "البريد الإلكتروني مستخدم بالفعل.")
-            return redirect("driver:profile")
+        
+        
+        requires_reverification = False
+        
+        if (
+            request.POST.get("first_name") != old_first_name
+            or
+            request.POST.get("last_name") != old_last_name
+            or
+            new_city_id != old_city_id
+            or
+            request.POST.get("vehicle_model") != (old_vehicle_model or "")
+            or
+            request.POST.get("gender") != (old_gender or "")
+        ):
+            requires_reverification = True
+        
+
+        # ===== تغيير البريد الإلكتروني =====
+
+        email_changed = (
+            new_email
+            and
+            new_email != request.user.email
+        )
+
+        if email_changed:
+
+            if User.objects.filter(
+                email=new_email
+            ).exclude(
+                pk=request.user.pk
+            ).exists():
+
+                messages.error(
+                    request,
+                    "البريد الإلكتروني مستخدم بالفعل."
+                )
+
+                return redirect("driver:profile")
+
+            if User.objects.filter(
+                pending_email=new_email
+            ).exclude(
+                pk=request.user.pk
+            ).exists():
+
+                messages.error(
+                    request,
+                    "هذا البريد الإلكتروني قيد التأكيد لحساب آخر."
+                )
+
+                return redirect("driver:profile")
+
+            request.user.pending_email = new_email
 
         # ===== منع تغيير المدينة لو عنده اشتراكات أو طلاب =====
         has_active_subscriptions = Subscription.objects.filter(
@@ -136,10 +201,16 @@ def driver_profile(request):
             return redirect("driver:profile")
 
         # ===== حفظ بيانات المستخدم =====
-        request.user.email = new_email
         request.user.phone = new_phone
         request.user.city_id = new_city_id
         request.user.save()
+
+        if email_changed:
+
+            send_email_change_confirmation(
+                request.user,
+                request
+            )
 
         # ===== بيانات السائق =====
         profile.vehicle_model = request.POST.get("vehicle_model")
@@ -159,10 +230,10 @@ def driver_profile(request):
             if request.FILES.get(field):
                 setattr(profile, field, request.FILES.get(field))
 
-        # ===== إعادة مراجعة لو غير المدينة =====
-        if str(request.user.city_id) != new_city_id:
-            profile.verification_status = "pending"
-            messages.info(request, "تم تغيير المدينة وسيتم إعادة مراجعة حسابك.")
+        # # ===== إعادة مراجعة لو غير المدينة =====
+        # if str(request.user.city_id) != new_city_id:
+        #     profile.verification_status = "pending"
+        #     messages.info(request, "تم تغيير المدينة وسيتم إعادة مراجعة حسابك.")
 
         # ===== تحقق اكتمال البيانات =====
         documents_complete = all([
@@ -175,14 +246,39 @@ def driver_profile(request):
             profile.vehicle_side_image,
         ])
 
-        if profile.vehicle_model and profile.gender and documents_complete:
-            profile.verification_status = "pending"
-            messages.success(request, "تم إرسال بياناتك للمراجعة.")
-        else:
+        if not (
+            profile.vehicle_model
+            and
+            profile.gender
+            and
+            documents_complete
+        ):
+
             profile.verification_status = "incomplete"
-            messages.error(request, "يرجى إكمال جميع البيانات والمستندات.")
+
+            messages.error(
+                request,
+                "يرجى إكمال جميع البيانات والمستندات."
+            )
+
+        elif requires_reverification:
+
+            profile.verification_status = "pending"
+
+            messages.success(
+                request,
+                "تم إرسال بياناتك للمراجعة."
+            )
 
         profile.save()
+
+        if email_changed:
+
+            messages.success(
+                request,
+                "تم حفظ التعديلات وإرسال رابط تأكيد إلى البريد الإلكتروني الجديد."
+            )
+
         return redirect("driver:profile")
 
     context = {

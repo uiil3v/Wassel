@@ -14,7 +14,9 @@ class EmailVerificationTokenGenerator(
         return (
             str(user.pk) +
             str(timestamp) +
-            str(user.email_verified)
+            str(user.email_verified) +
+            str(user.email) +
+            str(user.pending_email)
         )
 
 

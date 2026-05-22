@@ -32,6 +32,70 @@
     outline: none;
 }
 
+.email-pending-note{
+    margin-top:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    font-size:13px;
+    color:#9a7b1f;
+}
+
+.email-resend-link{
+    color:var(--accent-color);
+    font-weight:600;
+    text-decoration:none;
+}
+
+.email-resend-link:hover{
+    text-decoration:underline;
+}
+
+
+.email-change-box{
+    margin-top:10px;
+
+    background:#faf7ef;
+
+    border:1px solid rgba(200,169,81,.15);
+
+    border-radius:12px;
+
+    padding:10px 14px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.email-change-info{
+    font-size:13px;
+    color:#9a7b1f;
+}
+
+.email-change-info strong{
+    color:var(--accent-color);
+    font-weight:700;
+}
+
+.email-actions{
+    display:flex;
+    gap:12px;
+    flex-shrink:0;
+}
+
+.email-cancel-link{
+    color:#dc3545;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.email-cancel-link:hover{
+    text-decoration:underline;
+}
+
 </style>
 
 <h4 class="fw-bold mb-4">ملفي الشخصي</h4>
@@ -63,7 +127,46 @@
                 <input type="email" name="email"
                        value="{{ user.email }}"
                        class="premium-input">
+
+                      {% if user.pending_email %}
+
+                    <div class="email-change-box">
+
+                        <div class="email-change-info">
+
+                            📩 يوجد بريد إلكتروني جديد بانتظار التفعيل:
+
+                            <strong>
+                                {{ user.pending_email }}
+                            </strong>
+
+                        </div>
+
+                        <div class="email-actions">
+
+                            <a
+                                href="{% url 'accounts:resend_email_change_confirmation' %}"
+                                class="email-resend-link"
+                            >
+                                إعادة الإرسال
+                            </a>
+
+                            <a
+                                href="{% url 'accounts:cancel_email_change' %}"
+                                class="email-cancel-link"
+                            >
+                                إلغاء التغيير
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
             </div>
+ 
+
+
 
             <div class="col-md-6 mb-3">
                 <label>رقم الجوال</label>

@@ -33,6 +33,8 @@ from datetime import timedelta
 
 from django.contrib.auth.views import PasswordResetView
 
+from .utils import send_email_change_confirmation
+
 
 
 
@@ -165,6 +167,159 @@ def verify_email_view(request, uidb64, token):
     )
 
     return redirect("accounts:login")
+
+
+
+def confirm_email_change_view(request, uidb64, token):
+
+    try:
+
+        uid = force_str(
+            urlsafe_base64_decode(uidb64)
+        )
+
+        user = User.objects.get(pk=uid)
+
+    except (
+        TypeError,
+        ValueError,
+        OverflowError,
+        User.DoesNotExist
+    ):
+
+        user = None
+
+    if (
+        user is not None
+        and
+        user.pending_email
+        and
+        email_verification_token.check_token(
+            user,
+            token
+        )
+    ):
+
+        user.email = user.pending_email
+        user.pending_email = None
+        user.email_verified = True
+
+        user.save()
+
+        messages.success(
+            request,
+            "تم تغيير البريد الإلكتروني بنجاح ✅"
+        )
+
+        return redirect("main:index")
+
+    messages.error(
+        request,
+        "رابط تأكيد البريد الإلكتروني غير صالح أو منتهي."
+    )
+
+    return redirect("main:index")
+
+
+
+
+@login_required
+def resend_email_change_confirmation_view(request):
+
+    if not request.user.pending_email:
+
+        messages.error(
+            request,
+            "لا يوجد بريد إلكتروني بانتظار التأكيد."
+        )
+
+        return redirect("main:index")
+    
+    
+    # =========================
+    # منع إعادة الإرسال قبل 10 دقائق
+    # =========================
+
+    if request.user.last_email_change_confirmation_sent:
+
+        time_passed = (
+            timezone.now()
+            -
+            request.user.last_email_change_confirmation_sent
+        )
+
+        if time_passed < timedelta(minutes=10):
+
+            remaining = (
+                10
+                -
+                int(
+                    time_passed.total_seconds()
+                    // 60
+                )
+            )
+
+            messages.warning(
+                request,
+                f"يمكنك إعادة إرسال رابط التأكيد بعد {remaining} دقيقة."
+            )
+
+            return redirect(
+                request.META.get(
+                    "HTTP_REFERER",
+                    "main:index"
+                )
+            )
+
+    send_email_change_confirmation(
+        request.user,
+        request
+    )
+
+    messages.success(
+        request,
+        "تم إعادة إرسال رابط التأكيد إلى البريد الإلكتروني الجديد 📩"
+    )
+    
+    request.user.last_email_change_confirmation_sent = (
+        timezone.now()
+    )
+
+    request.user.save(
+        update_fields=[
+            "last_email_change_confirmation_sent"
+        ]
+    )
+
+    return redirect(
+        request.META.get(
+            "HTTP_REFERER",
+            "main:index"
+        )
+    )
+
+
+@login_required
+def cancel_email_change_view(request):
+
+    request.user.pending_email = None
+
+    request.user.save(
+        update_fields=["pending_email"]
+    )
+
+    messages.success(
+        request,
+        "تم إلغاء طلب تغيير البريد الإلكتروني."
+    )
+
+    return redirect(
+        request.META.get(
+            "HTTP_REFERER",
+            "main:index"
+        )
+    )
+
 
 
 @login_required
