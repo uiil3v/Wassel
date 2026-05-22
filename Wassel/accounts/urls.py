@@ -10,6 +10,7 @@ urlpatterns = [
     path("verify-email-notice/", views.verify_email_notice_view, name="verify_email_notice"),
     path("resend-verification/", views.resend_verification_email_view, name="resend_verification"),
     path("login/", views.login_view, name="login"),
+    path("restore-account/", views.restore_account_view, name="restore_account"),
     path("logout/", views.logout_view, name="logout"), 
     path("profile/<int:user_id>/", views.public_profile_view, name="public_profile"), 
     # =========================
@@ -18,11 +19,7 @@ urlpatterns = [
 
     path(
         "forgot-password/",
-        auth_views.PasswordResetView.as_view(
-            template_name="accounts/forgot_password.html",
-            email_template_name="accounts/password_reset_email.html",
-            success_url="/accounts/forgot-password/done/"
-        ),
+        views.CustomPasswordResetView.as_view(),
         name="forgot_password"
     ),
 

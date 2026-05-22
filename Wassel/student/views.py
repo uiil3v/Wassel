@@ -28,6 +28,9 @@ from reviews.models import Review
 
 from .decorators import student_profile_completed_required
 
+
+from django.contrib.auth import logout
+
 @login_required
 @student_profile_completed_required
 def student_dashboard(request):
@@ -456,6 +459,82 @@ def student_profile(request):
     }
 
     return render(request, "student/profile.html", context)
+
+
+@login_required
+def delete_student_account(request):
+
+    if request.user.role != "student":
+        return redirect("main:index")
+
+    if request.method != "POST":
+        return redirect("student:profile")
+
+    profile = request.user.student_profile
+
+    # يوجد طلب قيد الانتظار
+    if profile.subscription_requests.filter(
+        status="pending"
+    ).exists():
+
+        messages.error(
+            request,
+            "لا يمكنك حذف الحساب لوجود طلب اشتراك قيد الانتظار."
+        )
+
+        return redirect("student:profile")
+
+    # يوجد اشتراك قائم
+    if profile.subscription_requests.filter(
+        status="approved",
+        subscription__end_date__gte=timezone.now().date()
+    ).exists():
+
+        messages.error(
+            request,
+            "لا يمكنك حذف الحساب لوجود اشتراك قائم."
+        )
+
+        return redirect("student:profile")
+
+    wallet = getattr(
+        request.user,
+        "wallet",
+        None
+    )
+    
+    if wallet:
+
+        if wallet.balance > 0:
+
+            messages.error(
+                request,
+                "يرجى سحب الرصيد الموجود في المحفظة قبل حذف الحساب."
+            )
+
+            return redirect("student:profile")
+
+        if wallet.frozen_balance > 0:
+
+            messages.error(
+                request,
+                "لا يمكنك حذف الحساب لوجود مبلغ مجمد في المحفظة."
+            )
+
+            return redirect("student:profile")
+
+    request.user.status = "deleted"
+    request.user.deleted_at = timezone.now()
+    request.user.save()
+
+    logout(request)
+
+    messages.success(
+        request,
+        "تم حذف حسابك بنجاح."
+    )
+
+    return redirect("main:index")
 
 
 

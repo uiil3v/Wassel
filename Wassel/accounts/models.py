@@ -60,6 +60,7 @@ class User(AbstractUser):
     STATUS_CHOICES = (
         ('active', 'نشط'),
         ('banned', 'محظور'),
+        ('deleted', 'محذوف'),
     )
     
     ADMIN_LEVELS = (
@@ -112,6 +113,16 @@ class User(AbstractUser):
     )
     
     last_verification_email_sent = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+    
+    last_password_reset_email_sent = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+    
+    deleted_at = models.DateTimeField(
         null=True,
         blank=True
     )

@@ -159,6 +159,46 @@
         </button>
     </div>
 
+    
+
 </form>
+
+<hr class="my-5">
+
+<div class="text-center">
+
+    <h5 class="text-danger fw-bold mb-3">
+        حذف الحساب
+    </h5>
+
+    <p class="text-muted mb-4">
+
+        حذف الحساب سيؤدي إلى تعطيل الحساب وإخفائه من المنصة.
+
+        لا يمكن حذف الحساب إذا كان لديك:
+        اشتراك قائم، طلب اشتراك قيد الانتظار،
+        أو رصيد في المحفظة.
+
+    </p>
+
+    <form method="POST"
+          action="{% url 'student:delete_account' %}">
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="btn btn-danger px-4 py-2"
+            onclick="return confirm(
+                'هل أنت متأكد من حذف حسابك؟ سيتم تعطيل الحساب ويمكنك إعادة تنشيطه لاحقًا.'
+            );">
+
+            حذف الحساب
+
+        </button>
+
+    </form>
+
+</div>
 
 {% endblock %}

@@ -22,6 +22,8 @@ from django.utils import timezone
 
 from contracts.services import create_transport_contract
 
+from django.contrib.auth import logout
+
 
 
 
@@ -189,6 +191,71 @@ def driver_profile(request):
     }
 
     return render(request, "driver/profile.html", context)
+
+
+
+
+@login_required
+def delete_driver_account(request):
+
+    if request.user.role != "driver":
+        return redirect("main:index")
+
+    if request.method != "POST":
+        return redirect("driver:profile")
+
+    profile = request.user.driver_profile
+
+    # يوجد اشتراكات مرتبطة بالسائق
+    if Subscription.objects.filter(
+        driver=profile
+    ).exists():
+
+        messages.error(
+            request,
+            "لا يمكنك حذف الحساب لوجود اشتراكات مرتبطة بحسابك."
+        )
+
+        return redirect("driver:profile")
+
+    wallet = getattr(
+        request.user,
+        "wallet",
+        None
+    )
+
+    if wallet:
+
+        if wallet.balance > 0:
+
+            messages.error(
+                request,
+                "يرجى سحب الرصيد الموجود في المحفظة قبل حذف الحساب."
+            )
+
+            return redirect("driver:profile")
+
+        if wallet.frozen_balance > 0:
+
+            messages.error(
+                request,
+                "لا يمكنك حذف الحساب لوجود مبلغ مجمد في المحفظة."
+            )
+
+            return redirect("driver:profile")
+
+    request.user.status = "deleted"
+    request.user.deleted_at = timezone.now()
+    request.user.save()
+
+    logout(request)
+
+    messages.success(
+        request,
+        "تم حذف حسابك بنجاح."
+    )
+
+    return redirect("main:index")
 
 
 

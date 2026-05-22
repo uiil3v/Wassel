@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}
+إعادة تنشيط الحساب | وصل
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+.restore-card {
+    background: white;
+    border-radius: 35px;
+    padding: 60px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    max-width: 700px;
+    margin: 60px auto;
+    text-align: center;
+    border: 1px solid rgba(200,169,81,0.15);
+}
+
+.restore-icon {
+    width: 110px;
+    height: 110px;
+    margin: auto;
+    border-radius: 50%;
+    background: rgba(200,169,81,0.12);
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+}
+
+.restore-title {
+    font-weight: 700;
+    margin-top: 25px;
+    color: #4a3f35;
+}
+
+.restore-text {
+    color: #8c7b6b;
+    font-size: 18px;
+    line-height: 2;
+    margin-top: 20px;
+}
+
+.restore-note {
+    color: #9c8a74;
+    font-size: 15px;
+    margin-top: 15px;
+    line-height: 1.8;
+}
+
+.restore-btn {
+    margin-top: 30px;
+    padding: 14px 35px;
+    border-radius: 30px;
+}
+
+.cancel-btn {
+    margin-top: 12px;
+    padding: 12px 30px;
+    border-radius: 30px;
+}
+
+</style>
+
+<div class="container">
+
+    <div class="restore-card">
+
+        <div class="restore-icon">
+            <i class="bi bi-person-check"></i>
+        </div>
+
+        <h2 class="restore-title">
+            الحساب معطل
+        </h2>
+
+        <p class="restore-text">
+
+            تم تعطيل هذا الحساب سابقًا بناءً على طلبك.
+
+            يمكنك إعادة تنشيط الحساب والعودة لاستخدام منصة وصل
+            مع الاحتفاظ بجميع بياناتك السابقة.
+
+        </p>
+
+        <p class="restore-note">
+
+            يمكنك إعادة تنشيط الحساب في أي وقت باستخدام
+            نفس البريد الإلكتروني وكلمة المرور.
+
+        </p>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-accent restore-btn">
+
+                إعادة تنشيط الحساب
+
+            </button>
+
+        </form>
+
+        <div>
+
+            <a href="{% url 'main:index' %}"
+               class="btn btn-outline-secondary cancel-btn">
+
+                ليس الآن
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

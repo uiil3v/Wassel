@@ -31,6 +31,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import timedelta
 
+from django.contrib.auth.views import PasswordResetView
+
 
 
 
@@ -272,6 +274,78 @@ def resend_verification_email_view(request):
     )
 
 
+
+class CustomPasswordResetView(PasswordResetView):
+
+    template_name = "accounts/forgot_password.html"
+
+    email_template_name = (
+        "accounts/password_reset_email.html"
+    )
+
+    success_url = (
+        "/accounts/forgot-password/done/"
+    )
+
+    def form_valid(self, form):
+
+        email = form.cleaned_data["email"]
+
+        user = User.objects.filter(
+            email=email
+        ).first()
+
+        if user:
+
+            if user.last_password_reset_email_sent:
+
+                time_passed = (
+                    timezone.now()
+                    -
+                    user.last_password_reset_email_sent
+                )
+
+                if time_passed < timedelta(
+                    minutes=10
+                ):
+
+                    remaining = (
+                        10
+                        -
+                        int(
+                            time_passed.total_seconds()
+                            // 60
+                        )
+                    )
+
+                    messages.warning(
+                        self.request,
+                        f"يمكنك طلب إعادة تعيين كلمة المرور بعد {remaining} دقيقة."
+                    )
+
+                    return redirect(
+                        "accounts:forgot_password"
+                    )
+
+        response = super().form_valid(form)
+
+        if user:
+
+            user.last_password_reset_email_sent = (
+                timezone.now()
+            )
+
+            user.save(
+                update_fields=[
+                    "last_password_reset_email_sent"
+                ]
+            )
+
+        return response
+
+
+
+
 def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")   
@@ -285,6 +359,15 @@ def login_view(request):
             if user.status == "banned":
                 messages.error(request, "حسابك محظور.")
                 return redirect("accounts:login")
+            
+            # الحساب محذوف
+            if user.status == "deleted":
+
+                request.session["restore_user_id"] = user.id
+
+                return redirect(
+                    "accounts:restore_account"
+                )
             
             # الحساب غير مفعل
             if not user.email_verified:
@@ -308,6 +391,57 @@ def login_view(request):
             messages.error(request, "البريد الإلكتروني أو كلمة المرور غير صحيحة.")
 
     return render(request, "accounts/login.html")
+
+
+def restore_account_view(request):
+
+    user_id = request.session.get(
+        "restore_user_id"
+    )
+
+    if not user_id:
+
+        return redirect(
+            "accounts:login"
+        )
+
+    user = get_object_or_404(
+        User,
+        id=user_id,
+        status="deleted"
+    )
+
+    if request.method == "POST":
+
+        user.status = "active"
+        user.deleted_at = None
+        user.save()
+
+        login(
+            request,
+            user
+        )
+
+        request.session.pop(
+            "restore_user_id",
+            None
+        )
+
+        messages.success(
+            request,
+            "تمت إعادة تنشيط حسابك بنجاح 🎉"
+        )
+
+        return redirect(
+            "main:index"
+        )
+
+    return render(
+        request,
+        "accounts/restore_account.html"
+    )
+
+
 
 
 def logout_view(request):
