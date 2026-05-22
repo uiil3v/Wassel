@@ -281,4 +281,76 @@
 
 </div>
 
+
+<!-- ========================= -->
+<!-- القسم 4: الطلبات السابقة -->
+<!-- ========================= -->
+
+<div class="detail-card">
+
+    <h5 class="section-title">
+        الطلبات السابقة
+    </h5>
+
+    {% if old_requests %}
+
+        {% for req in old_requests %}
+
+        <a href="{% url 'driver:subscription_request_detail' req.id %}"
+           class="text-decoration-none text-dark">
+
+            <div class="student-row d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <div class="fw-bold">
+                        {{ req.student.user.get_full_name }}
+                    </div>
+
+                    <div class="text-muted small">
+
+                        {% if req.status == "cancelled" %}
+                            تم إلغاء الاشتراك
+                        {% elif req.status == "rejected" %}
+                            تم رفض الطلب
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div>
+
+                    {% if req.status == "cancelled" %}
+                        <span class="badge bg-warning text-dark">
+                            ملغي
+                        </span>
+                    {% elif req.status == "rejected" %}
+                        <span class="badge bg-danger">
+                            مرفوض
+                        </span>
+                    {% endif %}
+
+                    <span class="btn btn-outline-primary btn-sm ms-2">
+                        عرض التفاصيل
+                    </span>
+
+                </div>
+
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p class="text-muted">
+            لا توجد طلبات سابقة.
+        </p>
+
+    {% endif %}
+
+</div>
+
 {% endblock %}

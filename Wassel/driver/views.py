@@ -565,11 +565,18 @@ def subscription_detail(request, sub_id):
     approved_requests = subscription.requests.filter(
         status="approved"
     ).select_related("student__user")
+    
+    old_requests = subscription.requests.filter(
+        status__in=["cancelled", "rejected"]
+    ).select_related(
+        "student__user"
+    ).order_by("-request_date")
 
     context = {
         "subscription": subscription,
         "pending_requests": pending_requests,
         "approved_requests": approved_requests,
+        "old_requests": old_requests,
     }
 
     return render(request, "driver/subscription_detail.html", context)
@@ -583,6 +590,9 @@ def delete_subscription(request, sub_id):
     if request.user.role != "driver":
         return redirect("main:index")
 
+    if request.method != "POST":
+        return redirect("driver:subscriptions")
+
     profile = request.user.driver_profile
 
     subscription = get_object_or_404(
@@ -591,24 +601,26 @@ def delete_subscription(request, sub_id):
         driver=profile
     )
 
-    # تحقق
-    has_students = subscription.requests.filter(status="approved").exists()
-    has_pending = subscription.requests.filter(status="pending").exists()
+    if subscription.requests.exists():
 
-    if has_students:
-        messages.error(request, "لا يمكن حذف الاشتراك لوجود طلاب مشتركين.")
-        return redirect("driver:subscription_detail", sub_id=sub_id)
+        messages.error(
+            request,
+            "لا يمكن حذف اشتراك سبق أن استقبل طلبات. يمكنك إيقافه فقط."
+        )
 
-    if has_pending:
-        messages.error(request, "لا يمكن حذف الاشتراك لوجود طلبات قيد الانتظار.")
-        return redirect("driver:subscription_detail", sub_id=sub_id)
+        return redirect(
+            "driver:subscription_detail",
+            sub_id=sub_id
+        )
 
     subscription.delete()
-    messages.success(request, "تم حذف الاشتراك بنجاح.")
+
+    messages.success(
+        request,
+        "تم حذف الاشتراك بنجاح."
+    )
 
     return redirect("driver:subscriptions")
-
-
 
 
 
