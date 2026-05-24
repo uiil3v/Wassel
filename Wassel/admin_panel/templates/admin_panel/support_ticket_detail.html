@@ -1,0 +1,496 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+
+.detail-card{
+    background:white;
+    border-radius:30px;
+    padding:30px;
+    box-shadow:0 20px 50px rgba(0,0,0,.05);
+    margin-bottom:25px;
+}
+
+.detail-card h5{
+    font-weight:700;
+    margin-bottom:25px;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.info-item{
+    background:#fafafa;
+    border-radius:20px;
+    padding:15px;
+}
+
+.info-label{
+    font-size:13px;
+    color:#888;
+    margin-bottom:5px;
+}
+
+.info-value{
+    font-weight:600;
+}
+
+.status-badge{
+    padding:8px 16px;
+    border-radius:25px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.status-progress{
+    background:#fff3cd;
+    color:#856404;
+}
+
+.status-waiting{
+    background:#cff4fc;
+    color:#055160;
+}
+
+.status-resolved{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.status-closed{
+    background:#f8d7da;
+    color:#842029;
+}
+
+.ticket-owner{
+    background:#fdf8ef;
+    border:1px solid rgba(200,169,81,.2);
+    border-radius:20px;
+    padding:15px;
+}
+
+.btn-wassel{
+    background:#c8a951;
+    border:none;
+    color:white;
+    border-radius:30px;
+    padding:10px 25px;
+}
+
+.btn-wassel:hover{
+    background:#b8953f;
+    color:white;
+}
+
+.btn-outline-wassel{
+    border:1px solid #c8a951;
+    color:#c8a951;
+    border-radius:30px;
+    padding:10px 25px;
+}
+
+.btn-outline-wassel:hover{
+    background:#c8a951;
+    color:white;
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.chat-box{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.chat-message{
+    max-width:80%;
+    padding:15px 20px;
+    border-radius:22px;
+    position:relative;
+}
+
+.chat-user{
+    background:#f5f5f5;
+    align-self:flex-start;
+}
+
+.chat-admin{
+    background:#fdf8ef;
+    border:1px solid rgba(200,169,81,.25);
+    align-self:flex-end;
+}
+
+.chat-header{
+    font-size:12px;
+    color:#777;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.chat-time{
+    font-size:11px;
+    color:#999;
+    margin-top:10px;
+}
+
+.reply-box{
+    background:#fafafa;
+    border-radius:25px;
+    padding:20px;
+}
+
+</style>
+
+<div class="page-header">
+
+    <div>
+
+        <h3 class="fw-bold mb-1">
+            🎫 {{ ticket.ticket_number }}
+        </h3>
+
+        <div class="text-muted">
+            تفاصيل تذكرة الدعم
+        </div>
+
+    </div>
+
+    <a href="{% url 'admin_panel:support_tickets' %}"
+       class="btn btn-outline-wassel">
+
+        رجوع
+
+    </a>
+
+</div>
+
+
+<div class="detail-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h5 class="mb-0">
+            معلومات التذكرة
+        </h5>
+
+        {% if ticket.status == "in_progress" %}
+            <span class="status-badge status-progress">
+                قيد المعالجة
+            </span>
+
+        {% elif ticket.status == "waiting_user" %}
+            <span class="status-badge status-waiting">
+                بانتظار رد العميل
+            </span>
+
+        {% elif ticket.status == "resolved" %}
+            <span class="status-badge status-resolved">
+                تم الحل
+            </span>
+
+        {% else %}
+            <span class="status-badge status-closed">
+                مغلقة
+            </span>
+        {% endif %}
+
+    </div>
+
+    <div class="info-grid">
+
+        <div class="info-item">
+            <div class="info-label">رقم التذكرة</div>
+            <div class="info-value">
+                {{ ticket.ticket_number }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">نوع التذكرة</div>
+            <div class="info-value">
+                {{ ticket.get_category_display }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">تاريخ الإنشاء</div>
+            <div class="info-value">
+                {{ ticket.created_at|date:"d/m/Y H:i" }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">آخر تحديث</div>
+            <div class="info-value">
+                {{ ticket.updated_at|date:"d/m/Y H:i" }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="detail-card">
+
+    <h5>
+        👤 معلومات العميل
+    </h5>
+
+    <div class="info-grid">
+
+        <div class="info-item">
+            <div class="info-label">الاسم</div>
+            <div class="info-value">
+                {{ ticket.name }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">البريد الإلكتروني</div>
+            <div class="info-value">
+                {{ ticket.email }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">رقم الجوال</div>
+            <div class="info-value">
+                {{ ticket.phone }}
+            </div>
+        </div>
+
+        <div class="info-item">
+            <div class="info-label">نوع الحساب</div>
+            <div class="info-value">
+
+                {% if ticket.user %}
+                    {{ ticket.user.get_role_display }}
+                {% else %}
+                    زائر
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{% if ticket.attachment %}
+
+<div class="detail-card">
+
+    <h5>
+        📎 المرفق
+    </h5>
+
+    <a href="{{ ticket.attachment.url }}"
+       target="_blank"
+       class="btn btn-outline-wassel">
+
+        عرض المرفق
+
+    </a>
+
+</div>
+
+{% endif %}
+
+
+
+<div class="detail-card">
+
+    <h5>
+        💬 المحادثة
+    </h5>
+
+    <div class="chat-box">
+
+        {% for msg in messages_list %}
+
+            <div class="chat-message {% if msg.sender_type == 'admin' %}chat-admin{% else %}chat-user{% endif %}">
+
+                <div class="chat-header">
+
+                    {% if msg.sender_type == "admin" %}
+                        🛠 {{ msg.sender.full_name|default:"مشرف" }}
+                    {% elif msg.sender_type == "user" %}
+                        👤 {{ ticket.name }}
+                    {% else %}
+                        🌐 زائر
+                    {% endif %}
+
+                </div>
+
+                <div>
+                    {{ msg.message|linebreaks }}
+                </div>
+
+                <div class="chat-time">
+                    {{ msg.created_at|date:"d/m/Y H:i" }}
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="alert alert-light">
+                لا توجد رسائل.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<div class="detail-card">
+
+    <h5>
+        🛠 إدارة التذكرة
+    </h5>
+
+    <div class="ticket-owner mb-4">
+
+        <strong>المسؤول الحالي:</strong>
+
+        {% if ticket.handled_by %}
+            {{ ticket.handled_by.full_name }}
+        {% else %}
+            غير مسندة
+        {% endif %}
+
+    </div>
+
+    {% if not ticket.handled_by %}
+
+        <form method="post" class="mb-4">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="claim"
+            >
+
+            <button
+                type="submit"
+                class="btn btn-wassel">
+
+                🙋 استلام التذكرة
+
+            </button>
+
+        </form>
+
+        <div class="alert alert-info">
+
+            يجب استلام التذكرة أولاً قبل الرد على العميل أو إغلاقها.
+
+        </div>
+
+    {% elif ticket.handled_by == request.user %}
+
+        {% if ticket.status != "closed" and ticket.status != "resolved" %}
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="reply"
+                >
+
+                <div class="reply-box">
+
+                    <label class="form-label fw-bold mb-3">
+                        الرد على العميل
+                    </label>
+
+                    {{ message_form.message }}
+
+                    <div class="mt-3 d-flex gap-2 flex-wrap">
+
+                        <button
+                            type="submit"
+                            class="btn btn-wassel">
+
+                            ✉️ إرسال الرد
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+            <form method="post" class="mt-3">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="close"
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger">
+
+                    🔒 إغلاق التذكرة
+
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <div class="alert alert-success mb-0">
+
+                تم إغلاق هذه التذكرة ولا يمكن إضافة ردود جديدة.
+
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="alert alert-warning mb-0">
+
+            هذه التذكرة مسندة إلى
+
+            <strong>
+                {{ ticket.handled_by.full_name }}
+            </strong>
+
+            ولا يمكنك تعديلها.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

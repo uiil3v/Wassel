@@ -1,0 +1,625 @@
+{% extends "admin_panel/admin_base.html" %}
+
+{% block admin_content %}
+
+<style>
+
+/* ================= HEADER ================= */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-title {
+    font-weight: 800;
+    margin: 0;
+}
+
+.page-subtitle {
+    color: #777;
+    margin-top: 5px;
+}
+
+/* ================= STATS ================= */
+
+.stat-card {
+    background: white;
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    transition: 0.3s;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent-color);
+}
+
+.stat-label {
+    color: #777;
+    margin-top: 5px;
+}
+
+/* ================= SEARCH ================= */
+
+.search-container {
+    background: white;
+    padding: 35px;
+    border-radius: 35px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.search-input {
+    border-radius: 30px;
+    padding: 14px 20px;
+}
+
+.advanced-box {
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 25px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.search-footer {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.results-count {
+    color: #777;
+}
+
+.results-count strong {
+    color: black;
+}
+
+/* ================= BUTTONS ================= */
+
+.btn-wassel-primary {
+    background-color: #c8a951;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 22px;
+}
+
+.btn-wassel-primary:hover {
+    background-color: #b8953f;
+    color: white;
+}
+
+.btn-wassel-outline {
+    border: 1px solid #c8a951;
+    color: #c8a951;
+    background: transparent;
+    border-radius: 30px;
+    padding: 10px 22px;
+}
+
+.btn-wassel-outline:hover {
+    background-color: #c8a951;
+    color: white;
+}
+
+/* ================= TICKET CARD ================= */
+
+.ticket-card {
+    background: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    transition: 0.3s;
+    height: 100%;
+}
+
+.ticket-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.08);
+}
+
+.ticket-number {
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.ticket-subject {
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.ticket-meta {
+    color: #777;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.ticket-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.06);
+    margin: 18px 0;
+}
+
+.info-item {
+    margin-bottom: 8px;
+}
+
+.info-label {
+    color: #777;
+    font-size: 13px;
+}
+
+/* ================= BADGES ================= */
+
+.status-badge,
+.category-badge {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-progress {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-waiting {
+    background: #cff4fc;
+    color: #055160;
+}
+
+.status-resolved {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-closed {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.category-support {
+    background: #eef6ff;
+    color: #0d6efd;
+}
+
+.category-complaint {
+    background: #fff1f2;
+    color: #dc3545;
+}
+
+.category-suggestion {
+    background: #f0fff4;
+    color: #198754;
+}
+
+.category-report {
+    background: #fff7e6;
+    color: #fd7e14;
+}
+
+.category-other {
+    background: #ececec;
+    color: #555;
+}
+
+/* ================= EMPTY ================= */
+
+.empty-box {
+    background: white;
+    border-radius: 35px;
+    padding: 60px;
+    text-align: center;
+    color: #888;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+}
+
+</style>
+
+<!-- ================= HEADER ================= -->
+
+<div class="page-header">
+
+    <div>
+        <h3 class="page-title">🎫 الدعم</h3>
+        <div class="page-subtitle">
+            إدارة ومتابعة تذاكر الدعم الفني والشكاوى والاقتراحات
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= STATS ================= -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_tickets }}</div>
+            <div class="stat-label">إجمالي التذاكر</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ in_progress_count }}</div>
+            <div class="stat-label">قيد المعالجة</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ waiting_user_count }}</div>
+            <div class="stat-label">بانتظار العميل</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ resolved_count }}</div>
+            <div class="stat-label">تم الحل</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ closed_count }}</div>
+            <div class="stat-label">مغلقة</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ unassigned_count }}</div>
+            <div class="stat-label">غير مسندة لمشرف</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg">
+        <div class="stat-card">
+            <div class="stat-number">{{ attachment_count }}</div>
+            <div class="stat-label">بمرفقات</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= SEARCH ================= -->
+
+<form method="get">
+
+<div class="search-container">
+
+    <div class="d-flex flex-column flex-md-row gap-3">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            class="form-control search-input"
+            placeholder="ابحث برقم التذكرة أو الاسم أو البريد أو الجوال أو عنوان التذكرة..."
+        >
+
+        <div class="d-flex gap-2">
+
+            <button class="btn btn-wassel-primary">
+                بحث
+            </button>
+
+            <button
+                class="btn btn-wassel-outline"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#advancedSearch">
+
+                بحث متقدم
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="collapse mt-4" id="advancedSearch">
+
+        <div class="advanced-box">
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+                    <label class="form-label">النوع</label>
+                    <select name="category" class="form-select">
+                        <option value="">الكل</option>
+
+                        {% for value,label in tickets.model.CATEGORY_CHOICES %}
+                        <option value="{{ value }}" {% if category == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">الحالة</label>
+                    <select name="status" class="form-select">
+
+                        <option value="">الكل</option>
+
+                        <option value="in_progress" {% if status == "in_progress" %}selected{% endif %}>
+                            قيد المعالجة
+                        </option>
+
+                        <option value="waiting_user" {% if status == "waiting_user" %}selected{% endif %}>
+                            بانتظار العميل
+                        </option>
+
+                        <option value="resolved" {% if status == "resolved" %}selected{% endif %}>
+                            تم الحل
+                        </option>
+
+                        <option value="closed" {% if status == "closed" %}selected{% endif %}>
+                            مغلقة
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">المسؤول</label>
+
+                    <select name="handled_by" class="form-select">
+
+                        <option value="">الكل</option>
+
+                        <option value="unassigned"
+                            {% if handled_by == "unassigned" %}selected{% endif %}>
+                            غير مسندة
+                        </option>
+
+                        {% for admin in admins %}
+                        <option value="{{ admin.id }}"
+                            {% if handled_by == admin.id|stringformat:"s" %}selected{% endif %}>
+                            {{ admin.full_name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">المرفقات</label>
+
+                    <select name="attachment" class="form-select">
+
+                        <option value="">الكل</option>
+
+                        <option value="yes"
+                            {% if attachment == "yes" %}selected{% endif %}>
+                            يوجد مرفق
+                        </option>
+
+                        <option value="no"
+                            {% if attachment == "no" %}selected{% endif %}>
+                            بدون مرفق
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">من تاريخ</label>
+                    <input type="date" name="date_from" value="{{ date_from }}" class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">إلى تاريخ</label>
+                    <input type="date" name="date_to" value="{{ date_to }}" class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">الترتيب</label>
+
+                    <select name="sort" class="form-select">
+
+                        <option value="-created_at" {% if sort == "-created_at" %}selected{% endif %}>
+                            الأحدث أولاً
+                        </option>
+
+                        <option value="created_at" {% if sort == "created_at" %}selected{% endif %}>
+                            الأقدم أولاً
+                        </option>
+
+                        <option value="-updated_at" {% if sort == "-updated_at" %}selected{% endif %}>
+                            آخر تحديث
+                        </option>
+
+                        <option value="updated_at" {% if sort == "updated_at" %}selected{% endif %}>
+                            أقدم تحديث
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="text-end mt-4">
+
+                <button class="btn btn-wassel-primary">
+                    تطبيق الفلاتر
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="search-footer">
+
+        <div class="results-count">
+            تم العثور على <strong>{{ tickets.count }}</strong> تذكرة
+        </div>
+
+        <a href="{% url 'admin_panel:support_tickets' %}"
+           class="btn btn-wassel-outline btn-sm">
+            إعادة تعيين
+        </a>
+
+    </div>
+
+</div>
+
+</form>
+
+<!-- ================= RESULTS ================= -->
+
+<div class="row g-4">
+
+{% for ticket in tickets %}
+
+<div class="col-md-6 col-xl-4">
+
+<div class="ticket-card">
+
+<div class="d-flex justify-content-between align-items-center">
+
+    <div class="ticket-number">
+        🎫 {{ ticket.ticket_number }}
+    </div>
+
+    {% if ticket.status == "in_progress" %}
+        <span class="status-badge status-progress">قيد المعالجة</span>
+
+    {% elif ticket.status == "waiting_user" %}
+        <span class="status-badge status-waiting">بانتظار العميل</span>
+
+    {% elif ticket.status == "resolved" %}
+        <span class="status-badge status-resolved">تم الحل</span>
+
+    {% else %}
+        <span class="status-badge status-closed">مغلقة</span>
+    {% endif %}
+
+</div>
+
+<div class="ticket-subject">
+    {{ ticket.subject }}
+</div>
+
+<div class="ticket-meta">
+    {{ ticket.created_at|date:"Y-m-d H:i" }}
+</div>
+
+<div class="ticket-divider"></div>
+
+<div class="info-item">
+    <div class="info-label">الاسم</div>
+    <strong>{{ ticket.name }}</strong>
+</div>
+
+<div class="info-item">
+    <div class="info-label">البريد</div>
+    {{ ticket.email }}
+</div>
+
+<div class="info-item">
+    <div class="info-label">الجوال</div>
+    {{ ticket.phone }}
+</div>
+
+<div class="info-item mt-3">
+
+    {% if ticket.category == "support" %}
+        <span class="category-badge category-support">دعم فني</span>
+
+    {% elif ticket.category == "complaint" %}
+        <span class="category-badge category-complaint">شكوى</span>
+
+    {% elif ticket.category == "suggestion" %}
+        <span class="category-badge category-suggestion">اقتراح</span>
+
+    {% elif ticket.category == "report_user" %}
+        <span class="category-badge category-report">بلاغ عن مستخدم</span>
+
+    {% else %}
+        <span class="category-badge category-other">أخرى</span>
+    {% endif %}
+
+</div>
+
+<div class="ticket-divider"></div>
+
+<div class="d-flex justify-content-between align-items-center">
+
+    <div>
+
+        {% if ticket.attachment %}
+            📎 يوجد مرفق
+        {% else %}
+            📄 بدون مرفقات
+        {% endif %}
+
+        <br>
+
+        👨‍💼
+        {{ ticket.handled_by.full_name|default:"غير مسندة" }}
+
+    </div>
+
+    <a href="{% url 'admin_panel:support_ticket_detail' ticket.id %}"
+       class="btn btn-wassel-outline btn-sm">
+
+        عرض التفاصيل
+
+    </a>
+
+</div>
+
+</div>
+</div>
+
+{% empty %}
+
+<div class="col-12">
+
+    <div class="empty-box">
+
+        <h5 class="fw-bold mb-3">
+            لا توجد تذاكر
+        </h5>
+
+        <div>
+            لم يتم العثور على أي نتائج مطابقة للفلاتر المحددة.
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

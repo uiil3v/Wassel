@@ -1,5 +1,8 @@
 from django import forms
-from .models import SupportTicket
+from .models import (
+    SupportTicket,
+    SupportMessage,
+)
 
 
 class SupportTicketForm(forms.ModelForm):
@@ -92,3 +95,40 @@ class TicketTrackingForm(forms.Form):
             "placeholder": "example@email.com"
         })
     )
+    
+    
+class SupportMessageForm(forms.ModelForm):
+
+    class Meta:
+
+        model = SupportMessage
+
+        fields = [
+            "message",
+        ]
+
+        widgets = {
+
+            "message": forms.Textarea(attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "اكتب رسالتك هنا..."
+            }),
+
+        }
+
+        labels = {
+            "message": "الرسالة",
+        }
+
+    def clean_message(self):
+
+        message = self.cleaned_data["message"].strip()
+
+        if not message:
+
+            raise forms.ValidationError(
+                "لا يمكن إرسال رسالة فارغة."
+            )
+
+        return message

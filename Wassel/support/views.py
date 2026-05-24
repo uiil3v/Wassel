@@ -2,16 +2,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
 
-from .forms import SupportTicketForm
-from .models import SupportTicket
+
+from .models import (
+    SupportTicket,
+    SupportMessage,
+)
 
 
 from .forms import (
     SupportTicketForm,
     TicketTrackingForm,
+    SupportMessageForm,
 )
 
-from .models import SupportTicket
 
 def contact_view(request):
 
@@ -86,6 +89,27 @@ def contact_view(request):
                 ticket.phone = request.user.phone
 
             ticket.save()
+            
+            # =========================
+            # أول رسالة بالمحادثة
+            # =========================
+
+            SupportMessage.objects.create(
+
+                ticket=ticket,
+
+                sender=request.user
+                if request.user.is_authenticated
+                else None,
+
+                sender_type=(
+                    "user"
+                    if request.user.is_authenticated
+                    else "guest"
+                ),
+
+                message=ticket.message,
+            )
 
             messages.success(
                 request,
@@ -180,21 +204,112 @@ def track_ticket(request):
         context
     )
 
-
 def ticket_detail_view(
     request,
     ticket_number
 ):
 
     ticket = get_object_or_404(
-        SupportTicket,
+        SupportTicket.objects.prefetch_related(
+            "messages"
+        ),
         ticket_number=ticket_number
     )
+
+    # =========================
+    # إرسال رد جديد
+    # =========================
+
+    if request.method == "POST":
+
+        action = request.POST.get("action")
+
+        # رد العميل
+        if action == "reply":
+
+            if ticket.status in [
+                "closed",
+                "resolved"
+            ]:
+
+                messages.warning(
+                    request,
+                    "لا يمكن الرد على تذكرة مغلقة."
+                )
+
+                return redirect(
+                    "support:ticket_detail",
+                    ticket_number=ticket.ticket_number
+                )
+
+            form = SupportMessageForm(
+                request.POST
+            )
+
+            if form.is_valid():
+
+                SupportMessage.objects.create(
+
+                    ticket=ticket,
+
+                    sender=(
+                        request.user
+                        if request.user.is_authenticated
+                        else None
+                    ),
+
+                    sender_type=(
+                        "user"
+                        if request.user.is_authenticated
+                        else "guest"
+                    ),
+
+                    message=form.cleaned_data[
+                        "message"
+                    ]
+                )
+
+                ticket.mark_in_progress()
+
+                messages.success(
+                    request,
+                    "تم إرسال ردك بنجاح."
+                )
+
+                return redirect(
+                    "support:ticket_detail",
+                    ticket_number=ticket.ticket_number
+                )
+
+        # اعتماد الحل
+        elif action == "resolve":
+
+            ticket.mark_resolved()
+
+            messages.success(
+                request,
+                "تم اعتماد الحل وإغلاق التذكرة."
+            )
+
+            return redirect(
+                "support:ticket_detail",
+                ticket_number=ticket.ticket_number
+            )
+
+    message_form = SupportMessageForm()
+
+    context = {
+
+        "ticket": ticket,
+
+        "messages_list": ticket.messages.all(),
+
+        "message_form": message_form,
+    }
 
     return render(
         request,
         "support/ticket_detail.html",
-        {
-            "ticket": ticket
-        }
+        context
     )
+

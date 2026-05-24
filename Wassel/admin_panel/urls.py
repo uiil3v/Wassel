@@ -25,4 +25,7 @@ urlpatterns = [
     path("subscriptions/<int:pk>/deactivate/", views.deactivate_subscription, name="deactivate_subscription"),
     path("subscriptions/<int:pk>/activate/", views.activate_subscription, name="activate_subscription"),
     path("subscription-requests/<int:pk>/", views.subscription_request_detail, name="subscription_request_detail"),
+    
+    path("support/", views.support_tickets, name="support_tickets"),
+    path("support/<int:pk>/", views.support_ticket_detail, name="support_ticket_detail"),
 ]

@@ -28,6 +28,16 @@ from Wassel.email_utils import (
 
 
 
+
+
+from support.forms import SupportMessageForm
+
+from support.models import (
+    SupportTicket,
+    SupportMessage,
+)
+
+
 @admin_required(levels=[1, 2])
 def dashboard(request):
     # Stats
@@ -937,3 +947,427 @@ def subscription_request_detail(request, pk):
     
     
     
+    
+@admin_required(levels=[1, 2])
+def support_tickets(request):
+
+    tickets = SupportTicket.objects.select_related(
+        "user",
+        "handled_by"
+    ).order_by("-created_at")
+
+    # ======================
+    # Search
+    # ======================
+
+    search = request.GET.get("search", "").strip()
+
+    if search:
+
+        tickets = tickets.filter(
+
+            Q(ticket_number__icontains=search) |
+            Q(name__icontains=search) |
+            Q(email__icontains=search) |
+            Q(phone__icontains=search) |
+            Q(subject__icontains=search) |
+            Q(message__icontains=search)
+
+        )
+
+    # ======================
+    # Category Filter
+    # ======================
+
+    category = request.GET.get("category", "")
+
+    if category:
+
+        tickets = tickets.filter(
+            category=category
+        )
+
+    # ======================
+    # Status Filter
+    # ======================
+
+    status = request.GET.get("status", "")
+
+    if status:
+
+        tickets = tickets.filter(
+            status=status
+        )
+
+    # ======================
+    # Admin Filter
+    # ======================
+
+    handled_by = request.GET.get(
+        "handled_by",
+        ""
+    )
+
+    if handled_by == "unassigned":
+
+        tickets = tickets.filter(
+            handled_by__isnull=True
+        )
+
+    elif handled_by:
+
+        tickets = tickets.filter(
+            handled_by_id=handled_by
+        )
+
+    # ======================
+    # Attachment Filter
+    # ======================
+
+    attachment = request.GET.get(
+        "attachment",
+        ""
+    )
+
+    if attachment == "yes":
+
+        tickets = tickets.exclude(
+            attachment=""
+        ).exclude(
+            attachment__isnull=True
+        )
+
+    elif attachment == "no":
+
+        tickets = tickets.filter(
+            attachment__isnull=True
+        )
+
+    # ======================
+    # Date Filters
+    # ======================
+
+    date_from = request.GET.get(
+        "date_from"
+    )
+
+    date_to = request.GET.get(
+        "date_to"
+    )
+
+    if date_from:
+
+        tickets = tickets.filter(
+            created_at__date__gte=date_from
+        )
+
+    if date_to:
+
+        tickets = tickets.filter(
+            created_at__date__lte=date_to
+        )
+
+    # ======================
+    # Sorting
+    # ======================
+
+    sort = request.GET.get(
+        "sort",
+        "-created_at"
+    )
+
+    allowed_sorts = [
+        "-created_at",
+        "created_at",
+        "-updated_at",
+        "updated_at",
+    ]
+
+    if sort in allowed_sorts:
+
+        tickets = tickets.order_by(sort)
+
+    # ======================
+    # Statistics
+    # ======================
+
+    total_tickets = SupportTicket.objects.count()
+
+    in_progress_count = SupportTicket.objects.filter(
+        status="in_progress"
+    ).count()
+
+    waiting_user_count = SupportTicket.objects.filter(
+        status="waiting_user"
+    ).count()
+
+    resolved_count = SupportTicket.objects.filter(
+        status="resolved"
+    ).count()
+
+    closed_count = SupportTicket.objects.filter(
+        status="closed"
+    ).count()
+
+    unassigned_count = SupportTicket.objects.filter(
+        handled_by__isnull=True
+    ).count()
+
+    attachment_count = SupportTicket.objects.exclude(
+        attachment=""
+    ).exclude(
+        attachment__isnull=True
+    ).count()
+
+    admins = User.objects.filter(
+        role="admin"
+    )
+
+    context = {
+
+        "tickets": tickets,
+        "admins": admins,
+
+        "search": search,
+        "category": category,
+        "status": status,
+        "handled_by": handled_by,
+        "attachment": attachment,
+        "date_from": date_from,
+        "date_to": date_to,
+        "sort": sort,
+
+        "total_tickets": total_tickets,
+        "in_progress_count": in_progress_count,
+        "waiting_user_count": waiting_user_count,
+        "resolved_count": resolved_count,
+        "closed_count": closed_count,
+        "unassigned_count": unassigned_count,
+        "attachment_count": attachment_count,
+    }
+
+    return render(
+        request,
+        "admin_panel/support_tickets.html",
+        context
+    )
+  
+  
+  
+@admin_required(levels=[1, 2])
+def support_ticket_detail(request, pk):
+
+    ticket = get_object_or_404(
+        SupportTicket.objects.select_related(
+            "user",
+            "handled_by"
+        ).prefetch_related(
+            "messages"
+        ),
+        id=pk
+    )
+
+    # =========================
+    # هل يملك صلاحية التعديل؟
+    # =========================
+
+    can_manage = (
+
+        request.user.admin_level == 1
+
+        or
+
+        ticket.handled_by == request.user
+
+        or
+
+        ticket.handled_by is None
+
+    )
+
+    # =========================
+    # POST
+    # =========================
+
+    if request.method == "POST":
+
+        action = request.POST.get("action")
+
+        # =====================
+        # استلام التذكرة
+        # =====================
+
+        if action == "claim":
+
+            if ticket.handled_by is None:
+
+                ticket.handled_by = request.user
+                ticket.save()
+
+                messages.success(
+                    request,
+                    "تم استلام التذكرة بنجاح."
+                )
+
+            else:
+
+                messages.warning(
+                    request,
+                    "التذكرة مستلمة بالفعل."
+                )
+
+            return redirect(
+                "admin_panel:support_ticket_detail",
+                pk=ticket.id
+            )
+
+        # =====================
+        # الرد على التذكرة
+        # =====================
+
+        elif action == "reply":
+
+            if not can_manage:
+
+                messages.error(
+                    request,
+                    "لا تملك صلاحية الرد على هذه التذكرة."
+                )
+
+                return redirect(
+                    "admin_panel:support_ticket_detail",
+                    pk=ticket.id
+                )
+
+            if ticket.handled_by != request.user:
+
+                messages.error(
+                    request,
+                    "يجب استلام التذكرة أولاً قبل الرد عليها."
+                )
+
+                return redirect(
+                    "admin_panel:support_ticket_detail",
+                    pk=ticket.id
+                )
+
+            if ticket.status in [
+                "closed",
+                "resolved"
+            ]:
+
+                messages.warning(
+                    request,
+                    "لا يمكن الرد على تذكرة مغلقة أو محلولة."
+                )
+
+                return redirect(
+                    "admin_panel:support_ticket_detail",
+                    pk=ticket.id
+                )
+
+            form = SupportMessageForm(
+                request.POST
+            )
+
+            if form.is_valid():
+
+                SupportMessage.objects.create(
+
+                    ticket=ticket,
+
+                    sender=request.user,
+
+                    sender_type="admin",
+
+                    message=form.cleaned_data[
+                        "message"
+                    ]
+                )
+
+                ticket.mark_waiting_user()
+
+                if ticket.user:
+
+                    send_notification(
+
+                        title="تم الرد على تذكرتك",
+
+                        message=(
+                            f"تم الرد على تذكرتك "
+                            f"({ticket.ticket_number})"
+                        ),
+
+                        target="user",
+
+                        user=ticket.user,
+
+                        notification_type="admin",
+
+                        sent_by=request.user
+                    )
+
+                messages.success(
+                    request,
+                    "تم إرسال الرد بنجاح."
+                )
+
+            return redirect(
+                "admin_panel:support_ticket_detail",
+                pk=ticket.id
+            )
+
+        # =====================
+        # إغلاق التذكرة
+        # =====================
+
+        elif action == "close":
+
+            if ticket.handled_by != request.user:
+
+                messages.error(
+                    request,
+                    "يجب استلام التذكرة أولاً."
+                )
+
+                return redirect(
+                    "admin_panel:support_ticket_detail",
+                    pk=ticket.id
+                )
+
+            ticket.mark_closed()
+
+            messages.success(
+                request,
+                "تم إغلاق التذكرة بنجاح."
+            )
+
+            return redirect(
+                "admin_panel:support_ticket_detail",
+                pk=ticket.id
+            )
+
+    admins = User.objects.filter(
+        role="admin"
+    ).order_by(
+        "first_name",
+        "last_name"
+    )
+
+    message_form = SupportMessageForm()
+
+    context = {
+
+        "ticket": ticket,
+        "admins": admins,
+        "can_manage": can_manage,
+        "messages_list": ticket.messages.all(),
+        "message_form": message_form,
+
+    }
+
+    return render(
+        request,
+        "admin_panel/support_ticket_detail.html",
+        context
+    )

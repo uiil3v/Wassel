@@ -197,6 +197,12 @@
             الإشعارات
         </a>
 
+        <a href="{% url 'admin_panel:support_tickets' %}"
+        class="driver-link {% if 'support' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-life-preserver me-2"></i>
+            الدعم
+        </a>
+
     </div>
 
     <!-- ===== Content ===== -->
@@ -247,6 +253,11 @@
         <a href="{% url 'admin_panel:notifications' %}"
            class="driver-link {% if 'notification' in request.resolver_match.url_name %}active{% endif %}">
             الإشعارات
+        </a>
+
+        <a href="{% url 'admin_panel:support_tickets' %}"
+        class="driver-link {% if 'support' in request.resolver_match.url_name %}active{% endif %}">
+            الدعم
         </a>
 
     </div>

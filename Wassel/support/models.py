@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from cloudinary.models import CloudinaryField
+from django.utils import timezone
 
 
 class SupportTicket(models.Model):
@@ -69,9 +70,16 @@ class SupportTicket(models.Model):
         default="in_progress"
     )
 
-    admin_response = models.TextField(
-        blank=True,
-        null=True
+    
+    last_admin_reply_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+    
+    
+    last_user_reply_at = models.DateTimeField(
+        null=True,
+        blank=True
     )
 
     created_at = models.DateTimeField(
@@ -99,6 +107,49 @@ class SupportTicket(models.Model):
         blank=True,
         related_name="handled_tickets"
     )
+    
+    
+    
+    def mark_resolved(self):
+
+        self.status = "resolved"
+        self.resolved_at = timezone.now()
+        
+        self.closed_at = None
+
+        self.save()
+
+
+    def mark_closed(self):
+
+        self.status = "closed"
+        self.closed_at = timezone.now()
+        
+        self.resolved_at = None
+
+        self.save()
+
+
+    def mark_waiting_user(self):
+
+        self.status = "waiting_user"
+
+        self.last_admin_reply_at = timezone.now()
+
+        self.closed_at = None
+
+        self.save()
+
+
+    def mark_in_progress(self):
+
+        self.status = "in_progress"
+
+        self.last_user_reply_at = timezone.now()
+
+        self.resolved_at = None
+
+        self.save()
 
     def generate_ticket_number(self):
 
@@ -119,3 +170,54 @@ class SupportTicket(models.Model):
     def __str__(self):
 
         return self.ticket_number or f"Ticket #{self.pk}"
+    
+    
+    
+    
+class SupportMessage(models.Model):
+
+    SENDER_TYPES = (
+        ("user", "مستخدم"),
+        ("admin", "مشرف"),
+        ("guest", "زائر"),
+    )
+
+    ticket = models.ForeignKey(
+        SupportTicket,
+        on_delete=models.CASCADE,
+        related_name="messages"
+    )
+
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="support_messages"
+    )
+
+    sender_type = models.CharField(
+        max_length=20,
+        choices=SENDER_TYPES
+    )
+
+    message = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+
+        if self.sender:
+            sender_name = self.sender.email
+        else:
+            sender_name = self.ticket.email
+
+        return (
+            f"{self.ticket.ticket_number} - "
+            f"{sender_name}"
+        )
