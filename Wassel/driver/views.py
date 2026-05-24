@@ -375,6 +375,20 @@ def create_subscription(request):
         return redirect("main:index")
 
     profile = request.user.driver_profile
+    
+    blocked_subscription_exists = Subscription.objects.filter(
+        driver=profile,
+        status="inactive_by_admin"
+    ).exists()
+
+    if blocked_subscription_exists:
+
+        messages.error(
+            request,
+            "لا يمكنك إنشاء اشتراك جديد لوجود اشتراك موقوف من إدارة المنصة. يرجى التواصل مع الدعم الفني."
+        )
+
+        return redirect("driver:subscriptions")
 
     if profile.verification_status != "approved":
         messages.error(request, "لا يمكنك إنشاء اشتراك قبل اعتماد حسابك.")
@@ -603,8 +617,15 @@ def driver_subscriptions(request):
         driver=profile
     ).order_by("-created_at")
 
+
+    blocked_by_admin = Subscription.objects.filter(
+        driver=profile,
+        status="inactive_by_admin"
+    ).exists()
+
     context = {
-        "subscriptions": subscriptions
+        "subscriptions": subscriptions,
+        "blocked_by_admin": blocked_by_admin,
     }
 
     return render(request, "driver/subscriptions.html", context)

@@ -51,11 +51,20 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold">اشتراكاتي</h3>
 
-    <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
-        <i class="bi bi-plus-circle me-2"></i>
-        إنشاء اشتراك جديد
-    </a>
+    {% if not blocked_by_admin %}
+        <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
+            <i class="bi bi-plus-circle me-2"></i>
+            إنشاء اشتراك جديد
+        </a>
+    {% endif %}
 </div>
+
+{% if blocked_by_admin %}
+<div class="alert alert-danger rounded-4 mb-4">
+    <strong>تنبيه:</strong>
+    يوجد لديك اشتراك موقوف من إدارة المنصة، لذلك تم تعطيل إمكانية إنشاء اشتراكات جديدة حتى يتم حل المشكلة مع الدعم الفني.
+</div>
+{% endif %}
 
 {% if subscriptions %}
 
@@ -145,9 +154,11 @@
             ابدأ بإنشاء اشتراك جديد لاستقبال الطلبات من الطلاب.
         </p>
 
-        <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
-            إنشاء اشتراك
-        </a>
+        {% if not blocked_by_admin %}
+            <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
+                إنشاء اشتراك
+            </a>
+        {% endif %}
     </div>
 
 {% endif %}
