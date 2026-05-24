@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}تواصل معنا - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== HEADER ===== */
+    .contact-header {
+        text-align: center;
+        padding: 120px 0 60px;
+    }
+
+    .contact-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+    }
+
+    .contact-header p {
+        font-size: 1.3rem;
+        color: var(--soft-color);
+        max-width: 750px;
+        margin: 20px auto 0;
+        line-height: 2;
+    }
+
+    /* ===== CONTACT SECTION ===== */
+    .contact-section {
+        padding: 80px 0 120px;
+    }
+
+    .contact-wrapper {
+        background: linear-gradient(135deg, #f6f2ea, #ece6db);
+        border-radius: 60px;
+        padding: 60px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ===== FORM ===== */
+
+    .contact-form {
+        background: white;
+        padding: 40px;
+        border-radius: 30px;
+        border: 1px solid rgba(200, 169, 81, 0.3);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 15px;
+        padding: 14px;
+        border: 1px solid #ddd;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(200, 169, 81, 0.25);
+    }
+
+    .btn-contact {
+        background-color: var(--accent-color);
+        color: white;
+        border-radius: 30px;
+        padding: 12px 35px;
+        border: none;
+        transition: 0.3s ease;
+    }
+
+    .btn-contact:hover {
+        background-color: #b8953f;
+        transform: translateY(-3px);
+    }
+
+    .ticket-note {
+        background: rgba(200, 169, 81, 0.08);
+        border: 1px solid rgba(200, 169, 81, 0.2);
+        padding: 15px;
+        border-radius: 15px;
+        color: var(--dark-color);
+        margin-bottom: 25px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+
+    @media (max-width: 992px) {
+
+        .contact-wrapper {
+            padding: 40px;
+        }
+
+    }
+
+    @media (max-width: 768px) {
+
+        .contact-header {
+            padding: 90px 0 40px;
+        }
+
+        .contact-header h1 {
+            font-size: 2rem;
+        }
+
+        .contact-header p {
+            font-size: 1rem;
+            line-height: 1.8;
+            padding: 0 10px;
+        }
+
+        .contact-wrapper {
+            padding: 25px;
+            border-radius: 30px;
+        }
+
+        .contact-form {
+            padding: 25px 20px;
+            border-radius: 25px;
+        }
+
+    }
+
+    @media (max-width: 576px) {
+
+        .contact-wrapper {
+            padding: 15px;
+        }
+
+        .contact-form {
+            padding: 20px 15px;
+        }
+
+        .btn-contact {
+            width: 100%;
+            padding: 14px;
+            border-radius: 50px;
+        }
+
+    }
+
+    .track-ticket-box {
+    background: rgba(13, 110, 253, 0.08);
+    border: 1px solid rgba(13, 110, 253, 0.15);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.track-ticket-btn {
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+
+    .track-ticket-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== HEADER ===== -->
+<section class="contact-header">
+    <div class="container">
+
+        <h1>مركز الدعم والتواصل</h1>
+
+        <p>
+            يمكنك إرسال استفسار أو شكوى أو اقتراح أو طلب دعم فني من خلال نظام التذاكر.
+            سيتم تزويدك برقم تذكرة لمتابعة حالة الطلب والاطلاع على الردود المقدمة من فريق الدعم.
+        </p>
+
+    </div>
+</section>
+
+<!-- ===== CONTACT SECTION ===== -->
+<section class="contact-section">
+    <div class="container">
+
+        <div class="contact-wrapper">
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8 col-xl-7">
+
+                    <div class="contact-form">
+
+                        <h4 class="fw-bold mb-3">
+                            إنشاء تذكرة دعم
+                        </h4>
+
+                        <div class="ticket-note">
+                            بعد إرسال الطلب سيتم إنشاء رقم تذكرة خاص بك يمكنك استخدامه لاحقاً لمتابعة حالة الطلب ومعرفة حالة معالجته من قبل فريق الدعم.
+                        </div>
+
+                        <div class="track-ticket-box">
+
+                        <div>
+                            <strong>لديك تذكرة سابقة؟</strong>
+                            <div class="text-muted small">
+                                يمكنك متابعة حالة التذكرة والاطلاع على ردود فريق الدعم.
+                            </div>
+                        </div>
+
+                        <a
+                            href="{% url 'support:track_ticket' %}"
+                            class="btn btn-outline-primary track-ticket-btn"
+                        >
+                            <i class="bi bi-search me-2"></i>
+                            تتبع التذكرة
+                        </a>
+
+                    </div>
+
+                        <form method="POST" enctype="multipart/form-data">
+
+                            {% csrf_token %}
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">
+                                        {{ form.name.label }}
+                                    </label>
+
+                                    {{ form.name }}
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">
+                                        {{ form.email.label }}
+                                    </label>
+
+                                    {{ form.email }}
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">
+                                        {{ form.phone.label }}
+                                    </label>
+
+                                    {{ form.phone }}
+                                </div>
+
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">
+                                        {{ form.category.label }}
+                                    </label>
+
+                                    {{ form.category }}
+                                </div>
+
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    {{ form.subject.label }}
+                                </label>
+
+                                {{ form.subject }}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    {{ form.message.label }}
+                                </label>
+
+                                {{ form.message }}
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+                                    {{ form.attachment.label }}
+                                </label>
+
+                                {{ form.attachment }}
+
+                                <small class="text-muted d-block mt-2">
+                                    يمكنك إرفاق صورة أو ملف PDF لدعم طلبك (اختياري).
+                                </small>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-contact">
+                                <i class="bi bi-send me-2"></i>
+                                إرسال التذكرة
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

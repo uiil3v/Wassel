@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ ticket.ticket_number }} - تفاصيل التذكرة
+{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.ticket-header {
+    text-align: center;
+    padding: 120px 0 60px;
+}
+
+.ticket-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.ticket-header p {
+    color: var(--soft-color);
+    margin-top: 15px;
+}
+
+.ticket-section {
+    padding: 0 0 120px;
+}
+
+.ticket-card {
+    background: white;
+    border-radius: 40px;
+    padding: 45px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
+}
+
+.info-box {
+    background: #f8f9fa;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.info-label {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-weight: 600;
+}
+
+.admin-response {
+    background: rgba(25, 135, 84, 0.08);
+    border-right: 5px solid #198754;
+    border-radius: 20px;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.message-box {
+    background: #fafafa;
+    border-radius: 20px;
+    padding: 25px;
+    line-height: 2;
+}
+
+.status-badge {
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 14px;
+}
+
+.back-btn {
+    border-radius: 25px;
+}
+
+@media (max-width:768px){
+
+    .ticket-header h1{
+        font-size:2rem;
+    }
+
+    .ticket-card{
+        padding:25px;
+    }
+
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="ticket-header">
+
+    <div class="container">
+
+        <h1>تفاصيل التذكرة</h1>
+
+        <p>
+            يمكنك متابعة حالة الطلب والاطلاع على ردود فريق الدعم.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="ticket-section">
+
+    <div class="container">
+
+        <div class="ticket-card">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
+                <div>
+
+                    <h4 class="fw-bold mb-2">
+                        {{ ticket.ticket_number }}
+                    </h4>
+
+                    <div class="text-muted">
+                        تم الإنشاء بتاريخ
+                        {{ ticket.created_at|date:"d/m/Y H:i" }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                   <div class="text-start">
+
+                        <div class="small text-muted mb-2">
+                            حالة التذكرة
+                        </div>
+
+                        {% if ticket.status == "in_progress" %}
+
+                            <span class="badge bg-warning text-dark status-badge">
+                                قيد المعالجة
+                            </span>
+
+                        {% elif ticket.status == "waiting_user" %}
+
+                            <span class="badge bg-info status-badge">
+                                بانتظار رد العميل
+                            </span>
+
+                        {% elif ticket.status == "resolved" %}
+
+                            <span class="badge bg-success status-badge">
+                                تم الحل
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary status-badge">
+                                مغلقة
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            نوع الطلب
+                        </div>
+
+                        <div class="info-value">
+                            {{ ticket.get_category_display }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            آخر تحديث
+                        </div>
+
+                        <div class="info-value">
+                            {{ ticket.updated_at|date:"d/m/Y H:i" }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% if ticket.handled_by %}
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    المسؤول عن التذكرة
+                </div>
+
+                <div class="info-value">
+                    {{ ticket.handled_by.full_name }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            {% if ticket.resolved_at %}
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    تاريخ الحل
+                </div>
+
+                <div class="info-value">
+                    {{ ticket.resolved_at|date:"d/m/Y H:i" }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            <hr class="my-4">
+
+            <h5 class="fw-bold mb-3">
+                عنوان الطلب
+            </h5>
+
+            <div class="message-box mb-4">
+                {{ ticket.subject }}
+            </div>
+
+            <h5 class="fw-bold mb-3">
+                تفاصيل الطلب
+            </h5>
+
+            <div class="message-box">
+                {{ ticket.message|linebreaks }}
+            </div>
+
+            {% if ticket.attachment %}
+
+            <div class="mt-4">
+
+                <a
+                    href="{{ ticket.attachment.url }}"
+                    target="_blank"
+                    class="btn btn-outline-secondary"
+                >
+                    📎 عرض المرفق
+                </a>
+
+            </div>
+
+            {% endif %}
+
+            {% if ticket.admin_response %}
+
+            <div class="admin-response">
+
+                <h5 class="fw-bold mb-3">
+                    رد فريق الدعم
+                </h5>
+
+                <div>
+                    {{ ticket.admin_response|linebreaks }}
+                </div>
+
+            </div>
+
+            {% endif %}
+
+            <div class="mt-5">
+
+                <a
+                    href="{% url 'support:track_ticket' %}"
+                    class="btn btn-outline-dark back-btn"
+                >
+                    ← العودة لصفحة البحث
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

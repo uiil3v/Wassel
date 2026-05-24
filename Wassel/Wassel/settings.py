@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "notifications",
     "reviews",
     "contracts",
+    "support",
     'cloudinary',
     'cloudinary_storage',
     'whitenoise.runserver_nostatic',
