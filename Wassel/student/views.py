@@ -37,6 +37,15 @@ from accounts.utils import (
 )
 
 
+from notifications.utils import send_notification
+
+from Wassel.email_utils import (
+    send_student_cancelled_subscription_email,
+    send_driver_subscription_cancelled_email,
+)
+
+
+
 @login_required
 @student_profile_completed_required
 def student_dashboard(request):
@@ -373,6 +382,8 @@ def create_request(request, sub_id):
 
 
 
+
+
 @login_required
 @student_profile_completed_required
 def cancel_request(request, req_id):
@@ -394,10 +405,58 @@ def cancel_request(request, req_id):
             refund_frozen_amount(req)
             req.status = "cancelled"
             req.save()
+            
+            send_driver_subscription_cancelled_email(req)
+
+            send_student_cancelled_subscription_email(
+                request.user
+            )
+            
+            send_notification(
+                title="تم إلغاء الاشتراك",
+                message="تم إلغاء الاشتراك وإتمام الإجراءات المالية المرتبطة به بنجاح.",
+                target="user",
+                user=request.user,
+                notification_type="system"
+            )
+
+            send_notification(
+                title="تم إلغاء اشتراك طالب",
+                message=f"قام الطالب {request.user.full_name} بإلغاء طلب الاشتراك.",
+                target="user",
+                user=req.subscription.driver.user,
+                notification_type="system"
+            )
 
         elif req.status == "approved":
             refund_after_approval(req)
+            
+            send_driver_subscription_cancelled_email(req)
 
+            send_student_cancelled_subscription_email(
+                request.user
+            )
+
+            send_notification(
+                title="تم إلغاء اشتراك طالب",
+                message=f"قام الطالب {request.user.full_name} بإلغاء الاشتراك الحالي.",
+                target="user",
+                user=req.subscription.driver.user,
+                notification_type="system"
+            )
+            
+            send_notification(
+                title="تم إلغاء الاشتراك",
+                message="تم إلغاء الاشتراك وإتمام الإجراءات المالية المرتبطة به بنجاح.",
+                target="user",
+                user=request.user,
+                notification_type="system"
+            )
+
+        messages.success(
+            request,
+            "تم إلغاء الاشتراك بنجاح."
+        )
         return redirect("student:dashboard")
     
     

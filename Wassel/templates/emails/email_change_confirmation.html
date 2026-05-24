@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد تغيير البريد الإلكتروني</title>
+</head>
+
+<body style="
+    margin:0;
+    padding:0;
+    background:#f9f7f3;
+    font-family:Tahoma, Arial, sans-serif;
+">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 15px;">
+<tr>
+<td align="center">
+
+<table width="650" cellpadding="0" cellspacing="0" style="
+    background:#ffffff;
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid #e6ddd1;
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+">
+
+    <tr>
+        <td style="
+            height:8px;
+            background:#c8a951;
+        ">
+        </td>
+    </tr>
+
+    <tr>
+        <td align="center" style="
+            background:#4a3f35;
+            padding:40px 30px;
+        ">
+
+            <div style="
+                color:white;
+                font-size:52px;
+                font-weight:bold;
+                line-height:1;
+            ">
+                وصْـــــل
+            </div>
+
+            <div style="
+                margin-top:10px;
+                color:#e8dfd1;
+                font-size:14px;
+            ">
+                منصة النقل الجامعي الذكية
+            </div>
+
+        </td>
+    </tr>
+
+    <tr>
+        <td style="
+            padding:45px 40px;
+            color:#4a3f35;
+            line-height:2;
+        ">
+
+            <h2 style="
+                margin-top:0;
+                margin-bottom:20px;
+                color:#4a3f35;
+            ">
+                تأكيد تغيير البريد الإلكتروني 📧
+            </h2>
+
+            <p style="
+                font-size:15px;
+                color:#4a3f35;
+            ">
+                مرحباً {{ user.full_name }}
+            </p>
+
+            <p style="
+                font-size:15px;
+                color:#8c7b6b;
+            ">
+                لقد طلبت تغيير البريد الإلكتروني المرتبط بحسابك في منصة وصل.
+            </p>
+
+            <div style="
+                background:#fbfaf7;
+                border-right:5px solid #c8a951;
+                padding:18px;
+                margin:30px 0;
+                border-radius:10px;
+                color:#6b5d51;
+            ">
+                لإتمام عملية تغيير البريد الإلكتروني يرجى الضغط على الزر التالي.
+            </div>
+
+            <div style="
+                text-align:center;
+                margin:40px 0;
+            ">
+
+                <a href="{{ confirmation_url }}"
+                   style="
+                    background:#c8a951;
+                    color:white;
+                    text-decoration:none;
+                    padding:15px 35px;
+                    border-radius:30px;
+                    font-weight:bold;
+                    display:inline-block;
+                ">
+                    تأكيد البريد الإلكتروني الجديد
+                </a>
+
+            </div>
+
+            <p style="
+                font-size:13px;
+                color:#8c7b6b;
+            ">
+                إذا لم يعمل الزر يمكنك استخدام الرابط التالي:
+            </p>
+
+            <p style="
+                word-break:break-all;
+                color:#4a3f35;
+                font-size:12px;
+            ">
+                {{ confirmation_url }}
+            </p>
+
+            <hr style="
+                border:none;
+                border-top:1px solid #e6ddd1;
+                margin:35px 0;
+            ">
+
+            <p style="
+                font-size:14px;
+                color:#8c7b6b;
+                margin-bottom:0;
+            ">
+                إذا لم تقم بطلب تغيير البريد الإلكتروني يمكنك تجاهل هذه الرسالة بأمان.
+            </p>
+
+        </td>
+    </tr>
+
+    <tr>
+        <td align="center" style="
+            background:#fbfaf7;
+            padding:25px;
+            color:#8c7b6b;
+            font-size:13px;
+            border-top:1px solid #e6ddd1;
+        ">
+            شكراً لاستخدامك وصْـــــل 🚍
+        </td>
+    </tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -27,6 +27,15 @@ from django.contrib.auth import logout
 
 from accounts.utils import send_email_change_confirmation
 
+from Wassel.email_utils import (
+    send_request_approved_email,
+    send_request_rejected_email,
+)
+
+
+from notifications.utils import send_notification
+
+from notifications.models import Notification
 
 
 @login_required
@@ -772,6 +781,8 @@ def subscription_request_detail(request, req_id):
         context
     )
     
+ 
+ 
     
     
 @login_required
@@ -798,6 +809,19 @@ def approve_request(request, req_id):
                 approve_subscription_payment(req)
                 # 🔥 إنشاء العقد الإلكتروني
                 create_transport_contract(req)
+                
+                send_request_approved_email(
+                    req,
+                    request
+                )
+                
+                send_notification(
+                    title="تم قبول طلب الاشتراك",
+                    message="تمت الموافقة على طلبك وإنشاء العقد الإلكتروني بنجاح.",
+                    target="user",
+                    user=req.student.user,
+                    notification_type="system"
+                )
 
             messages.success(request, "تمت الموافقة وتحويل المبلغ بنجاح.")
 
@@ -805,6 +829,8 @@ def approve_request(request, req_id):
             messages.error(request, str(e))
 
     return redirect("driver:subscription_detail", sub_id=req.subscription.id)
+
+
 
 
 
@@ -910,6 +936,8 @@ def activate_subscription(request, sub_id):
     )
 
 
+
+
 @login_required
 @driver_verified_required
 def reject_request(request, req_id):
@@ -921,6 +949,15 @@ def reject_request(request, req_id):
             with transaction.atomic():
                 req.reject()  # تغيير الحالة
                 refund_frozen_amount(req)  # 🔥 إرجاع الفلوس
+                send_request_rejected_email(req)
+                
+                send_notification(
+                    title="تم رفض طلب الاشتراك",
+                    message="تم رفض الطلب وإعادة المبلغ إلى محفظتك.",
+                    target="user",
+                    user=req.student.user,
+                    notification_type="system"
+                )
 
             messages.success(request, "تم رفض الطلب وإرجاع المبلغ للطالب.")
 
@@ -928,6 +965,9 @@ def reject_request(request, req_id):
             messages.error(request, str(e))
 
     return redirect("driver:subscription_detail", sub_id=req.subscription.id)
+
+
+
 
 
 @login_required

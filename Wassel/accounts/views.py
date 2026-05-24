@@ -35,6 +35,8 @@ from django.contrib.auth.views import PasswordResetView
 
 from .utils import send_email_change_confirmation
 
+from Wassel.email_utils import send_platform_email
+
 
 
 
@@ -79,19 +81,15 @@ def register_view(request):
             # =========================
             # إرسال الإيميل
             # =========================
-
-            send_mail(
-                subject="تفعيل حسابك في وصل",
-
-                message=(
-                    f"مرحبًا {user.full_name}\n\n"
-                    f"اضغط الرابط التالي لتفعيل حسابك:\n\n"
-                    f"{verification_url}"
-                ),
-
-                from_email=settings.DEFAULT_FROM_EMAIL,
-
-                recipient_list=[user.email],
+            
+            send_platform_email(
+                subject="أهلاً بك في وصل",
+                recipient=user.email,
+                template_name="emails/welcome_email.html",
+                context={
+                    "user": user,
+                    "verification_url": verification_url,
+                }
             )
 
 
@@ -401,18 +399,14 @@ def resend_verification_email_view(request):
     # إرسال الإيميل
     # =========================
 
-    send_mail(
+    send_platform_email(
         subject="إعادة إرسال رابط التفعيل",
-
-        message=(
-            f"مرحبًا {request.user.full_name}\n\n"
-            f"اضغط الرابط التالي لتفعيل حسابك:\n\n"
-            f"{verification_url}"
-        ),
-
-        from_email=settings.DEFAULT_FROM_EMAIL,
-
-        recipient_list=[request.user.email],
+        recipient=request.user.email,
+        template_name="emails/welcome_email.html",
+        context={
+            "user": request.user,
+            "verification_url": verification_url,
+        }
     )
     
     request.user.last_verification_email_sent = timezone.now()
@@ -433,9 +427,17 @@ def resend_verification_email_view(request):
 class CustomPasswordResetView(PasswordResetView):
 
     template_name = "accounts/forgot_password.html"
-
+    
+    subject_template_name = (
+        "emails/password_reset_subject.txt"
+    )
+    
     email_template_name = (
         "accounts/password_reset_email.html"
+    )
+
+    html_email_template_name = (
+        "emails/password_reset_email.html"
     )
 
     success_url = (

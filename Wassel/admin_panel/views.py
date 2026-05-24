@@ -15,6 +15,17 @@ import csv
 from django.http import HttpResponse
 
 
+from Wassel.email_utils import (
+    send_driver_approved_email,
+    send_driver_rejected_email,
+    send_user_banned_email,
+    send_user_activated_email,
+    send_subscription_deactivated_email,
+    send_subscription_activated_email,
+    send_admin_notification_email,
+)
+
+
 
 
 @admin_required(levels=[1, 2])
@@ -126,6 +137,11 @@ def approve_driver(request, pk):
         user=driver.user,
         notification_type="system"
     )
+    
+    send_driver_approved_email(
+        driver.user,
+        request
+    )
 
     messages.success(request, "تم اعتماد السائق 🚗")
     return redirect("admin_panel:requests")
@@ -148,6 +164,11 @@ def reject_driver(request, pk):
             target="user",
             user=driver.user,
             notification_type="system"
+        )
+        
+        send_driver_rejected_email(
+            driver.user,
+            reason
         )
 
         messages.error(request, "تم رفض السائق ❌")
@@ -287,6 +308,8 @@ def user_detail(request, pk):
 
     return render(request, "admin_panel/user_detail.html", context)
 
+
+
 @admin_required(levels=[1, 2])
 def ban_user(request, pk):
     user = get_object_or_404(User, id=pk)
@@ -298,9 +321,22 @@ def ban_user(request, pk):
 
     user.status = "banned"
     user.save()
+    
+    send_notification(
+        title="تم تقييد حسابك",
+        message="تم إيقاف حسابك مؤقتاً من قبل إدارة المنصة. يرجى التواصل مع الدعم الفني للمزيد من المعلومات.",
+        target="user",
+        user=user,
+        notification_type="system"
+    )
+
+    send_user_banned_email(user)
 
     messages.success(request, "تم حظر المستخدم 🚫")
     return redirect("admin_panel:user_detail", pk=pk)
+
+
+
 
 @admin_required(levels=[1, 2])
 def activate_user(request, pk):
@@ -312,6 +348,16 @@ def activate_user(request, pk):
 
     user.status = "active"
     user.save()
+    
+    send_notification(
+        title="تم إعادة تفعيل حسابك",
+        message="تمت إعادة تفعيل حسابك ويمكنك الآن استخدام المنصة بشكل طبيعي.",
+        target="user",
+        user=user,
+        notification_type="system"
+    )
+
+    send_user_activated_email(user)
 
     messages.success(request, "تم تفعيل المستخدم ✅")
     return redirect("admin_panel:user_detail", pk=pk)
@@ -477,6 +523,8 @@ def export_payments_csv(request):
     return response
 
 
+
+
 @admin_required(levels=[1, 2])
 def send_notification_view(request):
 
@@ -489,6 +537,10 @@ def send_notification_view(request):
         user_id = request.POST.get("user")
 
         selected_user = None
+        
+        send_email = request.POST.get(
+            "send_email"
+        )
 
         # 🔥 إذا Manager → يجبر يكون User فقط
         if request.user.admin_level == 2:
@@ -500,7 +552,10 @@ def send_notification_view(request):
                 messages.error(request, "يجب اختيار مستخدم.")
                 return redirect("admin_panel:send_notification")
 
-            selected_user = User.objects.get(id=user_id)
+            selected_user = get_object_or_404(
+                User,
+                id=user_id
+            )
 
         send_notification(
             title=title,
@@ -510,12 +565,77 @@ def send_notification_view(request):
             notification_type="admin",
             sent_by=request.user
         )
+        
+        if send_email:
+            
+
+            if target == "user":
+
+                send_admin_notification_email(
+                    selected_user,
+                    title,
+                    message
+                )
+
+            elif target == "student":
+
+                for user in User.objects.filter(
+                    role="student"
+                ):
+
+                    send_admin_notification_email(
+                        user,
+                        title,
+                        message
+                    )
+
+            elif target == "driver":
+
+                for user in User.objects.filter(
+                    role="driver"
+                ):
+
+                    send_admin_notification_email(
+                        user,
+                        title,
+                        message
+                    )
+
+            elif target == "admin":
+
+                for user in User.objects.filter(
+                    role="admin"
+                ):
+
+                    send_admin_notification_email(
+                        user,
+                        title,
+                        message
+                    )
+
+            elif target == "all":
+
+                for user in User.objects.all():
+
+                    send_admin_notification_email(
+                        user,
+                        title,
+                        message
+                    )
 
         messages.success(request, "تم إرسال الإشعار بنجاح 🔔")
+        
+        return redirect(
+            "admin_panel:send_notification"
+        )
 
     return render(request, "admin_panel/send_notification.html", {
         "users": users
     })
+
+
+
+
 
 @admin_required(levels=[1, 2])
 def notifications_list(request):
@@ -710,6 +830,18 @@ def deactivate_subscription(request, pk):
         )
 
     subscription.deactivate_by_admin()
+    
+    send_notification(
+        title="تم إيقاف أحد اشتراكاتك",
+        message="تم إيقاف الاشتراك من قبل إدارة المنصة. يرجى التواصل مع الدعم الفني للمزيد من المعلومات.",
+        target="user",
+        user=subscription.driver.user,
+        notification_type="system"
+    )
+
+    send_subscription_deactivated_email(
+        subscription
+    )
 
     messages.success(
         request,
@@ -741,6 +873,18 @@ def activate_subscription(request, pk):
         )
 
     subscription.activate()
+    
+    send_notification(
+        title="تمت إعادة تفعيل الاشتراك",
+        message="تمت إعادة تفعيل الاشتراك ويمكنك الآن استقبال الطلبات بشكل طبيعي.",
+        target="user",
+        user=subscription.driver.user,
+        notification_type="system"
+    )
+
+    send_subscription_activated_email(
+        subscription
+    )
 
     messages.success(request, "تم إعادة تفعيل الاشتراك ✅")
 

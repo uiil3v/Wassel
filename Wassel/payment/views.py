@@ -11,6 +11,13 @@ from decimal import Decimal
 import csv
 from django.http import HttpResponse
 
+from notifications.utils import send_notification
+
+from Wassel.email_utils import (
+    send_wallet_deposit_email,
+    send_wallet_withdraw_email,
+)
+
 
 
 
@@ -67,12 +74,53 @@ def wallet_view(request):
 
         try:
             if action == "deposit":
-                deposit_wallet(request.user, amount)
-                messages.success(request, "تم شحن الرصيد بنجاح.")
+                deposit_wallet(
+                    request.user,
+                    amount
+                )
+
+                send_notification(
+                    title="تم شحن المحفظة",
+                    message=f"تم إضافة {amount} ريال إلى محفظتك بنجاح.",
+                    target="user",
+                    user=request.user,
+                    notification_type="system"
+                )
+
+                send_wallet_deposit_email(
+                    request.user,
+                    amount
+                )
+
+                messages.success(
+                    request,
+                    "تم شحن الرصيد بنجاح."
+                )
 
             elif action == "withdraw":
-                withdraw_wallet(request.user, amount)
-                messages.success(request, "تم سحب المبلغ بنجاح.")
+
+                withdraw_wallet(
+                    request.user,
+                    amount
+                )
+
+                send_notification(
+                    title="تم سحب مبلغ من المحفظة",
+                    message=f"تم سحب {amount} ريال من محفظتك بنجاح.",
+                    target="user",
+                    user=request.user,
+                    notification_type="system"
+                )
+
+                send_wallet_withdraw_email(
+                    request.user,
+                    amount
+                )
+
+                messages.success(
+                    request,
+                    "تم سحب المبلغ بنجاح."
+                )
 
         except ValidationError as e:
             messages.error(request, str(e))
