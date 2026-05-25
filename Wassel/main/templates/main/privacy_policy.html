@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}سياسة الخصوصية - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+    .privacy-header {
+        padding: 95px 0 55px;
+        text-align: center;
+    }
+
+    .privacy-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--accent-color);
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .privacy-header h1 {
+        font-size: 3.2rem;
+        color: var(--dark-color);
+        margin-bottom: 22px;
+    }
+
+    .privacy-header p {
+        max-width: 820px;
+        margin: auto;
+        color: var(--soft-color);
+        font-size: 1.25rem;
+        line-height: 2;
+    }
+
+    .privacy-layout {
+        display: grid;
+        grid-template-columns: 310px 1fr;
+        gap: 34px;
+        align-items: start;
+        margin-bottom: 80px;
+    }
+
+    .privacy-summary {
+        position: sticky;
+        top: 150px;
+        background: linear-gradient(135deg, #f2ede4, #ffffff);
+        border: 1.5px solid rgba(200, 169, 81, 0.45);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 24px 55px rgba(0, 0, 0, 0.06);
+    }
+
+    .privacy-summary h2 {
+        font-size: 1.25rem;
+        margin-bottom: 18px;
+    }
+
+    .privacy-summary a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--soft-color);
+        text-decoration: none;
+        padding: 11px 0;
+        border-bottom: 1px solid rgba(74, 63, 53, 0.08);
+        transition: 0.25s ease;
+    }
+
+    .privacy-summary a:last-child {
+        border-bottom: none;
+    }
+
+    .privacy-summary a:hover {
+        color: var(--accent-color);
+        transform: translateX(-4px);
+    }
+
+    .privacy-content {
+        background-color: #ffffff;
+        border-radius: 34px;
+        padding: 48px;
+        border: 1px solid rgba(200, 169, 81, 0.35);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.06);
+    }
+
+    .privacy-section {
+        padding-bottom: 34px;
+        margin-bottom: 34px;
+        border-bottom: 1px solid rgba(74, 63, 53, 0.1);
+    }
+
+    .privacy-section:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+
+    .privacy-section h2 {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 1.75rem;
+        margin-bottom: 18px;
+        color: var(--dark-color);
+    }
+
+    .privacy-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 50%;
+        background-color: rgba(200, 169, 81, 0.15);
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .privacy-section p,
+    .privacy-section li {
+        color: var(--soft-color);
+        font-size: 1.08rem;
+        line-height: 2;
+    }
+
+    .privacy-section ul {
+        padding-right: 22px;
+        margin-bottom: 0;
+    }
+
+    .privacy-note {
+        background-color: var(--light-bg);
+        border-right: 5px solid var(--accent-color);
+        border-radius: 22px;
+        padding: 22px 26px;
+        color: var(--dark-color);
+        line-height: 2;
+        margin-top: 22px;
+    }
+
+    .privacy-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 24px;
+        padding: 12px 20px;
+        border-radius: 28px;
+        background-color: var(--primary-color);
+        color: var(--dark-color);
+        font-size: 0.98rem;
+    }
+
+    @media (max-width: 992px) {
+        .privacy-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .privacy-summary {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .privacy-header {
+            padding-top: 55px;
+        }
+
+        .privacy-header h1 {
+            font-size: 2.25rem;
+        }
+
+        .privacy-header p {
+            font-size: 1.05rem;
+        }
+
+        .privacy-content {
+            padding: 28px 22px;
+            border-radius: 26px;
+        }
+
+        .privacy-section h2 {
+            font-size: 1.35rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="privacy-header">
+    <div class="privacy-kicker">
+        <i class="bi bi-shield-lock"></i>
+        <span>حماية بياناتك جزء من الثقة</span>
+    </div>
+
+    <h1>سياسة الخصوصية</h1>
+
+    <p>
+        توضح هذه السياسة كيف تتعامل منصة وصل مع بيانات المستخدمين عند إنشاء الحساب، استخدام خدمات النقل،
+        إدارة الاشتراكات، المدفوعات، التقييمات، وطلبات الدعم.
+    </p>
+
+    <div class="privacy-date">
+        <i class="bi bi-calendar-check"></i>
+        <span>آخر تحديث: 26 مايو 2026</span>
+    </div>
+</section>
+
+<section class="privacy-layout">
+    <aside class="privacy-summary">
+        <h2>محتويات الصفحة</h2>
+        <a href="#data"><i class="bi bi-database"></i> البيانات التي نجمعها</a>
+        <a href="#usage"><i class="bi bi-gear"></i> كيف نستخدم البيانات</a>
+        <a href="#sharing"><i class="bi bi-people"></i> مشاركة البيانات</a>
+        <a href="#payments"><i class="bi bi-wallet2"></i> المدفوعات والمحفظة</a>
+        <a href="#security"><i class="bi bi-lock"></i> حماية البيانات</a>
+        <a href="#rights"><i class="bi bi-person-check"></i> حقوق المستخدم</a>
+    </aside>
+
+    <div class="privacy-content">
+        <div class="privacy-section" id="data">
+            <h2>
+                <span class="privacy-icon"><i class="bi bi-database"></i></span>
+                البيانات التي نجمعها
+            </h2>
+            <p>
+                نجمع البيانات اللازمة لتشغيل الخدمة والتحقق من هوية المستخدمين، وتشمل بيانات الحساب الأساسية
+                مثل الاسم، البريد الإلكتروني، رقم الجوال، المدينة، ونوع الحساب.
+            </p>
+            <ul>
+                <li>بيانات الطالب مثل الجامعة، الحي، ورابط الموقع عند إضافته.</li>
+                <li>بيانات السائق ومركبته، ومستندات التحقق المطلوبة للمراجعة الإدارية.</li>
+                <li>بيانات الاشتراكات والطلبات والجداول المرتبطة بخدمة النقل.</li>
+                <li>المراسلات مع الدعم الفني والتقييمات المرتبطة بتجربة الاشتراك.</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section" id="usage">
+            <h2>
+                <span class="privacy-icon"><i class="bi bi-gear"></i></span>
+                كيف نستخدم البيانات
+            </h2>
+            <p>
+                نستخدم البيانات لتقديم الخدمة بشكل منظم وآمن، مثل إنشاء الحسابات، مطابقة الطلاب مع السائقين،
+                مراجعة طلبات التوثيق، إدارة الاشتراكات، إرسال الإشعارات، وتحسين تجربة المستخدم داخل المنصة.
+            </p>
+            <div class="privacy-note">
+                لا نستخدم بياناتك لغرض خارج نطاق تشغيل منصة وصل أو تحسين خدماتها، ولا نطلب بيانات غير مرتبطة
+                بتجربة النقل والاشتراكات.
+            </div>
+        </div>
+
+        <div class="privacy-section" id="sharing">
+            <h2>
+                <span class="privacy-icon"><i class="bi bi-people"></i></span>
+                مشاركة البيانات داخل المنصة
+            </h2>
+            <p>
+                قد تظهر بعض البيانات الضرورية للطرف الآخر بعد وجود علاقة اشتراك أو طلب، مثل اسم المستخدم وبيانات
+                التواصل الأساسية والمعلومات اللازمة لتنظيم الرحلة. كما يمكن لفريق الإدارة الاطلاع على البيانات
+                المطلوبة للمراجعة، الدعم، وحماية جودة الخدمة.
+            </p>
+            <p>
+                لا يتم نشر مستندات التحقق أو بيانات المحفظة للعامة، وتبقى مخصصة للمراجعة الإدارية أو العمليات
+                المرتبطة بها داخل النظام.
+            </p>
+        </div>
+
+        <div class="privacy-section" id="payments">
+            <h2>
+                <span class="privacy-icon"><i class="bi bi-wallet2"></i></span>
+                المدفوعات والمحفظة
+            </h2>
+            <p>
+                تحتفظ المنصة بسجلات العمليات المالية اللازمة لتوضيح الإيداع، التجميد، التحويل، الاسترجاع،
+                والعمولات. تستخدم هذه السجلات لحساب أرصدة المحافظ، متابعة الاشتراكات، وتوثيق العمليات بين الطالب
+                والسائق والمنصة.
+            </p>
+        </div>
+
+        <div class="privacy-section" id="security">
+            <h2>
+                <span class="privacy-icon"><i class="bi bi-lock"></i></span>
+                حماية البيانات
+            </h2>
+            <p>
+                نحرص على حماية بيانات المستخدمين من خلال صلاحيات وصول محددة، تحقق البريد الإلكتروني، ومراجعة
+                الحسابات والوثائق من قبل الإدارة. كما ننصح المستخدمين بالحفاظ على سرية كلمة المرور وعدم مشاركة
+                بيانات الدخول مع أي طرف آخر.
+            </p>
+        </div>
+
+        <div class="privacy-section" id="rights">
+            <h2>
+                <span class="privacy-icon"><i class="bi bi-person-check"></i></span>
+                حقوق المستخدم
+            </h2>
+            <p>
+                يحق لك تحديث بياناتك، طلب تعديل معلومات غير صحيحة، أو التواصل مع الدعم بشأن حسابك وبياناتك.
+                وقد تحتفظ المنصة ببعض السجلات الضرورية للعمليات المالية، العقود، أو الالتزامات التنظيمية داخل
+                الخدمة.
+            </p>
+            <p>
+                لأي استفسار متعلق بالخصوصية، يمكنك التواصل معنا عبر صفحة الدعم أو البريد الإلكتروني:
+                support@wassel.sa
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
