@@ -3,179 +3,480 @@
 {% block driver_content %}
 
 <style>
-    /* ===== Welcome Card ===== */
-    .dashboard-welcome {
-        background: white;
-        border-radius: 35px;
-        padding: 40px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 40px;
+    .driver-dashboard {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
     }
 
-    /* ===== Stats Cards ===== */
-    .stat-card {
-        background: white;
+    .dashboard-hero {
+        background: #fff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
         border-radius: 30px;
         padding: 30px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-        transition: 0.3s ease;
-        height: 100%;
+        box-shadow: 0 22px 55px rgba(74, 63, 53, 0.06);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: center;
+    }
+
+    .hero-kicker {
+        color: var(--accent-color);
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .hero-title {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin: 0;
+        font-size: 1.75rem;
+        line-height: 1.7;
+    }
+
+    .hero-subtitle {
+        color: var(--soft-color);
+        margin: 8px 0 0;
+        line-height: 1.8;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .btn-dashboard-outline {
+        border: 1px solid rgba(200, 169, 81, 0.45);
+        color: var(--dark-color);
+        background: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 700;
+    }
+
+    .btn-dashboard-outline:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+        background: rgba(200, 169, 81, 0.08);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 24px;
+        padding: 22px;
+        min-height: 150px;
+        box-shadow: 0 18px 45px rgba(74, 63, 53, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .stat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.08);
+        transform: translateY(-4px);
+        box-shadow: 0 24px 55px rgba(74, 63, 53, 0.08);
+    }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
     }
 
     .stat-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--accent-color), #d4af37);
-        border-radius: 50%;
-        display: flex;
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+        background: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-size: 22px;
-        margin-bottom: 20px;
-    }
-
-    .stat-number {
-        font-size: 1.9rem;
-        font-weight: 700;
+        font-size: 1.25rem;
+        flex: 0 0 auto;
     }
 
     .stat-label {
         color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 8px;
     }
 
-    /* ===== Section Card ===== */
-    .section-card {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    .stat-number {
+        color: var(--dark-color);
+        font-size: 1.65rem;
+        font-weight: 800;
+        line-height: 1.2;
+        word-break: break-word;
     }
 
-    .table thead {
-        background-color: var(--light-bg);
+    .stat-note {
+        color: var(--soft-color);
+        font-size: 0.85rem;
+        margin-top: 14px;
+    }
+
+    .dashboard-section {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 30px;
+        padding: 26px;
+        box-shadow: 0 20px 50px rgba(74, 63, 53, 0.05);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin: 0;
+        font-size: 1.15rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .requests-table {
+        margin: 0;
+        min-width: 720px;
+    }
+
+    .requests-table thead th {
+        background: var(--light-bg);
+        color: var(--soft-color);
+        border-bottom: 0;
+        padding: 16px;
+        font-weight: 800;
+        text-align: start;
+        white-space: nowrap;
+    }
+
+    .requests-table thead th:first-child {
+        border-top-right-radius: 18px;
+    }
+
+    .requests-table thead th:last-child {
+        border-top-left-radius: 18px;
+    }
+
+    .requests-table tbody td {
+        padding: 18px 16px;
+        color: var(--dark-color);
+        border-color: rgba(74, 63, 53, 0.07);
+        vertical-align: middle;
+        text-align: start;
+    }
+
+    .student-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 190px;
+    }
+
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(200, 169, 81, 0.16);
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .cell-title {
+        font-weight: 800;
+        color: var(--dark-color);
+    }
+
+    .cell-muted {
+        color: var(--soft-color);
+        font-size: 0.88rem;
+        margin-top: 2px;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-approved {
+        background: rgba(25, 135, 84, 0.12);
+        color: #08764d;
+    }
+
+    .status-pending {
+        background: rgba(200, 169, 81, 0.17);
+        color: #9b7a1e;
+    }
+
+    .status-rejected {
+        background: rgba(220, 53, 69, 0.1);
+        color: #b02a37;
+    }
+
+    .status-cancelled {
+        background: rgba(108, 117, 125, 0.12);
+        color: #5c636a;
+    }
+
+    .empty-state {
+        background: var(--light-bg);
+        border: 1px dashed rgba(200, 169, 81, 0.4);
+        border-radius: 22px;
+        padding: 34px 20px;
+        text-align: center;
+        color: var(--soft-color);
+    }
+
+    .empty-state i {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        margin-bottom: 12px;
+    }
+
+    @media (max-width: 1199px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-hero,
+        .dashboard-section {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .dashboard-hero {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-title {
+            font-size: 1.35rem;
+        }
+
+        .hero-actions {
+            justify-content: stretch;
+        }
+
+        .hero-actions .btn {
+            width: 100%;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-card {
+            min-height: 126px;
+        }
+
+        .section-header {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .section-header .btn {
+            width: 100%;
+        }
     }
 </style>
 
+<div class="driver-dashboard">
+    <section class="dashboard-hero">
+        <div>
+            <div class="hero-kicker">
+                <i class="bi bi-speedometer2"></i>
+                لوحة السائق
+            </div>
+            <h1 class="hero-title">مرحباً {{ user.first_name|default:user.get_full_name }}</h1>
+            <p class="hero-subtitle">
+                تابع الطلبات الجديدة، المقاعد المتاحة، وأرباحك من مكان واحد.
+            </p>
+        </div>
 
-<!-- ===== Welcome ===== -->
-<div class="dashboard-welcome">
-    <h3>مرحباً بك، {{ user.first_name }} 👋</h3>
-    <p class="text-muted mt-2">
-        هذه نظرة سريعة على نشاطك اليوم.
-    </p>
+        <div class="hero-actions">
+            <a href="{% url 'driver:requests' %}" class="btn btn-accent">
+                <i class="bi bi-clipboard-check me-2"></i>
+                الطلبات
+            </a>
+            <a href="{% url 'driver:create_subscription' %}" class="btn btn-dashboard-outline">
+                <i class="bi bi-plus-circle me-2"></i>
+                اشتراك جديد
+            </a>
+        </div>
+    </section>
+
+    <section class="stats-grid" aria-label="ملخص السائق">
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">الاشتراكات النشطة</div>
+                    <div class="stat-number">{{ active_subscriptions }}</div>
+                </div>
+                <span class="stat-icon"><i class="bi bi-ticket-perforated"></i></span>
+            </div>
+            <div class="stat-note">اشتراكات متاحة للطلاب حالياً</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">طلبات بانتظارك</div>
+                    <div class="stat-number">{{ new_requests }}</div>
+                </div>
+                <span class="stat-icon"><i class="bi bi-inbox"></i></span>
+            </div>
+            <div class="stat-note">راجعها حتى لا يتأخر الطالب</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">الطلاب الحاليون</div>
+                    <div class="stat-number">{{ students_count }}</div>
+                </div>
+                <span class="stat-icon"><i class="bi bi-people"></i></span>
+            </div>
+            <div class="stat-note">طلبات مقبولة في اشتراكاتك</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">رصيد المحفظة</div>
+                    <div class="stat-number">{{ total_earnings|floatformat:2 }} ر.س</div>
+                </div>
+                <span class="stat-icon"><i class="bi bi-wallet2"></i></span>
+            </div>
+            <div class="stat-note">الرصيد المتاح في محفظتك</div>
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-clock-history"></i>
+                آخر الطلبات
+            </h2>
+            <a href="{% url 'driver:requests' %}" class="btn btn-dashboard-outline">
+                <i class="bi bi-arrow-left me-2"></i>
+                عرض الكل
+            </a>
+        </div>
+
+        {% if last_requests %}
+            <div class="table-responsive">
+                <table class="table requests-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>الاشتراك</th>
+                            <th>الحالة</th>
+                            <th>تاريخ الطلب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in last_requests %}
+                            <tr>
+                                <td>
+                                    <div class="student-cell">
+                                        <span class="student-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <div>
+                                            <div class="cell-title">{{ req.student.user.full_name }}</div>
+                                            <div class="cell-muted">{{ req.student.university_name|default:"طالب جامعي" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="cell-title">{{ req.subscription.neighborhood }}</div>
+                                    <div class="cell-muted">{{ req.subscription.driver.user.city.name_ar }}</div>
+                                </td>
+                                <td>
+                                    <span class="status-pill
+                                        {% if req.status == 'approved' %}status-approved
+                                        {% elif req.status == 'pending' %}status-pending
+                                        {% elif req.status == 'rejected' %}status-rejected
+                                        {% elif req.status == 'cancelled' %}status-cancelled
+                                        {% else %}status-cancelled{% endif %}">
+                                        {{ req.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="cell-title">{{ req.request_date|date:"d/m/Y" }}</div>
+                                    <div class="cell-muted">{{ req.request_date|date:"h:i A" }}</div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <h3 class="h6 fw-bold mb-2">لا توجد طلبات حالياً</h3>
+                <p class="mb-0">عند وصول طلب جديد سيظهر هنا مباشرة.</p>
+            </div>
+        {% endif %}
+    </section>
 </div>
-
-
-<!-- ===== Stats ===== -->
-<div class="row g-4 mb-5">
-
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-ticket-perforated"></i>
-            </div>
-            <div class="stat-number">{{ active_subscriptions }}</div>
-            <div class="stat-label">الاشتراكات النشطة</div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-clipboard-check"></i>
-            </div>
-            <div class="stat-number">{{ new_requests }}</div>
-            <div class="stat-label">طلبات جديدة</div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-people"></i>
-            </div>
-            <div class="stat-number">{{ students_count }}</div>
-            <div class="stat-label">عدد الطلاب</div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-cash-stack"></i>
-            </div>
-            <div class="stat-number">{{ total_earnings }}</div>
-            <div class="stat-label">إجمالي الأرباح</div>
-        </div>
-    </div>
-
-</div>
-
-
-<!-- ===== Latest Requests ===== -->
-<div class="section-card">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="fw-bold">آخر الطلبات</h5>
-        <a href="{% url 'driver:requests' %}" class="btn btn-accent btn-sm">عرض الكل</a>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>الطالب</th>
-                    <th>الاشتراك</th>
-                    <th>الحالة</th>
-                    <th>التاريخ</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            {% if last_requests %}
-                {% for req in last_requests %}
-                <tr>
-                    <td>{{ req.student.user.full_name }}</td>
-                    <td>
-                        {{ req.subscription.driver.user.city.name_ar }}
-                        -
-                        {{ req.subscription.neighborhood }}
-                    </td>
-
-                  <td>
-                    <span class="badge 
-                        {% if req.status == 'approved' %}bg-success
-                        {% elif req.status == 'pending' %}bg-warning text-dark
-                        {% elif req.status == 'rejected' %}bg-danger
-                        {% elif req.status == 'cancelled' %}bg-secondary
-                        {% else %}bg-dark
-                        {% endif %}
-                    ">
-                        {{ req.get_status_display }}
-                    </span>
-                </td>
-
-                    <td>{{ req.request_date|date:"Y-m-d" }}</td>
-                </tr>
-                {% endfor %}
-
-            {% else %}
-                <tr>
-                    <td colspan="4" class="text-center py-4">
-                        🚗 لا يوجد طلبات حالياً
-                    </td>
-                </tr>
-            {% endif %}
-
-            </tbody>
-        </table>
-    </div>
-</div>
-
 
 {% endblock %}

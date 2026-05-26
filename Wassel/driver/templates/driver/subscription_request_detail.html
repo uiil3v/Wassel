@@ -1,434 +1,682 @@
 {% extends "driver/base_driver.html" %}
+
 {% block driver_content %}
 
 <style>
-.detail-card {
-    background: white;
-    border-radius: 35px;
-    padding: 35px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
-}
+    .request-detail-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
+    .request-hero,
+    .detail-section {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(74, 63, 53, 0.05);
+    }
 
-.info-row span:first-child {
-    color: var(--soft-color);
-}
+    .request-hero {
+        padding: 28px 30px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: flex-start;
+    }
 
-/* ===== Schedule Styling ===== */
+    .hero-kicker {
+        color: var(--accent-color);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+    }
 
-.schedule-row {
-    padding: 18px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
+    .hero-title {
+        color: var(--dark-color);
+        font-size: 1.55rem;
+        font-weight: 900;
+        margin: 0;
+        line-height: 1.6;
+    }
 
-.schedule-row:last-child {
-    border-bottom: none;
-}
+    .hero-subtitle {
+        color: var(--soft-color);
+        margin: 7px 0 0;
+        line-height: 1.8;
+    }
 
-.day-name {
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--dark-color);
-}
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
 
-.time-box {
-    display: flex;
-    gap: 25px;
-    flex-wrap: wrap;
-}
+    .status-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
 
-.time-label {
-    display: block;
-    font-size: 12px;
-    color: var(--soft-color);
-}
+    .status-pending {
+        background: rgba(200, 169, 81, 0.17);
+        color: #9b7a1e;
+    }
 
-.time-item {
-    background: var(--light-bg);
-    padding: 8px 14px;
-    border-radius: 15px;
-    font-weight: 500;
-}
+    .status-approved {
+        background: rgba(25, 135, 84, 0.12);
+        color: #08764d;
+    }
 
-/* ===== Action Buttons ===== */
+    .status-rejected {
+        background: rgba(220, 53, 69, 0.1);
+        color: #b02a37;
+    }
 
-.action-wrapper {
-    text-align: center;
-}
+    .section-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(310px, 0.8fr);
+        gap: 20px;
+    }
 
-@media (max-width: 576px) {
-    .time-box {
+    .detail-section {
+        padding: 24px;
+    }
+
+    .section-title {
+        color: var(--dark-color);
+        font-size: 1.12rem;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 18px;
+    }
+
+    .section-title i {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.98rem;
+    }
+
+    .student-profile-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 18px;
+    }
+
+    .student-profile-box {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 22px;
+        padding: 18px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .student-profile-box:hover {
+        transform: translateY(-3px);
+        border-color: rgba(200, 169, 81, 0.35);
+    }
+
+    .student-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        flex: 0 0 auto;
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.25);
+    }
+
+    .student-name {
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.08rem;
+        overflow-wrap: anywhere;
+    }
+
+    .student-meta {
+        color: var(--soft-color);
+        font-size: 0.9rem;
+        margin-top: 3px;
+        line-height: 1.7;
+    }
+
+    .profile-action {
+        color: var(--accent-color);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .info-item {
+        background: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 18px;
+        padding: 14px;
+        min-height: 82px;
+    }
+
+    .info-label {
+        color: var(--soft-color);
+        font-size: 0.84rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: var(--dark-color);
+        font-weight: 850;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .map-link {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: 8px 14px;
+    }
+
+    .btn-detail-outline {
+        border: 1px solid rgba(200, 169, 81, 0.45);
+        color: var(--dark-color);
+        background: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 800;
+    }
+
+    .btn-detail-outline:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+        background: rgba(200, 169, 81, 0.08);
+    }
+
+    .subscription-card {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 22px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .subscription-title {
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.08rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .summary-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
     }
-}
 
-/* ===== Student Profile Box ===== */
+    .summary-item {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 16px;
+        padding: 12px;
+    }
 
-.student-profile-box {
-    background: var(--light-bg);
-    border-radius: 25px;
-    padding: 20px;
+    .summary-label {
+        color: var(--soft-color);
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+    }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .summary-value {
+        color: var(--dark-color);
+        font-weight: 900;
+        line-height: 1.5;
+    }
 
-    transition: 0.3s ease;
+    .schedule-section {
+        padding: 24px;
+    }
 
-    border: 1px solid rgba(0,0,0,0.03);
+    .schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
 
-    cursor: pointer;
-}
+    .schedule-row {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 20px;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+    }
 
-.student-profile-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-}
+    .day-name {
+        color: var(--dark-color);
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
 
-.student-profile-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+    .day-name i {
+        color: var(--accent-color);
+    }
 
-.student-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    .time-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
 
-    background: var(--accent-color);
-    color: white;
+    .time-chip {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.08);
+        border-radius: 16px;
+        min-width: 96px;
+        padding: 9px 12px;
+        text-align: center;
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    .time-label {
+        color: var(--soft-color);
+        font-size: 0.78rem;
+        margin-bottom: 3px;
+    }
 
-    font-size: 24px;
-}
+    .time-value {
+        color: var(--dark-color);
+        font-weight: 900;
+        white-space: nowrap;
+    }
 
-.student-name {
-    font-weight: 700;
-    color: #222;
-}
+    .off-day {
+        background: rgba(220, 53, 69, 0.1);
+        color: #b02a37;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
 
-.student-meta {
-    color: var(--soft-color);
-    font-size: 0.9rem;
-    margin-top: 4px;
-}
+    .decision-card {
+        text-align: center;
+        padding: 28px;
+    }
 
-.student-profile-action {
-    color: var(--accent-color);
-    font-weight: 600;
+    .decision-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
 
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    .extra-card {
+        text-align: center;
+        padding: 28px;
+    }
 
-    transition: 0.3s ease;
-}
+    .modal-content {
+        border: 0;
+        border-radius: 28px;
+    }
 
-.student-profile-box:hover .student-profile-action {
-    transform: translateX(-5px);
-}
+    .modal-header,
+    .modal-footer {
+        border: 0;
+    }
+
+    @media (max-width: 991px) {
+        .request-hero,
+        .section-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .request-hero,
+        .detail-section,
+        .schedule-section {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .student-profile-box,
+        .schedule-row {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid,
+        .summary-row {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-action,
+        .time-group {
+            justify-content: flex-start;
+        }
+
+        .decision-actions .btn,
+        .decision-actions form {
+            width: 100%;
+        }
+    }
 </style>
 
+<div class="request-detail-page">
+    <section class="request-hero">
+        <div>
+            <div class="hero-kicker">
+                <i class="bi bi-clipboard-check"></i>
+                طلب اشتراك
+            </div>
+            {% if req.status == "pending" %}
+                <h1 class="hero-title">تفاصيل طلب الاشتراك</h1>
+                <p class="hero-subtitle">راجع بيانات الطالب وجدوله قبل اتخاذ القرار.</p>
+            {% elif req.status == "approved" %}
+                <h1 class="hero-title">تفاصيل الطالب المشترك</h1>
+                <p class="hero-subtitle">هذا الطلب تم قبوله وربطه بالاشتراك.</p>
+            {% elif req.status == "rejected" %}
+                <h1 class="hero-title">طلب مرفوض</h1>
+                <p class="hero-subtitle">هذا الطلب محفوظ ضمن سجل الطلبات السابقة.</p>
+            {% else %}
+                <h1 class="hero-title">تفاصيل الطلب</h1>
+                <p class="hero-subtitle">معلومات الطلب والطالب والجدول.</p>
+            {% endif %}
+        </div>
 
-<!-- ===== Main Detail Card ===== -->
-<div class="detail-card">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
         {% if req.status == "pending" %}
-            <h4 class="fw-bold mb-0">تفاصيل طلب الاشتراك</h4>
-            <span class="badge bg-warning text-dark">⏳ قيد الانتظار</span>
+            <span class="status-pill status-pending">قيد الانتظار</span>
         {% elif req.status == "approved" %}
-            <h4 class="fw-bold mb-0">تفاصيل الطالب المشترك</h4>
-            <span class="badge bg-success">✅ مقبول</span>
+            <span class="status-pill status-approved">مقبول</span>
         {% elif req.status == "rejected" %}
-            <h4 class="fw-bold mb-0">طلب مرفوض</h4>
-            <span class="badge bg-danger">❌ مرفوض</span>
+            <span class="status-pill status-rejected">مرفوض</span>
         {% endif %}
-    </div>
+    </section>
 
-    <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
+    <div class="section-grid">
+        <section class="detail-section">
+            <h2 class="section-title">
+                <i class="bi bi-person"></i>
+                بيانات الطالب
+            </h2>
 
-    <div class="info-row">
-        <span>المدينة / الحي</span>
-        <span>
-            {{ req.subscription.driver.user.city.name_ar }}
-            -
-            {{ req.subscription.neighborhood }}
-        </span>
-    </div>
-
-<div class="info-row">
-    <span>نوع الاشتراك</span>
-    <span>{{ req.subscription.get_duration_display }}</span>
-</div>
-
-<div class="info-row">
-    <span>السعر</span>
-    <span>{{ req.subscription.price }} ر.س</span>
-</div>
-
-<div class="info-row">
-    <span>المقاعد المتبقية</span>
-    <span>{{ req.subscription.available_seats }}</span>
-</div>
-<!-- ===== Student Info ===== -->
-
-<h6 class="fw-bold mt-4 mb-3">
-    بيانات الطالب
-</h6>
-
-<a href="{% url 'accounts:public_profile' req.student.user.id %}"
-   class="text-decoration-none">
-
-    <div class="student-profile-box">
-
-        <div class="student-profile-left">
-
-            <div class="student-avatar">
-                <i class="bi bi-person-fill"></i>
-            </div>
-
-            <div>
-
-                <div class="student-name">
-                    {{ req.student.user.get_full_name }}
-                </div>
-
-                <div class="student-meta">
-
-                    {% if req.student.average_rating %}
-                        ⭐ {{ req.student.average_rating|floatformat:2 }}
-                    {% endif %}
-
-                    •
-
-                    طالب جامعي
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="student-profile-action">
-            عرض الملف الشخصي
-            <i class="bi bi-arrow-left-short"></i>
-        </div>
-
-    </div>
-
-</a>
-
-<div class="info-row mt-4">
-    <span>البريد</span>
-    <span>{{ req.student.user.email }}</span>
-</div>
-
-<div class="info-row">
-    <span>رقم الجوال</span>
-    <span>{{ req.student.user.phone }}</span>
-</div>
-
-<div class="info-row">
-    <span>الجامعة</span>
-    <span>{{ req.student.university_name }}</span>
-</div>
-
-
-
-
-<div class="info-row">
-    <span>الجنس</span>
-
-    <span>
-
-        {% if req.student.gender == "male" %}
-            ذكر
-        {% elif req.student.gender == "female" %}
-            أنثى
-        {% else %}
-            غير محدد
-        {% endif %}
-
-    </span>
-</div>
-
-<div class="info-row">
-    <span>المدينة / الحي</span>
-    <span>
-        {{ req.student.user.city.name_ar }}
-        -
-        {{ req.student.neighborhood }}
-    </span>
-</div>
-
-    <div class="info-row">
-        <span>رقم الطلب</span>
-        <span>{{ req.request_code }}</span>
-    </div>
-
-    {% if req.student.location_url %}
-    <div class="info-row">
-        <span>الموقع</span>
-        <a href="{{ req.student.location_url }}" target="_blank"
-           class="btn btn-outline-secondary btn-sm">
-            عرض على Google Maps
-        </a>
-    </div>
-    {% endif %}
-</div>
-
-
-<!-- ===== Weekly Schedule Card ===== -->
-<div class="detail-card">
-
-    <h5 class="fw-bold mb-4">الجدول الأسبوعي</h5>
-
-    {% if schedule %}
-
-        {% for day in schedule %}
-        <div class="schedule-row">
-
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-
-                <!-- Day Name -->
-                <div class="day-name mb-2 mb-md-0">
-                    {{ day.get_day_of_week_display }}
-                </div>
-
-                <!-- Times -->
-                <div>
-
-                    {% if day.is_off_day %}
-                        <span class="badge bg-danger-subtle text-danger px-3 py-2">
-                            إجازة
+            <a href="{% url 'accounts:public_profile' req.student.user.id %}" class="student-profile-link">
+                <div class="student-profile-box">
+                    <div class="student-main">
+                        <span class="student-avatar">
+                            <i class="bi bi-person-fill"></i>
                         </span>
-                    {% else %}
-
-                    <div class="time-box">
-
-                        <div class="time-item">
-                            <span class="time-label">ذهاب</span>
-                            {% with pickup=day.pickup_time|time:"h:i A" %}
-                                {{ pickup|cut:"AM"|cut:"PM" }}
-                                {% if "AM" in pickup %} ص {% else %} م {% endif %}
-                            {% endwith %}
+                        <div>
+                            <div class="student-name">{{ req.student.user.get_full_name }}</div>
+                            <div class="student-meta">
+                                {% if req.student.average_rating %}
+                                    {{ req.student.average_rating|floatformat:2 }} / 5
+                                {% else %}
+                                    بدون تقييمات
+                                {% endif %}
+                                · طالب جامعي
+                            </div>
                         </div>
-
-                        <div class="time-item">
-                            <span class="time-label">عودة</span>
-                            {% with ret=day.return_time|time:"h:i A" %}
-                                {{ ret|cut:"AM"|cut:"PM" }}
-                                {% if "AM" in ret %} ص {% else %} م {% endif %}
-                            {% endwith %}
-                        </div>
-
                     </div>
-
-                    {% endif %}
-
+                    <span class="profile-action">
+                        عرض الملف
+                        <i class="bi bi-arrow-left"></i>
+                    </span>
                 </div>
+            </a>
 
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label"><i class="bi bi-envelope"></i>البريد</div>
+                    <div class="info-value">{{ req.student.user.email }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><i class="bi bi-phone"></i>رقم الجوال</div>
+                    <div class="info-value">{{ req.student.user.phone }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><i class="bi bi-mortarboard"></i>الجامعة</div>
+                    <div class="info-value">{{ req.student.university_name|default:"غير محددة" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><i class="bi bi-person-badge"></i>الجنس</div>
+                    <div class="info-value">
+                        {% if req.student.gender == "male" %}
+                            ذكر
+                        {% elif req.student.gender == "female" %}
+                            أنثى
+                        {% else %}
+                            غير محدد
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><i class="bi bi-geo-alt"></i>المدينة / الحي</div>
+                    <div class="info-value">{{ req.student.user.city.name_ar }} - {{ req.student.neighborhood|default:"غير محدد" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><i class="bi bi-hash"></i>رقم الطلب</div>
+                    <div class="info-value">{{ req.request_code }}</div>
+                </div>
+                {% if req.student.location_url %}
+                    <div class="info-item">
+                        <div class="info-label"><i class="bi bi-map"></i>الموقع</div>
+                        <a href="{{ req.student.location_url }}" target="_blank" class="btn btn-detail-outline map-link">
+                            عرض على الخريطة
+                        </a>
+                    </div>
+                {% endif %}
             </div>
+        </section>
 
-        </div>
-        {% endfor %}
+        <aside class="detail-section">
+            <h2 class="section-title">
+                <i class="bi bi-ticket-perforated"></i>
+                تفاصيل الاشتراك
+            </h2>
 
-    {% else %}
-        <p class="text-muted">لم يتم تحديد جدول بعد.</p>
-    {% endif %}
-
-</div>
-
-
-<!-- ===== Action Buttons ===== -->
-{% if req.status == "pending" %}
-<div class="detail-card action-wrapper">
-
-    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-
-        <form method="post" action="{% url 'driver:approve_request' req.id %}">
-            {% csrf_token %}
-            <button type="submit"
-                    class="btn btn-success px-4"
-                    onclick="return confirm('هل أنت متأكد من قبول الطلب؟');">
-                قبول الطلب
-            </button>
-        </form>
-
-        <form method="post" action="{% url 'driver:reject_request' req.id %}">
-            {% csrf_token %}
-            <button type="submit"
-                    class="btn btn-danger px-4"
-                    onclick="return confirm('هل أنت متأكد من رفض الطلب؟');">
-                رفض الطلب
-            </button>
-        </form>
-
+            <div class="subscription-card">
+                <h3 class="subscription-title">
+                    {{ req.subscription.driver.user.city.name_ar }} - {{ req.subscription.neighborhood }}
+                </h3>
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <div class="summary-label">النوع</div>
+                        <div class="summary-value">{{ req.subscription.get_duration_display }}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">السعر</div>
+                        <div class="summary-value">{{ req.subscription.price|floatformat:2 }} ر.س</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">المقاعد المتبقية</div>
+                        <div class="summary-value">{{ req.subscription.available_seats }}</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-label">رقم الطلب</div>
+                        <div class="summary-value">{{ req.request_code }}</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
 
+    <section class="detail-section schedule-section">
+        <h2 class="section-title">
+            <i class="bi bi-calendar-week"></i>
+            الجدول الأسبوعي
+        </h2>
+
+        {% if schedule %}
+            <div class="schedule-list">
+                {% for day in schedule %}
+                    <div class="schedule-row">
+                        <div class="day-name">
+                            <i class="bi bi-calendar2-day"></i>
+                            {{ day.get_day_of_week_display }}
+                        </div>
+
+                        {% if day.is_off_day %}
+                            <span class="off-day">إجازة</span>
+                        {% else %}
+                            <div class="time-group">
+                                <div class="time-chip">
+                                    <div class="time-label">ذهاب</div>
+                                    <div class="time-value">{{ day.pickup_time|time:"h:i A" }}</div>
+                                </div>
+                                <div class="time-chip">
+                                    <div class="time-label">عودة</div>
+                                    <div class="time-value">{{ day.return_time|time:"h:i A" }}</div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="info-item text-center">
+                <div class="info-value text-muted">لم يتم تحديد جدول بعد.</div>
+            </div>
+        {% endif %}
+    </section>
+
+    {% if req.status == "pending" %}
+        <section class="detail-section decision-card">
+            <h2 class="section-title justify-content-center">
+                <i class="bi bi-check2-circle"></i>
+                قرار الطلب
+            </h2>
+            <p class="text-muted mb-4">بعد القبول سيتم تحويل المبلغ وإنشاء العقد الإلكتروني.</p>
+
+            <div class="decision-actions">
+                <button type="button" class="btn btn-success rounded-pill px-5" data-bs-toggle="modal" data-bs-target="#approveRequestModal">
+                    <i class="bi bi-check-circle me-2"></i>
+                    قبول الطلب
+                </button>
+                <button type="button" class="btn btn-outline-danger rounded-pill px-5" data-bs-toggle="modal" data-bs-target="#rejectRequestModal">
+                    <i class="bi bi-x-circle me-2"></i>
+                    رفض الطلب
+                </button>
+            </div>
+        </section>
+    {% endif %}
+
+    {% if req.status == "approved" and req.subscription.current_status == "expired" %}
+        <section class="detail-section extra-card">
+            <h2 class="section-title justify-content-center">
+                <i class="bi bi-star"></i>
+                تقييم الطالب
+            </h2>
+            <p class="text-muted mb-4">بعد انتهاء الاشتراك يمكنك مشاركة تجربتك مع الطالب.</p>
+            <a href="{% url 'reviews:create_review' req.id %}" class="btn btn-accent rounded-pill px-5">
+                تقييم الطالب
+            </a>
+        </section>
+    {% endif %}
+
+    {% if req.contract %}
+        <section class="detail-section extra-card">
+            <h2 class="section-title justify-content-center">
+                <i class="bi bi-file-earmark-text"></i>
+                العقد الإلكتروني
+            </h2>
+            <p class="text-muted mb-4">يمكنك تحميل العقد الإلكتروني الخاص بهذا الاشتراك.</p>
+            <a href="{% url 'contracts:download_contract_pdf' req.contract.id %}" class="btn btn-dark rounded-pill px-5">
+                <i class="bi bi-download me-2"></i>
+                تحميل العقد PDF
+            </a>
+        </section>
+    {% endif %}
 </div>
-{% endif %}
 
-<!-- ===== Review Section ===== -->
-
-{% if req.status == "approved" and req.subscription.current_status == "expired" %}
-
-
-<div class="detail-card text-center">
-
-    <h5 class="fw-bold mb-3">
-        تقييم الطالب
-    </h5>
-
-    <p class="text-muted mb-4">
-        بعد انتهاء الاشتراك يمكنك مشاركة تجربتك مع الطالب.
-    </p>
-
-    <a href="{% url 'reviews:create_review' req.id %}"
-       class="btn btn-accent px-5">
-
-        ⭐ تقييم الطالب
-
-    </a>
-
+<div class="modal fade" id="approveRequestModal" tabindex="-1" aria-labelledby="approveRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="approveRequestModalLabel">قبول طلب الاشتراك</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body text-muted lh-lg">
+                سيتم قبول الطلب، تحويل المبلغ، وإنشاء العقد الإلكتروني للطالب.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-detail-outline" data-bs-dismiss="modal">تراجع</button>
+                <form method="post" action="{% url 'driver:approve_request' req.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success rounded-pill px-4">تأكيد القبول</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-{% endif %}
-
-{% if req.contract %}
-
-<div class="detail-card text-center">
-
-    <h5 class="fw-bold mb-3">
-        📄 العقد الإلكتروني
-    </h5>
-
-    <p class="text-muted mb-4">
-        يمكنك تحميل العقد الإلكتروني الخاص بهذا الاشتراك.
-    </p>
-
-    <a
-        href="{% url 'contracts:download_contract_pdf' req.contract.id %}"
-        class="btn btn-dark px-5"
-    >
-
-        📥 تحميل العقد PDF
-
-    </a>
-
+<div class="modal fade" id="rejectRequestModal" tabindex="-1" aria-labelledby="rejectRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="rejectRequestModalLabel">رفض طلب الاشتراك</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body text-muted lh-lg">
+                سيتم رفض الطلب وإرجاع المبلغ المجمد للطالب حسب إجراءات النظام.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-detail-outline" data-bs-dismiss="modal">تراجع</button>
+                <form method="post" action="{% url 'driver:reject_request' req.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">تأكيد الرفض</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
-{% endif %}
 
 {% endblock %}

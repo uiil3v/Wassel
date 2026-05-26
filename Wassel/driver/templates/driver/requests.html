@@ -3,140 +3,465 @@
 {% block driver_content %}
 
 <style>
-    .section-card {
-        background: white;
-        border-radius: 35px;
-        padding: 30px;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
+    .requests-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
     }
 
-    .req-card {
-        background: var(--light-bg);
-        border-radius: 25px;
-        padding: 20px;
-        margin-bottom: 15px;
-        transition: 0.3s ease;
-        cursor: pointer;
+    .requests-header,
+    .requests-section {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(74, 63, 53, 0.05);
     }
 
-    .req-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    .requests-header {
+        padding: 28px 30px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: center;
     }
 
-    .req-title {
-        font-weight: 600;
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
     }
 
-    .req-meta {
-        font-size: 13px;
+    .header-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex: 0 0 auto;
+    }
+
+    .header-kicker {
+        color: var(--accent-color);
+        font-weight: 800;
+        margin-bottom: 3px;
+        font-size: 0.92rem;
+    }
+
+    .header-heading {
+        color: var(--dark-color);
+        font-weight: 900;
+        margin: 0;
+        font-size: 1.45rem;
+        line-height: 1.6;
+    }
+
+    .header-subtitle {
         color: var(--soft-color);
+        margin: 6px 0 0;
+        line-height: 1.8;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .mini-stat {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 18px;
+        padding: 12px 16px;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .mini-stat-value {
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.25rem;
+        line-height: 1.2;
+    }
+
+    .mini-stat-label {
+        color: var(--soft-color);
+        font-size: 0.82rem;
+        margin-top: 4px;
+    }
+
+    .requests-section {
+        padding: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .section-title {
+        color: var(--dark-color);
+        font-size: 1.12rem;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .section-title i {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.98rem;
+    }
+
+    .section-count {
+        background: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .request-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .request-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+    .request-card {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 20px;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .request-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(200, 169, 81, 0.35);
+    }
+
+    .request-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        box-shadow: 0 8px 22px rgba(74, 63, 53, 0.05);
+    }
+
+    .request-name {
+        color: var(--dark-color);
+        font-weight: 900;
+        margin-bottom: 3px;
+        overflow-wrap: anywhere;
+    }
+
+    .request-meta {
+        color: var(--soft-color);
+        font-size: 0.88rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        line-height: 1.7;
+    }
+
+    .request-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .request-side {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-approved {
+        background: rgba(25, 135, 84, 0.12);
+        color: #08764d;
+    }
+
+    .status-pending {
+        background: rgba(200, 169, 81, 0.17);
+        color: #9b7a1e;
+    }
+
+    .status-rejected {
+        background: rgba(220, 53, 69, 0.1);
+        color: #b02a37;
+    }
+
+    .status-cancelled,
+    .status-muted {
+        background: rgba(108, 117, 125, 0.12);
+        color: #5c636a;
+    }
+
+    .request-action {
+        color: var(--accent-color);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
     }
 
     .empty-box {
-        text-align: center;
-        padding: 40px;
+        background: var(--light-bg);
+        border: 1px dashed rgba(200, 169, 81, 0.35);
+        border-radius: 20px;
+        padding: 28px 20px;
         color: var(--soft-color);
+        text-align: center;
+        line-height: 1.8;
+    }
+
+    .empty-box i {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+    }
+
+    @media (max-width: 991px) {
+        .requests-header {
+            grid-template-columns: 1fr;
+        }
+
+        .header-stats {
+            justify-content: stretch;
+        }
+
+        .mini-stat {
+            flex: 1 1 140px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .requests-header,
+        .requests-section {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .request-card {
+            grid-template-columns: 1fr;
+        }
+
+        .request-side {
+            justify-content: flex-start;
+        }
+
+        .section-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
     }
 </style>
 
-
-<!-- ================= NEW REQUESTS ================= -->
-<div class="section-card">
-
-    <h4 class="fw-bold mb-4">🟡 الطلبات الجديدة</h4>
-
-    {% if pending_requests %}
-        {% for req in pending_requests %}
-
-        <div class="req-card">
-
-            <div class="d-flex justify-content-between align-items-center">
-
-                <div>
-                    <div class="req-title">
-                        {{ req.student.user.full_name }}
-                    </div>
-
-                    <div class="req-meta">
-                        {{ req.subscription.driver.user.city.name_ar }} -
-                        {{ req.subscription.neighborhood }} |
-                        {{ req.request_date|date:"d/m/Y" }}
-                    </div>
-                </div>
-
-                <div>
-                    <a href="{% url 'driver:subscription_request_detail' req.id %}" 
-                       class="btn btn-outline-primary btn-sm">
-                        عرض التفاصيل
-                    </a>
-                </div>
-
+<div class="requests-page">
+    <section class="requests-header">
+        <div class="header-title">
+            <span class="header-icon">
+                <i class="bi bi-clipboard-check"></i>
+            </span>
+            <div>
+                <div class="header-kicker">الطلبات</div>
+                <h1 class="header-heading">طلبات الطلاب</h1>
+                <p class="header-subtitle">راجع الطلبات الجديدة وتابع سجل الطلبات السابقة.</p>
             </div>
-
         </div>
 
-        {% endfor %}
-    {% else %}
-        <div class="empty-box">لا يوجد طلبات جديدة</div>
-    {% endif %}
-
-</div>
-
-
-<!-- ================= OLD REQUESTS ================= -->
-<div class="section-card">
-
-    <h4 class="fw-bold mb-4">📁 الطلبات السابقة</h4>
-
-    {% if old_requests %}
-        {% for req in old_requests %}
-
-        <!-- 👇 هذا هو التعديل (الكرت كامل قابل للضغط) -->
-        <a href="{% url 'driver:subscription_request_detail' req.id %}" 
-           class="text-decoration-none text-dark">
-
-            <div class="req-card">
-
-                <div class="d-flex justify-content-between align-items-center">
-
-                    <div>
-                        <div class="req-title">
-                            {{ req.student.user.full_name }}
-                        </div>
-
-                        <div class="req-meta">
-                            {{ req.subscription.driver.user.city.name_ar }} -
-                            {{ req.subscription.neighborhood }} |
-                            {{ req.request_date|date:"d/m/Y" }}
-                        </div>
-                    </div>
-
-                    <div>
-                        <span class="badge 
-                            {% if req.status == 'approved' %}bg-success
-                            {% elif req.status == 'rejected' %}bg-danger
-                            {% elif req.status == 'cancelled' %}bg-secondary
-                            {% elif req.status == 'pending' %}bg-warning text-dark
-                            {% else %}bg-dark
-                            {% endif %}
-                        ">
-                            {{ req.get_status_display }}
-                        </span>
-                    </div>
-
-                </div>
-
+        <div class="header-stats">
+            <div class="mini-stat">
+                <div class="mini-stat-value">{{ pending_requests|length }}</div>
+                <div class="mini-stat-label">طلبات جديدة</div>
             </div>
+            <div class="mini-stat">
+                <div class="mini-stat-value">{{ old_requests|length }}</div>
+                <div class="mini-stat-label">طلبات سابقة</div>
+            </div>
+        </div>
+    </section>
 
-        </a>
+    <section class="requests-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-inbox"></i>
+                الطلبات الجديدة
+            </h2>
+            <span class="section-count">{{ pending_requests|length }} طلب</span>
+        </div>
 
-        {% endfor %}
-    {% else %}
-        <div class="empty-box">لا يوجد طلبات سابقة</div>
-    {% endif %}
+        {% if pending_requests %}
+            <div class="request-list">
+                {% for req in pending_requests %}
+                    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="request-link">
+                        <article class="request-card">
+                            <div class="request-main">
+                                <span class="student-avatar">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <div>
+                                    <div class="request-name">{{ req.student.user.full_name }}</div>
+                                    <div class="request-meta">
+                                        <span>
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ req.subscription.driver.user.city.name_ar }} - {{ req.subscription.neighborhood }}
+                                        </span>
+                                        <span>
+                                            <i class="bi bi-calendar3"></i>
+                                            {{ req.request_date|date:"d/m/Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="request-side">
+                                <span class="status-pill status-pending">{{ req.get_status_display }}</span>
+                                <span class="request-action">
+                                    عرض التفاصيل
+                                    <i class="bi bi-arrow-left"></i>
+                                </span>
+                            </div>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                <i class="bi bi-inbox"></i>
+                <div class="fw-bold mb-1">لا يوجد طلبات جديدة</div>
+                <div>أي طلب جديد من الطلاب سيظهر هنا.</div>
+            </div>
+        {% endif %}
+    </section>
+
+    <section class="requests-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-clock-history"></i>
+                الطلبات السابقة
+            </h2>
+            <span class="section-count">{{ old_requests|length }} طلب</span>
+        </div>
+
+        {% if old_requests %}
+            <div class="request-list">
+                {% for req in old_requests %}
+                    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="request-link">
+                        <article class="request-card">
+                            <div class="request-main">
+                                <span class="student-avatar">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <div>
+                                    <div class="request-name">{{ req.student.user.full_name }}</div>
+                                    <div class="request-meta">
+                                        <span>
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ req.subscription.driver.user.city.name_ar }} - {{ req.subscription.neighborhood }}
+                                        </span>
+                                        <span>
+                                            <i class="bi bi-calendar3"></i>
+                                            {{ req.request_date|date:"d/m/Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="request-side">
+                                <span class="status-pill
+                                    {% if req.status == 'approved' %}status-approved
+                                    {% elif req.status == 'rejected' %}status-rejected
+                                    {% elif req.status == 'cancelled' %}status-cancelled
+                                    {% elif req.status == 'pending' %}status-pending
+                                    {% else %}status-muted{% endif %}">
+                                    {{ req.get_status_display }}
+                                </span>
+                                <span class="request-action">
+                                    عرض التفاصيل
+                                    <i class="bi bi-arrow-left"></i>
+                                </span>
+                            </div>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                <i class="bi bi-archive"></i>
+                <div class="fw-bold mb-1">لا يوجد طلبات سابقة</div>
+                <div>سجل الطلبات المقبولة أو المرفوضة سيظهر هنا.</div>
+            </div>
+        {% endif %}
+    </section>
 </div>
 
 {% endblock %}

@@ -3,143 +3,347 @@
 {% block driver_content %}
 
 <style>
-.schedule-card {
-    background: white;
-    border-radius: 30px;
-    padding: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-}
+    .schedule-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
 
-.day-box {
-    background: #faf9f6;
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
+    .schedule-header {
+        background: #fff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 30px;
+        padding: 28px 30px;
+        box-shadow: 0 22px 55px rgba(74, 63, 53, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+    }
 
-.day-title {
-    font-weight: 700;
-    margin-bottom: 15px;
-}
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
 
-.student-item {
-    background: white;
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s;
-}
+    .header-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        flex: 0 0 auto;
+    }
 
-.student-item:hover {
-    transform: translateY(-3px);
-}
+    .header-kicker {
+        color: var(--accent-color);
+        font-weight: 800;
+        margin-bottom: 3px;
+        font-size: 0.92rem;
+    }
 
-.meta {
-    font-size: 13px;
-    color: var(--soft-color);
-}
+    .header-heading {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin: 0;
+        font-size: 1.45rem;
+        line-height: 1.6;
+    }
 
-/* ===== TIME DESIGN ===== */
-.time-wrapper {
-    display: flex;
-    gap: 10px;
-}
+    .header-subtitle {
+        color: var(--soft-color);
+        margin: 6px 0 0;
+        line-height: 1.8;
+    }
 
-.time-box {
-    background: #f1f1f1;
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    text-align: center;
-    min-width: 80px;
-}
+    .week-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
 
-.time-label {
-    font-size: 11px;
-    color: #888;
-}
+    .day-card {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 26px;
+        padding: 22px;
+        min-height: 190px;
+        box-shadow: 0 18px 45px rgba(74, 63, 53, 0.05);
+    }
 
-.time-value {
-    font-weight: 700;
-}
+    .day-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid rgba(74, 63, 53, 0.08);
+    }
+
+    .day-name {
+        color: var(--dark-color);
+        font-size: 1.08rem;
+        font-weight: 800;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .day-name i {
+        color: var(--accent-color);
+    }
+
+    .day-count {
+        background: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .student-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .student-row {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 20px;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        box-shadow: 0 8px 22px rgba(74, 63, 53, 0.05);
+    }
+
+    .student-name {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin-bottom: 3px;
+        overflow-wrap: anywhere;
+    }
+
+    .student-location {
+        color: var(--soft-color);
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1.7;
+    }
+
+    .time-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .time-chip {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.08);
+        border-radius: 16px;
+        min-width: 92px;
+        padding: 9px 12px;
+        text-align: center;
+    }
+
+    .time-label {
+        color: var(--soft-color);
+        font-size: 0.78rem;
+        margin-bottom: 3px;
+    }
+
+    .time-value {
+        color: var(--dark-color);
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .no-time,
+    .empty-day {
+        color: var(--soft-color);
+        background: var(--light-bg);
+        border: 1px dashed rgba(200, 169, 81, 0.35);
+        border-radius: 18px;
+        padding: 16px;
+        text-align: center;
+        line-height: 1.8;
+    }
+
+    .empty-schedule {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 28px;
+        padding: 44px 24px;
+        text-align: center;
+        color: var(--soft-color);
+        box-shadow: 0 18px 45px rgba(74, 63, 53, 0.05);
+    }
+
+    .empty-schedule i {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.45rem;
+        margin-bottom: 12px;
+    }
+
+    @media (max-width: 768px) {
+        .schedule-header,
+        .day-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .schedule-header {
+            align-items: flex-start;
+        }
+
+        .header-title {
+            align-items: flex-start;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 1.15rem;
+        }
+
+        .header-heading {
+            font-size: 1.25rem;
+        }
+
+        .day-head,
+        .student-row {
+            grid-template-columns: 1fr;
+        }
+
+        .student-row {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .time-group {
+            justify-content: stretch;
+        }
+
+        .time-chip {
+            flex: 1 1 130px;
+        }
+    }
 </style>
 
-<h3 class="fw-bold mb-4">🗓 جدولك الأسبوعي</h3>
-
-<div class="schedule-card">
-
-{% if schedule %}
-
-    {% for day, items in schedule.items %}
-
-        <div class="day-box">
-
-            <div class="day-title">📅 {{ day }}</div>
-
-            {% if items %}
-
-                {% for item in items %}
-
-                <div class="student-item">
-
-                    <!-- بيانات الطالب -->
-                    <div>
-                        <div class="fw-bold">
-                            👤 {{ item.student }}
-                        </div>
-                        <div class="meta">
-                            📍 {{ item.city }} - {{ item.neighborhood }}
-                        </div>
-                    </div>
-
-                    <!-- الوقت -->
-                    <div>
-
-                        {% if item.pickup %}
-                            <div class="time-wrapper">
-
-                                <div class="time-box">
-                                    <div class="time-label">ذهاب</div>
-                                    <div class="time-value">
-                                        {{ item.pickup|time:"h:i A" }}
-                                    </div>
-                                </div>
-
-                                <div class="time-box">
-                                    <div class="time-label">عودة</div>
-                                    <div class="time-value">
-                                        {{ item.return|time:"h:i A" }}
-                                    </div>
-                                </div>
-
-                            </div>
-                        {% else %}
-                            <span class="text-muted">لم يحدد الوقت</span>
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-                {% endfor %}
-
-            {% else %}
-                <div class="text-muted">لا يوجد طلاب في هذا اليوم</div>
-            {% endif %}
-
+<div class="schedule-page">
+    <section class="schedule-header">
+        <div class="header-title">
+            <span class="header-icon">
+                <i class="bi bi-calendar-week"></i>
+            </span>
+            <div>
+                <div class="header-kicker">جدولي</div>
+                <h1 class="header-heading">الجدول الأسبوعي</h1>
+                <p class="header-subtitle">مواعيد الطلاب المقبولين حسب أيام الأسبوع.</p>
+            </div>
         </div>
+    </section>
 
-    {% endfor %}
+    {% if schedule %}
+        <section class="week-grid">
+            {% for day, items in schedule.items %}
+                <article class="day-card">
+                    <div class="day-head">
+                        <h2 class="day-name">
+                            <i class="bi bi-calendar2-day"></i>
+                            {{ day }}
+                        </h2>
+                        <span class="day-count">{{ items|length }} طالب</span>
+                    </div>
 
-{% else %}
-    <div class="text-center text-muted">
-        لا يوجد جدول حالياً
-    </div>
-{% endif %}
+                    {% if items %}
+                        <div class="student-list">
+                            {% for item in items %}
+                                <div class="student-row">
+                                    <div class="student-info">
+                                        <span class="student-avatar">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <div>
+                                            <div class="student-name">{{ item.student }}</div>
+                                            <div class="student-location">
+                                                <i class="bi bi-geo-alt"></i>
+                                                {{ item.city }} - {{ item.neighborhood }}
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    {% if item.pickup %}
+                                        <div class="time-group">
+                                            <div class="time-chip">
+                                                <div class="time-label">ذهاب</div>
+                                                <div class="time-value">{{ item.pickup|time:"h:i A" }}</div>
+                                            </div>
+                                            <div class="time-chip">
+                                                <div class="time-label">عودة</div>
+                                                <div class="time-value">{{ item.return|time:"h:i A" }}</div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="no-time">لم يحدد الوقت</div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-day">لا يوجد طلاب في هذا اليوم</div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <div class="empty-schedule">
+            <i class="bi bi-calendar-x"></i>
+            <h2 class="h5 fw-bold mb-2">لا يوجد جدول حالياً</h2>
+            <p class="mb-0">سيظهر جدولك بعد قبول طلبات الطلاب.</p>
+        </div>
+    {% endif %}
 </div>
 
 {% endblock %}

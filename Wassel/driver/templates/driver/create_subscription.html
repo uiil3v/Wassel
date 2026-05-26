@@ -3,141 +3,286 @@
 {% block driver_content %}
 
 <style>
-    .form-card {
-        background: white;
-        border-radius: 35px;
-        padding: 40px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 35px;
+    .subscription-form-page {
+        display: grid;
+        gap: 24px;
     }
 
-    .form-card h5 {
-        font-weight: 700;
-        margin-bottom: 25px;
+    .form-hero,
+    .form-card {
+        background: #fff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 30px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border-color: rgba(200, 169, 81, 0.22);
+        padding: 32px;
+    }
+
+    .hero-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .form-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+
+    .form-hero p {
+        color: var(--soft-color);
+        line-height: 1.9;
+        max-width: 760px;
+        margin-bottom: 0;
+    }
+
+    .hero-icon {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 14px 32px rgba(200, 169, 81, 0.3);
+        font-size: 1.35rem;
+    }
+
+    .form-card {
+        padding: 28px;
+    }
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .form-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 8px;
     }
 
     .premium-input {
         width: 100%;
-        border-radius: 22px;
-        padding: 14px 18px;
-        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        border-radius: 18px;
+        min-height: 50px;
+        padding: 12px 16px;
+        border: 1.5px solid rgba(74, 63, 53, 0.1);
         background: #fdfcf9;
-        transition: 0.3s ease;
+        transition: 0.25s ease;
+    }
+
+    textarea.premium-input {
+        min-height: 112px;
+        resize: vertical;
     }
 
     .premium-input:focus {
         border-color: var(--accent-color);
-        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.2);
+        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.16);
         outline: none;
+    }
+
+    .field-hint {
+        display: block;
+        margin-top: 8px;
+        color: var(--soft-color);
+        font-size: 0.85rem;
+        line-height: 1.7;
+    }
+
+    .date-preview {
+        display: none;
+        margin-top: 10px;
+        background: rgba(200, 169, 81, 0.12);
+        color: #80651a;
+        border: 1px solid rgba(200, 169, 81, 0.22);
+        border-radius: 16px;
+        padding: 10px 12px;
+        line-height: 1.7;
+        font-size: 0.9rem;
+    }
+
+    .save-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+
+    @media (max-width: 768px) {
+        .form-hero,
+        .form-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .form-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .hero-head {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .save-actions,
+        .save-actions .btn {
+            width: 100%;
+        }
     }
 </style>
 
-<div class="form-card">
-
-    <h3 class="mb-4">
-
-        {% if is_edit %}
-            تعديل الاشتراك
-        {% else %}
-            إنشاء اشتراك جديد
-        {% endif %}
-
-    </h3>
+<div class="subscription-form-page">
+    <section class="form-hero">
+        <div class="hero-head">
+            <div>
+                <h4 class="fw-bold">
+                    {% if is_edit %}
+                        تعديل الاشتراك
+                    {% else %}
+                        إنشاء اشتراك جديد
+                    {% endif %}
+                </h4>
+                <p>
+                    حدد الحي، السعر، المقاعد، ومدة الاشتراك. سيظهر الاشتراك للطلاب في مدينتك بعد حفظ البيانات.
+                </p>
+            </div>
+            <span class="hero-icon">
+                <i class="bi bi-ticket-perforated"></i>
+            </span>
+        </div>
+    </section>
 
     <form method="POST">
         {% csrf_token %}
 
-        <div class="row">
-
-            <div class="col-md-6 mb-3">
-                <label>الحي</label>
-                <input type="text"
-                name="neighborhood"
-                class="premium-input"
-                value="{{ subscription.neighborhood }}"
-                required>
+        <section class="form-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-sliders"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">بيانات الاشتراك</h5>
+                    <span class="text-muted">المعلومات التي تظهر للطالب عند استعراض الاشتراكات.</span>
+                </div>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label>السعر (ر.س)</label>
-                <input type="number"
-                step="0.01"
-                name="price"
-                class="premium-input"
-                value="{{ subscription.price }}"
-                required>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label class="form-label">الحي</label>
+                    <input type="text"
+                           name="neighborhood"
+                           class="premium-input"
+                           value="{{ subscription.neighborhood }}"
+                           required>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">السعر (ر.س)</label>
+                    <input type="number"
+                           step="0.01"
+                           min="1"
+                           name="price"
+                           class="premium-input"
+                           value="{{ subscription.price }}"
+                           required>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">عدد المقاعد</label>
+                    <input type="number"
+                           min="1"
+                           name="seats"
+                           class="premium-input"
+                           value="{{ subscription.seats }}"
+                           required>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">نوع الاشتراك</label>
+                    <select name="duration" class="premium-input">
+                        <option value="monthly" {% if subscription.duration == "monthly" %}selected{% endif %}>
+                            شهري
+                        </option>
+                        <option value="semester" {% if subscription.duration == "semester" %}selected{% endif %}>
+                            فصلي
+                        </option>
+                    </select>
+                    <span class="field-hint">الشهري يحسب تاريخ النهاية تلقائياً بعد 30 يوم.</span>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">تاريخ البداية</label>
+                    <input type="date"
+                           name="start_date"
+                           class="premium-input"
+                           value="{{ subscription.start_date|date:'Y-m-d' }}"
+                           required>
+                    <small id="end-date-preview" class="date-preview"></small>
+                </div>
+
+                <div class="form-field" data-end-date-field>
+                    <label class="form-label">تاريخ النهاية</label>
+                    <input type="date"
+                           name="end_date"
+                           class="premium-input"
+                           value="{{ subscription.end_date|date:'Y-m-d' }}">
+                    <span class="field-hint">للفصلي يجب أن تكون المدة 90 يوم على الأقل.</span>
+                </div>
+
+                <div class="form-field full">
+                    <label class="form-label">ملاحظات (اختياري)</label>
+                    <textarea name="notes" rows="3" class="premium-input">{{ subscription.notes }}</textarea>
+                </div>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label>عدد المقاعد</label>
-                <input type="number"
-                name="seats"
-                class="premium-input"
-                value="{{ subscription.seats }}"
-                required>
+            <div class="save-actions">
+                <button type="submit" class="btn btn-accent px-5 py-2 rounded-pill">
+                    <i class="bi bi-check2-circle me-2"></i>
+                    {% if is_edit %}
+                        حفظ التعديلات
+                    {% else %}
+                        إنشاء الاشتراك
+                    {% endif %}
+                </button>
             </div>
-
-            <div class="col-md-6 mb-3">
-                <label>نوع الاشتراك</label>
-                <select name="duration" class="premium-input">
-
-                    <option value="monthly"
-                        {% if subscription.duration == "monthly" %}
-                            selected
-                        {% endif %}>
-                        شهري
-                    </option>
-
-                    <option value="semester"
-                        {% if subscription.duration == "semester" %}
-                            selected
-                        {% endif %}>
-                        فصلي
-                    </option>
-
-                </select>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label>تاريخ البداية</label>
-                <input type="date"
-                name="start_date"
-                class="premium-input"
-                value="{{ subscription.start_date|date:'Y-m-d' }}"
-                required>
-
-                <small id="end-date-preview" style="display:none; color:#888;"></small>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label>تاريخ النهاية</label>
-                <input type="date"
-                name="end_date"
-                class="premium-input"
-                value="{{ subscription.end_date|date:'Y-m-d' }}">
-            </div>
-
-            <div class="col-12 mb-4">
-                <label>ملاحظات (اختياري)</label>
-                <textarea name="notes"
-                rows="3"
-                class="premium-input">{{ subscription.notes }}</textarea>
-            </div>
-
-        </div>
-
-        <div class="text-end">
-            <button type="submit" class="btn btn-accent px-5 py-2">
-               {% if is_edit %}
-                    حفظ التعديلات
-                {% else %}
-                    إنشاء الاشتراك
-                {% endif %}
-            </button>
-        </div>
-
+        </section>
     </form>
-
 </div>
 
 <script>
@@ -145,61 +290,64 @@ const durationField = document.querySelector('[name="duration"]');
 const startDateField = document.querySelector('[name="start_date"]');
 const endDateField = document.querySelector('[name="end_date"]');
 const previewText = document.getElementById("end-date-preview");
+const endDateWrapper = document.querySelector("[data-end-date-field]");
+
+function formatDateForDisplay(value) {
+    if (!value) {
+        return "غير محددة";
+    }
+
+    const date = new Date(value + "T00:00:00");
+    return date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric"
+    });
+}
+
+function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
 
 function updateEndDate() {
-
     const duration = durationField.value;
     const startDate = startDateField.value;
 
-    // إذا ما فيه تاريخ
     if (!startDate) {
         previewText.style.display = "none";
         return;
     }
 
-    let start = new Date(startDate);
+    let start = new Date(startDate + "T00:00:00");
 
-    // 🟡 اشتراك شهري
     if (duration === "monthly") {
-
         start.setDate(start.getDate() + 30);
-
-        let formattedDate = start.toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'numeric',
-            year: 'numeric'
-        });
-
-        endDateField.value = start.toISOString().split('T')[0];
+        endDateField.value = formatDateForInput(start);
         endDateField.readOnly = true;
-        endDateField.closest('.col-md-6').style.display = "none";
+        endDateWrapper.style.display = "none";
 
-        // 🔥 عرض النص
-        previewText.innerText = "* ينتهي الاشتراك في: " + formattedDate;
+        previewText.innerText = "ينتهي الاشتراك في: " + formatDateForDisplay(endDateField.value);
         previewText.style.display = "block";
-    }
+    } else if (duration === "semester") {
+        if (!endDateField.value) {
+            start.setDate(start.getDate() + 90);
+            endDateField.value = formatDateForInput(start);
+        }
 
-    // 🔵 اشتراك فصلي
-    else if (duration === "semester") {
-
-        start.setDate(start.getDate() + 90);
-
-        endDateField.value = start.toISOString().split('T')[0];
         endDateField.readOnly = false;
-        endDateField.closest('.col-md-6').style.display = "block";
-
-        // 🔥 إخفاء النص
+        endDateWrapper.style.display = "block";
         previewText.style.display = "none";
     }
+
 }
 
-// تشغيل الأحداث
 durationField.addEventListener("change", updateEndDate);
 startDateField.addEventListener("change", updateEndDate);
 
-// 🔥 تشغيل عند تحميل الصفحة
 updateEndDate();
 </script>
-
 
 {% endblock %}

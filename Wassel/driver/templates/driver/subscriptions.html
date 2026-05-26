@@ -3,164 +3,526 @@
 {% block driver_content %}
 
 <style>
-    .sub-card {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 25px;
-        transition: 0.3s ease;
-        cursor: pointer;
+    .subscriptions-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
     }
 
-    .sub-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 35px 75px rgba(0, 0, 0, 0.08);
+    .subscriptions-header {
+        background: #fff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 30px;
+        padding: 28px 30px;
+        box-shadow: 0 22px 55px rgba(74, 63, 53, 0.06);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: center;
     }
 
-    .sub-title {
-        font-weight: 700;
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .header-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        flex: 0 0 auto;
+    }
+
+    .header-kicker {
+        color: var(--accent-color);
+        font-weight: 800;
+        margin-bottom: 3px;
+        font-size: 0.92rem;
+    }
+
+    .header-heading {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin: 0;
+        font-size: 1.45rem;
+        line-height: 1.6;
+    }
+
+    .header-subtitle {
+        color: var(--soft-color);
+        margin: 6px 0 0;
+        line-height: 1.8;
+    }
+
+    .btn-sub-outline {
+        border: 1px solid rgba(200, 169, 81, 0.45);
+        color: var(--dark-color);
+        background: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 800;
+    }
+
+    .btn-sub-outline:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+        background: rgba(200, 169, 81, 0.08);
+    }
+
+    .admin-alert {
+        background: rgba(220, 53, 69, 0.08);
+        border: 1px solid rgba(220, 53, 69, 0.16);
+        border-radius: 24px;
+        padding: 18px 20px;
+        color: #9f2430;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        line-height: 1.8;
+    }
+
+    .admin-alert i {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(220, 53, 69, 0.1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        margin-top: 2px;
+    }
+
+    .subscriptions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .subscription-link {
+        color: inherit;
+        display: block;
+        text-decoration: none;
+    }
+
+    .subscription-card {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 28px;
+        padding: 24px;
+        box-shadow: 0 18px 45px rgba(74, 63, 53, 0.05);
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(300px, 1fr);
+        gap: 22px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .subscription-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(200, 169, 81, 0.38);
+        box-shadow: 0 24px 55px rgba(74, 63, 53, 0.08);
+    }
+
+    .sub-main {
+        min-width: 0;
+    }
+
+    .sub-topline {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .sub-location {
+        color: var(--dark-color);
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
     }
 
     .sub-meta {
         color: var(--soft-color);
-        font-size: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        margin-top: 6px;
+        font-size: 0.92rem;
     }
 
-    .sub-status-badge {
-        padding: 6px 14px;
+    .sub-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .date-range {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-active {
+        background: rgba(25, 135, 84, 0.12);
+        color: #08764d;
+    }
+
+    .status-expired,
+    .status-inactive {
+        background: rgba(108, 117, 125, 0.12);
+        color: #5c636a;
+    }
+
+    .status-full {
+        background: rgba(200, 169, 81, 0.17);
+        color: #9b7a1e;
+    }
+
+    .sub-price {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 22px;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .price-label {
+        color: var(--soft-color);
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+    }
+
+    .price-value {
+        color: var(--dark-color);
+        font-size: 1.55rem;
+        font-weight: 900;
+        line-height: 1.2;
+    }
+
+    .price-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+        background: #fff;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        font-size: 1.2rem;
+    }
+
+    .sub-side {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .metric {
+        background: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 18px;
+        padding: 14px 12px;
+        text-align: center;
+        min-height: 86px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .metric-value {
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.2rem;
+        line-height: 1.3;
+    }
+
+    .metric-label {
+        color: var(--soft-color);
+        font-size: 0.82rem;
+        margin-top: 4px;
+    }
+
+    .seats-summary {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.08);
         border-radius: 20px;
-        font-size: 13px;
+        padding: 15px;
+    }
+
+    .seats-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--soft-color);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .seats-line strong {
+        color: var(--dark-color);
+    }
+
+    .seat-progress {
+        height: 8px;
+        background: var(--light-bg);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .seat-progress-bar {
+        height: 100%;
+        background: var(--accent-color);
+        border-radius: inherit;
+    }
+
+    .card-footer-line {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        color: var(--accent-color);
+        font-weight: 800;
+        gap: 8px;
+        padding-top: 2px;
     }
 
     .empty-box {
-        background: white;
-        border-radius: 35px;
-        padding: 50px;
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 28px;
+        padding: 46px 24px;
         text-align: center;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 18px 45px rgba(74, 63, 53, 0.05);
+        color: var(--soft-color);
     }
 
-    .card-link {
-        text-decoration: none;
-        color: inherit;
-        display: block;
+    .empty-box i {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 14px;
+    }
+
+    .empty-title {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    @media (max-width: 991px) {
+        .subscriptions-header,
+        .subscription-card {
+            grid-template-columns: 1fr;
+        }
+
+        .subscriptions-header .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .subscriptions-header,
+        .subscription-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .header-title,
+        .sub-topline {
+            align-items: flex-start;
+        }
+
+        .sub-topline {
+            flex-direction: column;
+        }
+
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .sub-price {
+            align-items: flex-start;
+        }
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold">اشتراكاتي</h3>
-
-    {% if not blocked_by_admin %}
-        <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
-            <i class="bi bi-plus-circle me-2"></i>
-            إنشاء اشتراك جديد
-        </a>
-    {% endif %}
-</div>
-
-{% if blocked_by_admin %}
-<div class="alert alert-danger rounded-4 mb-4">
-    <strong>تنبيه:</strong>
-    يوجد لديك اشتراك موقوف من إدارة المنصة، لذلك تم تعطيل إمكانية إنشاء اشتراكات جديدة حتى يتم حل المشكلة مع الدعم الفني.
-</div>
-{% endif %}
-
-{% if subscriptions %}
-
-    {% for sub in subscriptions %}
-
-    <a href="{% url 'driver:subscription_detail' sub.id %}" class="card-link">
-        <div class="sub-card">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h5 class="sub-title mb-1">
-                        {{ sub.driver.user.city.name_ar }} - {{ sub.neighborhood }}
-                    </h5>
-
-                    <div class="sub-meta">
-                        {{ sub.get_duration_display }} |
-                        {{ sub.start_date|date:"d/m/Y" }} -
-                        {{ sub.end_date|date:"d/m/Y" }}
-                    </div>
-                </div>
-
-                <div>
-                    {% if sub.current_status == "active" %}
-
-                        <span class="badge bg-success sub-status-badge">
-                            نشط
-                        </span>
-
-                    {% elif sub.current_status == "expired" %}
-
-                        <span class="badge bg-danger sub-status-badge">
-                            منتهي
-                        </span>
-
-                    {% elif sub.current_status == "full" %}
-
-                        <span class="badge bg-warning text-dark sub-status-badge">
-                            ممتلئ
-                        </span>
-
-                    {% else %}
-
-                        <span class="badge bg-secondary sub-status-badge">
-                            غير نشط
-                        </span>
-
-                    {% endif %}
-                </div>
+<div class="subscriptions-page">
+    <section class="subscriptions-header">
+        <div class="header-title">
+            <span class="header-icon">
+                <i class="bi bi-ticket-perforated"></i>
+            </span>
+            <div>
+                <div class="header-kicker">اشتراكاتي</div>
+                <h1 class="header-heading">إدارة الاشتراكات</h1>
+                <p class="header-subtitle">تابع حالة الاشتراكات، المقاعد، والطلبات المرتبطة بها.</p>
             </div>
-
-            <div class="row text-center">
-
-                <div class="col-md-3">
-                    <div class="fw-bold">
-                        {{ sub.price|floatformat:0 }} ر.س
-                    </div>
-                    <div class="sub-meta">السعر</div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="fw-bold">{{ sub.seats }}</div>
-                    <div class="sub-meta">إجمالي المقاعد</div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="fw-bold">{{ sub.available_seats }}</div>
-                    <div class="sub-meta">المقاعد المتبقية</div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="fw-bold">{{ sub.requests.count }}</div>
-                    <div class="sub-meta">عدد الطلبات</div>
-                </div>
-
-            </div>
-
         </div>
-    </a>
-
-    {% endfor %}
-
-{% else %}
-
-    <div class="empty-box">
-        <h5 class="mb-3">لا يوجد لديك اشتراكات حالياً</h5>
-        <p class="text-muted mb-4">
-            ابدأ بإنشاء اشتراك جديد لاستقبال الطلبات من الطلاب.
-        </p>
 
         {% if not blocked_by_admin %}
             <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
-                إنشاء اشتراك
+                <i class="bi bi-plus-circle me-2"></i>
+                إنشاء اشتراك جديد
             </a>
         {% endif %}
-    </div>
+    </section>
 
-{% endif %}
+    {% if blocked_by_admin %}
+        <div class="admin-alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <div>
+                <strong>تنبيه:</strong>
+                يوجد لديك اشتراك موقوف من إدارة المنصة، لذلك تم تعطيل إمكانية إنشاء اشتراكات جديدة حتى يتم حل المشكلة مع الدعم الفني.
+            </div>
+        </div>
+    {% endif %}
+
+    {% if subscriptions %}
+        <section class="subscriptions-list">
+            {% for sub in subscriptions %}
+                <a href="{% url 'driver:subscription_detail' sub.id %}" class="subscription-link">
+                    <article class="subscription-card">
+                        <div class="sub-main">
+                            <div class="sub-topline">
+                                <div>
+                                    <h2 class="sub-location">
+                                        {{ sub.driver.user.city.name_ar }} - {{ sub.neighborhood }}
+                                    </h2>
+                                    <div class="sub-meta">
+                                        <span>
+                                            <i class="bi bi-calendar3"></i>
+                                            {{ sub.get_duration_display }}
+                                        </span>
+                                        <span class="date-range">
+                                            <span>
+                                                <i class="bi bi-calendar-check"></i>
+                                                بداية: {{ sub.start_date|date:"d/m/Y" }}
+                                            </span>
+                                            <span>
+                                                <i class="bi bi-calendar-x"></i>
+                                                نهاية: {{ sub.end_date|date:"d/m/Y" }}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {% if sub.current_status == "active" %}
+                                    <span class="status-pill status-active">نشط</span>
+                                {% elif sub.current_status == "expired" %}
+                                    <span class="status-pill status-expired">منتهي</span>
+                                {% elif sub.current_status == "full" %}
+                                    <span class="status-pill status-full">ممتلئ</span>
+                                {% else %}
+                                    <span class="status-pill status-inactive">غير نشط</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="sub-price">
+                                <div>
+                                    <div class="price-label">السعر</div>
+                                    <div class="price-value">{{ sub.price|floatformat:2 }} ر.س</div>
+                                </div>
+                                <span class="price-icon">
+                                    <i class="bi bi-cash-stack"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="sub-side">
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-value">{{ sub.seats }}</div>
+                                    <div class="metric-label">إجمالي المقاعد</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">{{ sub.available_seats }}</div>
+                                    <div class="metric-label">المقاعد المتبقية</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">{{ sub.requests.count }}</div>
+                                    <div class="metric-label">عدد الطلبات</div>
+                                </div>
+                            </div>
+
+                            <div class="seats-summary">
+                                <div class="seats-line">
+                                    <span>المقاعد المتاحة</span>
+                                    <strong>{{ sub.available_seats }} من {{ sub.seats }}</strong>
+                                </div>
+                                <div class="seat-progress">
+                                    <div class="seat-progress-bar" style="width: {% widthratio sub.available_seats sub.seats 100 %}%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer-line">
+                                عرض التفاصيل
+                                <i class="bi bi-arrow-left"></i>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+            {% endfor %}
+        </section>
+    {% else %}
+        <div class="empty-box">
+            <i class="bi bi-ticket-perforated"></i>
+            <h2 class="empty-title h5">لا يوجد لديك اشتراكات حالياً</h2>
+            <p class="mb-4">ابدأ بإنشاء اشتراك لاستقبال طلبات الطلاب.</p>
+
+            {% if not blocked_by_admin %}
+                <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    إنشاء اشتراك
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
 
 {% endblock %}

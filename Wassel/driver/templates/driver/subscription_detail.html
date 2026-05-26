@@ -3,354 +3,683 @@
 {% block driver_content %}
 
 <style>
-    .detail-card {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
+    .detail-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .detail-hero,
+    .detail-section {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.07);
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(74, 63, 53, 0.05);
+    }
+
+    .detail-hero {
+        padding: 28px 30px;
+    }
+
+    .hero-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: flex-start;
+        margin-bottom: 22px;
+    }
+
+    .hero-kicker {
+        color: var(--accent-color);
+        font-weight: 800;
+        margin-bottom: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .hero-title {
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.55rem;
+        line-height: 1.6;
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .hero-meta {
+        color: var(--soft-color);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        margin-top: 8px;
+        line-height: 1.8;
+    }
+
+    .hero-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-active {
+        background: rgba(25, 135, 84, 0.12);
+        color: #08764d;
+    }
+
+    .status-warning {
+        background: rgba(200, 169, 81, 0.17);
+        color: #9b7a1e;
+    }
+
+    .status-danger {
+        background: rgba(220, 53, 69, 0.1);
+        color: #b02a37;
+    }
+
+    .status-muted {
+        background: rgba(108, 117, 125, 0.12);
+        color: #5c636a;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .summary-card {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 20px;
+        padding: 16px;
+        min-height: 98px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .summary-label {
+        color: var(--soft-color);
+        font-size: 0.88rem;
+        margin-bottom: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .summary-value {
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.2rem;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .seat-panel {
+        background: #fff;
+        border: 1px solid rgba(74, 63, 53, 0.08);
+        border-radius: 22px;
+        padding: 18px;
+        margin-top: 14px;
+    }
+
+    .seat-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 10px;
+    }
+
+    .seat-line strong {
+        color: var(--dark-color);
+    }
+
+    .seat-progress {
+        height: 9px;
+        background: var(--light-bg);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .seat-progress-bar {
+        height: 100%;
+        background: var(--accent-color);
+        border-radius: inherit;
+    }
+
+    .notes-box {
+        background: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 22px;
+        padding: 18px;
+        margin-top: 14px;
+        color: var(--dark-color);
+        line-height: 1.9;
+    }
+
+    .actions-panel {
+        border-top: 1px solid rgba(74, 63, 53, 0.08);
+        margin-top: 22px;
+        padding-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .btn-detail-outline {
+        border: 1px solid rgba(200, 169, 81, 0.45);
+        color: var(--dark-color);
+        background: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 800;
+    }
+
+    .btn-detail-outline:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+        background: rgba(200, 169, 81, 0.08);
+    }
+
+    .locked-alert,
+    .delete-alert {
+        border-radius: 20px;
+        padding: 16px 18px;
+        line-height: 1.8;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .locked-alert {
+        background: rgba(220, 53, 69, 0.08);
+        border: 1px solid rgba(220, 53, 69, 0.16);
+        color: #9f2430;
+    }
+
+    .delete-alert {
+        background: rgba(200, 169, 81, 0.12);
+        border: 1px solid rgba(200, 169, 81, 0.24);
+        color: #80651a;
+    }
+
+    .detail-section {
+        padding: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
     }
 
     .section-title {
-        font-weight: 700;
-        margin-bottom: 25px;
+        color: var(--dark-color);
+        font-weight: 900;
+        font-size: 1.12rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .student-row {
-        padding: 18px;
+    .section-title i {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.98rem;
+    }
+
+    .section-count {
+        background: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .request-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .request-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+    .request-card {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
         border-radius: 20px;
-        background: #faf9f6;
-        margin-bottom: 15px;
-        transition: 0.3s ease;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .student-row:hover {
-        transform: translateY(-4px);
+    .request-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(200, 169, 81, 0.35);
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .student-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--accent-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        box-shadow: 0 8px 22px rgba(74, 63, 53, 0.05);
+    }
+
+    .student-name {
+        color: var(--dark-color);
+        font-weight: 900;
+        margin-bottom: 3px;
+        overflow-wrap: anywhere;
+    }
+
+    .student-meta {
+        color: var(--soft-color);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    .request-action {
+        color: var(--accent-color);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        background: var(--light-bg);
+        border: 1px dashed rgba(200, 169, 81, 0.35);
+        border-radius: 20px;
+        padding: 22px;
+        color: var(--soft-color);
+        text-align: center;
+        line-height: 1.8;
+    }
+
+    .modal-content {
+        border: 0;
+        border-radius: 28px;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border: 0;
+    }
+
+    @media (max-width: 991px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .detail-hero,
+        .detail-section {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .hero-top,
+        .request-card {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actions-panel .btn,
+        .actions-panel form {
+            width: 100%;
+        }
+
+        .actions-panel .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .section-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .request-action {
+            justify-content: flex-start;
+        }
     }
 </style>
 
-<!-- ========================= -->
-<!-- القسم 1: معلومات الاشتراك -->
-<!-- ========================= -->
+<div class="detail-page">
+    <section class="detail-hero">
+        <div class="hero-top">
+            <div>
+                <div class="hero-kicker">
+                    <i class="bi bi-ticket-perforated"></i>
+                    تفاصيل الاشتراك
+                </div>
+                <h1 class="hero-title">
+                    {{ subscription.driver.user.city.name_ar }} - {{ subscription.neighborhood }}
+                </h1>
+                <div class="hero-meta">
+                    <span><i class="bi bi-calendar3"></i>{{ subscription.get_duration_display }}</span>
+                    <span><i class="bi bi-calendar-check"></i>بداية: {{ subscription.start_date|date:"d/m/Y" }}</span>
+                    <span><i class="bi bi-calendar-x"></i>نهاية: {{ subscription.end_date|date:"d/m/Y" }}</span>
+                </div>
+            </div>
 
-<div class="detail-card">
+            {% if subscription.current_status == "active" %}
+                <span class="status-pill status-active">نشط</span>
+            {% elif subscription.current_status == "expired" %}
+                <span class="status-pill status-danger">منتهي</span>
+            {% elif subscription.current_status == "full" %}
+                <span class="status-pill status-warning">ممتلئ</span>
+            {% elif subscription.current_status == "inactive_by_admin" %}
+                <span class="status-pill status-danger">موقوف من الإدارة</span>
+            {% elif subscription.current_status == "inactive_by_driver" %}
+                <span class="status-pill status-muted">موقوف بواسطتك</span>
+            {% else %}
+                <span class="status-pill status-muted">غير نشط</span>
+            {% endif %}
+        </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold">{{ subscription.driver.user.city.name_ar }} - {{ subscription.neighborhood }}</h4>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label"><i class="bi bi-clock"></i>النوع</div>
+                <div class="summary-value">{{ subscription.get_duration_display }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label"><i class="bi bi-cash-stack"></i>السعر</div>
+                <div class="summary-value">{{ subscription.price|floatformat:2 }} ر.س</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label"><i class="bi bi-people"></i>إجمالي المقاعد</div>
+                <div class="summary-value">{{ subscription.seats }}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label"><i class="bi bi-person-check"></i>المقاعد المتبقية</div>
+                <div class="summary-value">{{ subscription.available_seats }}</div>
+            </div>
+        </div>
 
-       {% if subscription.current_status == "active" %}
-            <span class="badge bg-success">نشط</span>
+        <div class="seat-panel">
+            <div class="seat-line">
+                <span>المقاعد المتاحة</span>
+                <strong>{{ subscription.available_seats }} من {{ subscription.seats }}</strong>
+            </div>
+            <div class="seat-progress">
+                <div class="seat-progress-bar" style="width: {% widthratio subscription.available_seats subscription.seats 100 %}%;"></div>
+            </div>
+        </div>
 
-        {% elif subscription.current_status == "expired" %}
-            <span class="badge bg-danger">منتهي</span>
-
-        {% elif subscription.current_status == "full" %}
-            <span class="badge bg-warning text-dark">ممتلئ</span>
-
-        {% elif subscription.current_status == "inactive_by_admin" %}
-            <span class="badge bg-danger">موقوف من الإدارة</span>
-
-        {% elif subscription.current_status == "inactive_by_driver" %}
-            <span class="badge bg-secondary">موقوف بواسطتك</span>
-
-        {% else %}
-            <span class="badge bg-secondary">غير نشط</span>
+        {% if subscription.notes %}
+            <div class="notes-box">
+                <strong class="d-block mb-2">
+                    <i class="bi bi-journal-text me-1"></i>
+                    ملاحظاتك
+                </strong>
+                {{ subscription.notes }}
+            </div>
         {% endif %}
-    </div>
 
-    <div class="row text-center">
-
-        <div class="col-md-3">
-            <div class="text-muted mb-1">النوع</div>
-            <div class="fw-bold fs-5">
-                {{ subscription.get_duration_display }}
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="text-muted mb-1">السعر</div>
-            <div class="fw-bold fs-5">
-                {{ subscription.price|floatformat:0 }} ر.س
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="text-muted mb-1">المقاعد المتبقية</div>
-            <div class="fw-bold fs-5">
-                {{ subscription.available_seats }}
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="text-muted mb-1">إجمالي المقاعد</div>
-            <div class="fw-bold fs-5">
-                {{ subscription.seats }}
-            </div>
-        </div>
-
-    </div>
-
-
-    {% if subscription.notes %}
-
-    <div class="mt-4">
-
-        <div class="fw-bold mb-3">
-            📝 ملاحظاتك
-        </div>
-
-        <div class="p-3 rounded-4"
-             style="
-                background: #faf9f6;
-                line-height: 1.9;
-             ">
-
-            {{ subscription.notes }}
-
-        </div>
-
-    </div>
-
-{% endif %}
-
-
-    <hr class="my-4">
-
-    {% if subscription.current_status == "inactive_by_admin" %}
-
-        <div class="alert alert-danger text-center">
-            تم إيقاف هذا الاشتراك من قبل الإدارة، ولا يمكنك تفعيله أو استقبال طلبات جديدة عليه.
-        </div>
-
-    {% elif subscription.current_status == "active" or subscription.current_status == "full" %}
-
-        <div class="text-center mb-3">
-            <form method="post" action="{% url 'driver:deactivate_subscription' subscription.id %}">
-                {% csrf_token %}
-                <button class="btn btn-outline-danger px-4"
-                        onclick="return confirm('هل أنت متأكد من إيقاف الاشتراك؟');">
-                    إيقاف الاشتراك مؤقتًا
+        <div class="actions-panel">
+            {% if subscription.current_status == "inactive_by_admin" %}
+                <div class="locked-alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span>تم إيقاف هذا الاشتراك من قبل الإدارة، ولا يمكنك تفعيله أو استقبال طلبات جديدة عليه.</span>
+                </div>
+            {% elif subscription.current_status == "active" or subscription.current_status == "full" %}
+                <button type="button" class="btn btn-outline-danger rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#deactivateSubscriptionModal">
+                    <i class="bi bi-pause-circle me-2"></i>
+                    إيقاف الاشتراك مؤقتاً
                 </button>
-            </form>
-        </div>
+            {% elif subscription.current_status == "inactive_by_driver" %}
+                <form method="post" action="{% url 'driver:activate_subscription' subscription.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-accent rounded-pill px-4">
+                        <i class="bi bi-play-circle me-2"></i>
+                        تفعيل الاشتراك
+                    </button>
+                </form>
+            {% endif %}
 
-    {% elif subscription.current_status == "inactive_by_driver" %}
-
-        <div class="text-center mb-3">
-            <form method="post" action="{% url 'driver:activate_subscription' subscription.id %}">
-                {% csrf_token %}
-                <button class="btn btn-success px-4">
-                    تفعيل الاشتراك
-                </button>
-            </form>
-        </div>
-
-    {% endif %}
-
-    <div class="text-center">
-
-        {% if subscription.can_edit %}
-
-            <div class="mb-3">
-
-                <a href="{% url 'driver:edit_subscription' subscription.id %}"
-                class="btn btn-outline-primary px-4">
-
-                    ✏️ تعديل الاشتراك
-
+            {% if subscription.can_edit %}
+                <a href="{% url 'driver:edit_subscription' subscription.id %}" class="btn btn-detail-outline">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    تعديل الاشتراك
                 </a>
+            {% endif %}
 
+            {% if not pending_requests and not approved_requests and subscription.current_status != "inactive_by_admin" %}
+                <button type="button" class="btn btn-outline-danger rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#deleteSubscriptionModal">
+                    <i class="bi bi-trash me-2"></i>
+                    حذف الاشتراك
+                </button>
+            {% else %}
+                <div class="delete-alert">
+                    <i class="bi bi-info-circle"></i>
+                    <span>لا يمكن حذف الاشتراك لوجود طلاب أو طلبات مرتبطة به.</span>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="detail-section">
+        {% if subscription.current_status == "inactive_by_admin" %}
+            <div class="locked-alert mb-3">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>لا يمكنك قبول طلبات جديدة لأن الاشتراك موقوف من الإدارة.</span>
             </div>
-
         {% endif %}
 
-        {% if not pending_requests and not approved_requests and subscription.current_status != "inactive_by_admin" %}
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-inbox"></i>
+                الطلبات الجديدة
+            </h2>
+            <span class="section-count">{{ pending_requests|length }} طلب</span>
+        </div>
 
-        <form method="post" action="{% url 'driver:delete_subscription' subscription.id %}">
-            {% csrf_token %}
-            <button class="btn btn-danger px-4"
-                    onclick="return confirm('هل أنت متأكد من حذف الاشتراك؟');">
-                🗑 حذف الاشتراك
-            </button>
-        </form>
-
+        {% if pending_requests %}
+            <div class="request-list">
+                {% for req in pending_requests %}
+                    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="request-link">
+                        <article class="request-card">
+                            <div class="student-info">
+                                <span class="student-avatar"><i class="bi bi-person"></i></span>
+                                <div>
+                                    <div class="student-name">{{ req.student.user.get_full_name }}</div>
+                                    <div class="student-meta">{{ req.student.neighborhood|default:"لم يحدد الحي" }}</div>
+                                </div>
+                            </div>
+                            <span class="request-action">
+                                عرض التفاصيل
+                                <i class="bi bi-arrow-left"></i>
+                            </span>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
         {% else %}
-
-        <div class="alert alert-warning mt-3">
-            لا يمكن حذف الاشتراك لوجود طلاب أو طلبات مرتبطة به.
-        </div>
-
+            <div class="empty-state">لا توجد طلبات حالياً.</div>
         {% endif %}
+    </section>
 
+    <section class="detail-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-people"></i>
+                الطلاب المقبولين
+            </h2>
+            <span class="section-count">{{ approved_requests|length }} طالب</span>
+        </div>
+
+        {% if approved_requests %}
+            <div class="request-list">
+                {% for req in approved_requests %}
+                    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="request-link">
+                        <article class="request-card">
+                            <div class="student-info">
+                                <span class="student-avatar"><i class="bi bi-person-check"></i></span>
+                                <div>
+                                    <div class="student-name">{{ req.student.user.get_full_name }}</div>
+                                    <div class="student-meta">مشترك منذ {{ req.decision_date|date:"d/m/Y" }}</div>
+                                </div>
+                            </div>
+                            <span class="request-action">
+                                عرض التفاصيل
+                                <i class="bi bi-arrow-left"></i>
+                            </span>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">لا يوجد طلاب مشتركين حالياً.</div>
+        {% endif %}
+    </section>
+
+    <section class="detail-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-clock-history"></i>
+                الطلبات السابقة
+            </h2>
+            <span class="section-count">{{ old_requests|length }} طلب</span>
+        </div>
+
+        {% if old_requests %}
+            <div class="request-list">
+                {% for req in old_requests %}
+                    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="request-link">
+                        <article class="request-card">
+                            <div class="student-info">
+                                <span class="student-avatar"><i class="bi bi-person"></i></span>
+                                <div>
+                                    <div class="student-name">{{ req.student.user.get_full_name }}</div>
+                                    <div class="student-meta">
+                                        {% if req.status == "cancelled" %}
+                                            تم إلغاء الاشتراك
+                                        {% elif req.status == "rejected" %}
+                                            تم رفض الطلب
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="request-action">
+                                {% if req.status == "cancelled" %}
+                                    <span class="status-pill status-warning">ملغي</span>
+                                {% elif req.status == "rejected" %}
+                                    <span class="status-pill status-danger">مرفوض</span>
+                                {% endif %}
+                                <i class="bi bi-arrow-left"></i>
+                            </span>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">لا توجد طلبات سابقة.</div>
+        {% endif %}
+    </section>
+</div>
+
+<div class="modal fade" id="deactivateSubscriptionModal" tabindex="-1" aria-labelledby="deactivateSubscriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="deactivateSubscriptionModalLabel">إيقاف الاشتراك مؤقتاً</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body text-muted lh-lg">
+                سيتم إيقاف استقبال الطلبات الجديدة على هذا الاشتراك حتى تقوم بتفعيله مرة أخرى.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-detail-outline" data-bs-dismiss="modal">تراجع</button>
+                <form method="post" action="{% url 'driver:deactivate_subscription' subscription.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-danger rounded-pill px-4">تأكيد الإيقاف</button>
+                </form>
+            </div>
+        </div>
     </div>
-
 </div>
 
-
-<!-- ========================= -->
-<!-- القسم 2: الطلبات Pending -->
-<!-- ========================= -->
-
-
-
-<div class="detail-card">
-
-    {% if subscription.current_status == "inactive_by_admin" %}
-
-        <div class="alert alert-danger">
-            لا يمكنك قبول طلبات جديدة لأن الاشتراك موقوف من الإدارة.
+<div class="modal fade" id="deleteSubscriptionModal" tabindex="-1" aria-labelledby="deleteSubscriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="deleteSubscriptionModalLabel">حذف الاشتراك</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body text-muted lh-lg">
+                سيتم حذف هذا الاشتراك نهائياً. هذا الإجراء لا يظهر إلا عند عدم وجود طلبات أو طلاب مرتبطين به.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-detail-outline" data-bs-dismiss="modal">تراجع</button>
+                <form method="post" action="{% url 'driver:delete_subscription' subscription.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-danger rounded-pill px-4">تأكيد الحذف</button>
+                </form>
+            </div>
         </div>
-
-    {% endif %}
-
-    <h5 class="section-title">الطلبات الجديدة</h5>
-
-    {% if pending_requests %}
-
-    {% for req in pending_requests %}
-    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="text-decoration-none text-dark">
-
-        <div class="student-row d-flex justify-content-between align-items-center">
-
-            <div>
-                <div class="fw-bold">
-                    {{ req.student.user.get_full_name }}
-                </div>
-                <div class="text-muted small">
-                    {{ req.student.neighborhood }}
-                </div>
-            </div>
-
-            <div>
-                <span class="btn btn-outline-primary btn-sm">
-                    عرض التفاصيل
-                </span>
-            </div>
-
-        </div>
-    </a>
-    {% endfor %}
-
-    {% else %}
-    <p class="text-muted">لا توجد طلبات حالياً.</p>
-    {% endif %}
-
-</div>
-
-
-<!-- ========================= -->
-<!-- القسم 3: الطلاب المقبولين -->
-<!-- ========================= -->
-
-<div class="detail-card">
-
-    <h5 class="section-title">الطلاب المقبولين</h5>
-
-    {% if approved_requests %}
-
-    {% for req in approved_requests %}
-
-    <a href="{% url 'driver:subscription_request_detail' req.id %}" class="text-decoration-none text-dark">
-
-        <div class="student-row d-flex justify-content-between align-items-center">
-
-            <div>
-                <div class="fw-bold">
-                    {{ req.student.user.get_full_name }}
-                </div>
-                <div class="text-muted small">
-                    مشترك منذ {{ req.decision_date|date:"d/m/Y" }}
-                </div>
-            </div>
-
-            <div>
-                <span class="btn btn-outline-primary btn-sm">
-                    عرض التفاصيل
-                </span>
-            </div>
-
-        </div>
-
-    </a>
-
-    {% endfor %}
-
-    {% else %}
-    <p class="text-muted">لا يوجد طلاب مشتركين حالياً.</p>
-    {% endif %}
-
-</div>
-
-
-<!-- ========================= -->
-<!-- القسم 4: الطلبات السابقة -->
-<!-- ========================= -->
-
-<div class="detail-card">
-
-    <h5 class="section-title">
-        الطلبات السابقة
-    </h5>
-
-    {% if old_requests %}
-
-        {% for req in old_requests %}
-
-        <a href="{% url 'driver:subscription_request_detail' req.id %}"
-           class="text-decoration-none text-dark">
-
-            <div class="student-row d-flex justify-content-between align-items-center">
-
-                <div>
-
-                    <div class="fw-bold">
-                        {{ req.student.user.get_full_name }}
-                    </div>
-
-                    <div class="text-muted small">
-
-                        {% if req.status == "cancelled" %}
-                            تم إلغاء الاشتراك
-                        {% elif req.status == "rejected" %}
-                            تم رفض الطلب
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-                <div>
-
-                    {% if req.status == "cancelled" %}
-                        <span class="badge bg-warning text-dark">
-                            ملغي
-                        </span>
-                    {% elif req.status == "rejected" %}
-                        <span class="badge bg-danger">
-                            مرفوض
-                        </span>
-                    {% endif %}
-
-                    <span class="btn btn-outline-primary btn-sm ms-2">
-                        عرض التفاصيل
-                    </span>
-
-                </div>
-
-            </div>
-
-        </a>
-
-        {% endfor %}
-
-    {% else %}
-
-        <p class="text-muted">
-            لا توجد طلبات سابقة.
-        </p>
-
-    {% endif %}
-
+    </div>
 </div>
 
 {% endblock %}

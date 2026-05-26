@@ -289,6 +289,7 @@
             border: none;
             border-radius: 0;
             overflow: visible;
+            width: 100%;
         }
 
         .transactions-table,
@@ -308,13 +309,18 @@
         .transactions-table tbody {
             display: grid;
             gap: 12px;
+            width: 100%;
         }
 
         .transactions-table tbody tr {
-            background-color: var(--light-bg);
-            border: 1px solid rgba(74, 63, 53, 0.06);
+            display: grid;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #fbf8f1;
+            border: 1px solid rgba(200, 169, 81, 0.34);
             border-radius: 20px;
-            padding: 14px;
+            padding: 14px 16px;
+            box-shadow: 0 14px 32px rgba(74, 63, 53, 0.08);
         }
 
         .transactions-table tbody td {
@@ -325,6 +331,8 @@
             border-bottom: 1px solid rgba(74, 63, 53, 0.06);
             padding: 10px 0;
             text-align: right;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .transactions-table th:nth-child(2),
@@ -368,7 +376,7 @@
             <div>
                 <h4 class="fw-bold">محفظتي</h4>
                 <p>
-                    تابع رصيدك المتاح والمبالغ المجمدة، واشحن أو اسحب من محفظتك، وراجع سجل العمليات المالية.
+                    تابع رصيدك، المبالغ المجمدة، وإجمالي المحفظة، واشحن أو اسحب من محفظتك، وراجع سجل العمليات المالية.
                 </p>
             </div>
 
@@ -380,19 +388,19 @@
                     شحن الرصيد
                 </button>
 
-                <button class="btn btn-outline-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#withdrawModal">
-                    <i class="bi bi-dash-circle"></i>
-                    سحب مبلغ
-                </button>
+                    <button class="btn btn-outline-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#withdrawModal">
+                        <i class="bi bi-dash-circle"></i>
+                    سحب الرصيد
+                    </button>
             </div>
         </div>
 
         <div class="balance-grid">
             <div class="balance-card">
                 <div class="balance-icon">
-                    <i class="bi bi-wallet2"></i>
+                    <i class="bi bi-cash"></i>
                 </div>
                 <div class="balance-number">{{ wallet.balance|floatformat:2 }} ر.س</div>
                 <div class="balance-label">الرصيد المتاح</div>
@@ -408,7 +416,7 @@
 
             <div class="balance-card">
                 <div class="balance-icon">
-                    <i class="bi bi-cash-stack"></i>
+                    <i class="bi bi-wallet2"></i>
                 </div>
                 <div class="balance-number">{{ wallet_total|floatformat:2 }} ر.س</div>
                 <div class="balance-label">إجمالي المحفظة</div>

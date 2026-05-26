@@ -3,463 +3,655 @@
 {% block driver_content %}
 
 <style>
-    /* ===== Card Base ===== */
+    .profile-page {
+        display: grid;
+        gap: 26px;
+    }
+
+    .profile-hero,
     .profile-card {
-        background: white;
-        border-radius: 35px;
-        padding: 40px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 35px;
+        background: #fff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 30px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
     }
 
-    .profile-card h5 {
-        font-weight: 700;
-        margin-bottom: 25px;
+    .profile-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border-color: rgba(200, 169, 81, 0.22);
+        padding: 32px;
     }
 
-    /* ===== Status Bar ===== */
-    .status-bar-wrapper {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 40px;
+    .hero-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
     }
 
-    .status-progress {
-        height: 8px;
-        background: #eee;
-        border-radius: 20px;
+    .profile-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+
+    .profile-hero p {
+        color: var(--soft-color);
+        line-height: 1.9;
+        max-width: 760px;
+        margin-bottom: 0;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        padding: 8px 13px;
+        font-size: 0.84rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-pill::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-approved {
+        background: rgba(25, 135, 84, 0.12);
+        color: #08764d;
+    }
+
+    .status-pending {
+        background: rgba(200, 169, 81, 0.17);
+        color: #9b7a1e;
+    }
+
+    .status-rejected {
+        background: rgba(220, 53, 69, 0.1);
+        color: #b02a37;
+    }
+
+    .status-muted {
+        background: rgba(108, 117, 125, 0.12);
+        color: #5c636a;
+    }
+
+    .profile-card {
+        padding: 28px;
+    }
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+    }
+
+    .verification-progress {
+        height: 9px;
+        background: var(--light-bg);
+        border-radius: 999px;
         overflow: hidden;
+        margin-top: 22px;
     }
 
-    .status-progress-inner {
+    .verification-progress-inner {
         height: 100%;
         background: linear-gradient(90deg, var(--accent-color), #d4af37);
+        border-radius: inherit;
     }
 
-    /* ===== Inputs ===== */
+    .verification-note {
+        border-radius: 20px;
+        padding: 16px 18px;
+        line-height: 1.8;
+        margin-top: 16px;
+    }
+
+    .form-grid,
+    .documents-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .documents-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .form-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 8px;
+    }
+
     .premium-input {
         width: 100%;
-        border-radius: 22px;
-        padding: 14px 18px;
-        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        border-radius: 18px;
+        min-height: 50px;
+        padding: 12px 16px;
+        border: 1.5px solid rgba(74, 63, 53, 0.1);
         background: #fdfcf9;
-        transition: 0.3s ease;
+        transition: 0.25s ease;
     }
 
     .premium-input:focus {
         border-color: var(--accent-color);
-        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.2);
+        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.16);
         outline: none;
     }
 
-    /* ===== Document Box ===== */
-    .doc-box {
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 25px;
-        padding: 20px;
-        text-align: center;
-        transition: 0.3s ease;
-        background: #faf9f6;
+    .disabled-overlay {
+        opacity: 0.58;
+        pointer-events: none;
     }
 
-    .doc-box:hover {
-        transform: translateY(-5px);
+    .email-change-box {
+        margin-top: 12px;
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.2);
+        border-radius: 18px;
+        padding: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .email-change-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: #9a7b1f;
+        line-height: 1.8;
+        font-size: 0.92rem;
+    }
+
+    .email-change-info strong {
+        color: var(--accent-color);
+        font-weight: 700;
+    }
+
+    .email-actions {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+    }
+
+    .email-resend-link,
+    .email-cancel-link {
+        border-radius: 16px;
+        padding: 7px 11px;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .email-resend-link {
+        color: var(--accent-color);
+        background-color: rgba(200, 169, 81, 0.12);
+    }
+
+    .email-cancel-link {
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.09);
+    }
+
+    .doc-box {
+        background: var(--light-bg);
+        border: 1px solid rgba(200, 169, 81, 0.16);
+        border-radius: 22px;
+        padding: 16px;
+        min-height: 100%;
+    }
+
+    .doc-title {
+        color: var(--dark-color);
+        font-weight: 800;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .doc-preview {
         width: 100%;
-        height: 160px;
+        aspect-ratio: 16 / 10;
         object-fit: cover;
         border-radius: 18px;
-        margin-bottom: 15px;
+        border: 1px solid rgba(74, 63, 53, 0.08);
+        margin-bottom: 12px;
+        background: #fff;
     }
 
-    /* Disabled */
-    .disabled-overlay {
-        opacity: 0.5;
-        pointer-events: none;
+    .doc-empty {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        border-radius: 18px;
+        border: 1px dashed rgba(200, 169, 81, 0.38);
+        background: #fff;
+        color: var(--soft-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        text-align: center;
+        padding: 14px;
     }
 
+    .save-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
 
-    .email-change-box{
-    margin-top:10px;
+    .pending-edit-alert {
+        background: rgba(200, 169, 81, 0.13);
+        border: 1px solid rgba(200, 169, 81, 0.24);
+        color: #80651a;
+        border-radius: 22px;
+        padding: 16px 18px;
+        line-height: 1.8;
+    }
 
-    background:#faf7ef;
+    .danger-zone {
+        border-color: rgba(220, 53, 69, 0.2);
+    }
 
-    border:1px solid rgba(200,169,81,.15);
+    .danger-zone .title-icon {
+        background: #dc3545;
+        box-shadow: 0 12px 28px rgba(220, 53, 69, 0.2);
+    }
 
-    border-radius:12px;
+    .danger-zone p {
+        color: var(--soft-color);
+        line-height: 2;
+        margin-bottom: 22px;
+    }
 
-    padding:10px 14px;
+    .confirm-modal .modal-content {
+        border: none;
+        border-radius: 26px;
+        padding: 8px;
+    }
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-}
+    .confirm-modal-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+        font-size: 1.55rem;
+        margin-bottom: 16px;
+    }
 
-.email-change-info{
-    font-size:13px;
-    color:#9a7b1f;
-}
+    @media (max-width: 991px) {
+        .documents-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
 
-.email-change-info strong{
-    color:var(--accent-color);
-    font-weight:700;
-}
+    @media (max-width: 768px) {
+        .profile-hero,
+        .profile-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
 
-.email-actions{
-    display:flex;
-    gap:12px;
-    flex-shrink:0;
-}
+        .profile-hero h4 {
+            font-size: 1.55rem;
+        }
 
-.email-resend-link{
-    color:var(--accent-color);
-    text-decoration:none;
-    font-weight:600;
-}
+        .hero-head,
+        .email-change-box {
+            align-items: stretch;
+            flex-direction: column;
+        }
 
-.email-resend-link:hover{
-    text-decoration:underline;
-}
+        .form-grid,
+        .documents-grid {
+            grid-template-columns: 1fr;
+        }
 
-.email-cancel-link{
-    color:#dc3545;
-    text-decoration:none;
-    font-weight:600;
-}
+        .email-actions,
+        .email-actions a,
+        .save-actions .btn {
+            width: 100%;
+        }
 
-.email-cancel-link:hover{
-    text-decoration:underline;
-}
+        .email-actions a {
+            text-align: center;
+        }
+
+        .save-actions {
+            justify-content: stretch;
+        }
+    }
 </style>
 
-
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    <!-- ================= STATUS ================= -->
-    <div class="status-bar-wrapper">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5>حالة التوثيق</h5>
+<div class="profile-page">
+    <section class="profile-hero">
+        <div class="hero-head">
+            <div>
+                <h4 class="fw-bold">ملفي الشخصي</h4>
+                <p>
+                    حدّث بيانات حسابك، مستندات التوثيق، وبيانات المركبة. تستخدم هذه البيانات لاعتماد حسابك
+                    واستقبال طلبات الطلاب في مدينتك.
+                </p>
+            </div>
 
             {% if profile.verification_status == "approved" %}
-            <span class="badge bg-success">معتمد</span>
+                <span class="status-pill status-approved">معتمد</span>
             {% elif profile.verification_status == "pending" %}
-            <span class="badge bg-warning text-dark">قيد المراجعة</span>
+                <span class="status-pill status-pending">قيد المراجعة</span>
             {% elif profile.verification_status == "rejected" %}
-            <span class="badge bg-danger">مرفوض</span>
+                <span class="status-pill status-rejected">مرفوض</span>
             {% else %}
-            <span class="badge bg-secondary">غير مكتمل</span>
+                <span class="status-pill status-muted">غير مكتمل</span>
             {% endif %}
         </div>
 
-        <div class="status-progress mb-3">
-            <div class="status-progress-inner" style="width:
-        {% if profile.verification_status == 'approved' %}100%
-        {% elif profile.verification_status == 'pending' %}60%
-        {% elif profile.verification_status == 'rejected' %}80%
-        {% else %}20%
-        {% endif %}
-        ">
+        <div class="verification-progress">
+            <div class="verification-progress-inner" style="width:
+                {% if profile.verification_status == 'approved' %}100%
+                {% elif profile.verification_status == 'pending' %}60%
+                {% elif profile.verification_status == 'rejected' %}80%
+                {% else %}20%
+                {% endif %};">
             </div>
         </div>
 
-        <!-- 🔴 سبب الرفض -->
         {% if profile.verification_status == "rejected" and profile.rejection_reason %}
-        <div class="alert alert-danger mt-2 mb-0">
-            <strong>سبب الرفض:</strong>
-            {{ profile.rejection_reason }}
-        </div>
+            <div class="alert alert-danger verification-note mb-0">
+                <strong>سبب الرفض:</strong>
+                {{ profile.rejection_reason }}
+            </div>
+        {% elif profile.verification_status == "approved" %}
+            <div class="alert alert-success verification-note mb-0">
+                تم اعتماد حسابك ويمكنك استقبال الطلبات.
+            </div>
+        {% elif profile.verification_status == "pending" %}
+            <div class="pending-edit-alert mt-3">
+                بياناتك قيد المراجعة، لذلك لا يمكنك تعديلها حالياً.
+            </div>
         {% endif %}
+    </section>
 
-        <!-- 🟢 رسالة النجاح -->
-        {% if profile.verification_status == "approved" %}
-        <div class="alert alert-success mt-2 mb-0">
-            تم اعتماد حسابك ويمكنك استقبال الطلبات 🎉
-        </div>
-        {% endif %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    </div>
-
-
-    <!-- ================= GENERAL INFO ================= -->
-    <div class="profile-card {% if profile.verification_status == 'pending' %}disabled-overlay{% endif %}">
-        <h5>المعلومات العامة</h5>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label>الاسم الأول</label>
-                <input type="text" name="first_name" value="{{ user.first_name }}" class="premium-input">
+        <section class="profile-card mb-4 {% if profile.verification_status == 'pending' %}disabled-overlay{% endif %}">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-person-badge"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">المعلومات الشخصية</h5>
+                    <span class="text-muted">بيانات الحساب والتواصل.</span>
+                </div>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label>اسم العائلة</label>
-                <input type="text" name="last_name" value="{{ user.last_name }}" class="premium-input">
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label>البريد الإلكتروني</label>
-                <input type="email" name="email" value="{{ user.email }}" class="premium-input">
-                {% if user.pending_email %}
-
-                <div class="email-change-box">
-
-                    <div class="email-change-info">
-
-                        📩 يوجد بريد إلكتروني جديد بانتظار التفعيل:
-
-                        <strong>
-                            {{ user.pending_email }}
-                        </strong>
-
-                    </div>
-
-                    <div class="email-actions">
-
-                        <a
-                            href="{% url 'accounts:resend_email_change_confirmation' %}"
-                            class="email-resend-link"
-                        >
-                            إعادة الإرسال
-                        </a>
-
-                        <a
-                            href="{% url 'accounts:cancel_email_change' %}"
-                            class="email-cancel-link"
-                        >
-                            إلغاء التغيير
-                        </a>
-
-                    </div>
-
+            <div class="form-grid">
+                <div class="form-field">
+                    <label class="form-label">الاسم الأول</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="premium-input">
                 </div>
 
-                {% endif %}
-            </div>
+                <div class="form-field">
+                    <label class="form-label">اسم العائلة</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="premium-input">
+                </div>
 
-            <div class="col-md-6 mb-3">
-                <label>رقم الجوال</label>
-                <input type="text" name="phone" value="{{ user.phone }}" class="premium-input text-start" dir="ltr"
-                    style="direction: ltr; text-align: left;">
-            </div>
-            <div class="col-md-6 mb-3">
-                <label>المدينة</label>
+                <div class="form-field full">
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <input type="email" name="email" value="{{ user.email }}" class="premium-input">
 
-                <select name="city" class="premium-input">
-                    {% for city in cities %}
-                        <option value="{{ city.id }}"
-                            {% if user.city.id == city.id %}selected{% endif %}>
-                            {{ city.name_ar }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
+                    {% if user.pending_email %}
+                    <div class="email-change-box">
+                        <div class="email-change-info">
+                            <i class="bi bi-envelope-check"></i>
+                            <span>
+                                يوجد بريد إلكتروني جديد بانتظار التفعيل:
+                                <strong>{{ user.pending_email }}</strong>
+                            </span>
+                        </div>
 
-            <div class="col-md-6 mb-3">
-                <label>الجنس</label>
-
-                <select name="gender" class="premium-input">
-
-                    <option value="">اختر الجنس</option>
-
-                    <option
-                        value="male"
-                        {% if profile.gender == "male" %}selected{% endif %}
-                    >
-                        ذكر
-                    </option>
-
-                    <option
-                        value="female"
-                        {% if profile.gender == "female" %}selected{% endif %}
-                    >
-                        أنثى
-                    </option>
-
-                </select>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ================= DRIVER DOCUMENTS ================= -->
-    <div class="profile-card">
-        <h5>بيانات السائق</h5>
-
-        <div class="row g-4">
-
-            <!-- ID -->
-            <div class="col-md-4">
-                <div class="doc-box">
-                    <h6 class="mb-3">صورة الهوية</h6>
-
-                    {% if profile.id_document_image %}
-                    <img src="{{ profile.id_document_image.url }}" class="doc-preview">
+                        <div class="email-actions">
+                            <a href="{% url 'accounts:resend_email_change_confirmation' %}" class="email-resend-link">
+                                إعادة الإرسال
+                            </a>
+                            <a href="{% url 'accounts:cancel_email_change' %}" class="email-cancel-link">
+                                إلغاء التغيير
+                            </a>
+                        </div>
+                    </div>
                     {% endif %}
+                </div>
 
+                <div class="form-field">
+                    <label class="form-label">رقم الجوال</label>
+                    <input type="text"
+                           name="phone"
+                           value="{{ user.phone }}"
+                           class="premium-input text-start"
+                           dir="ltr"
+                           style="direction:ltr;text-align:left;">
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">المدينة</label>
+                    <select name="city" class="premium-input">
+                        {% for city in cities %}
+                            <option value="{{ city.id }}" {% if user.city.id == city.id %}selected{% endif %}>
+                                {{ city.name_ar }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">الجنس</label>
+                    <select name="gender" class="premium-input">
+                        <option value="">اختر الجنس</option>
+                        <option value="male" {% if profile.gender == "male" %}selected{% endif %}>ذكر</option>
+                        <option value="female" {% if profile.gender == "female" %}selected{% endif %}>أنثى</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="profile-card mb-4">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-card-image"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">مستندات السائق</h5>
+                    <span class="text-muted">صور الهوية ورخصة القيادة المطلوبة للتوثيق.</span>
+                </div>
+            </div>
+
+            <div class="documents-grid">
+                <div class="doc-box">
+                    <div class="doc-title"><i class="bi bi-person-vcard"></i>صورة الهوية</div>
+                    {% if profile.id_document_image %}
+                        <img src="{{ profile.id_document_image.url }}" class="doc-preview" alt="صورة الهوية">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
+                    {% endif %}
                     <input type="file" name="id_document_image" class="form-control">
                 </div>
-            </div>
 
-            <!-- License -->
-            <div class="col-md-4">
                 <div class="doc-box">
-                    <h6 class="mb-3">رخصة القيادة</h6>
-
+                    <div class="doc-title"><i class="bi bi-car-front"></i>رخصة القيادة</div>
                     {% if profile.driving_license_image %}
-                    <img src="{{ profile.driving_license_image.url }}" class="doc-preview">
+                        <img src="{{ profile.driving_license_image.url }}" class="doc-preview" alt="رخصة القيادة">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
                     {% endif %}
-
                     <input type="file" name="driving_license_image" class="form-control">
                 </div>
             </div>
+        </section>
 
-        </div>
-    </div>
-
-
-    <!-- ================= VEHICLE DATA ================= -->
-    <div class="profile-card {% if profile.verification_status == 'pending' %}disabled-overlay{% endif %}">
-        <h5>بيانات المركبة</h5>
-
-        <!-- موديل المركبة -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label>موديل المركبة</label>
-                <input type="text" name="vehicle_model" value="{{ profile.vehicle_model }}" class="premium-input">
+        <section class="profile-card mb-4 {% if profile.verification_status == 'pending' %}disabled-overlay{% endif %}">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-car-front"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">بيانات المركبة</h5>
+                    <span class="text-muted">بيانات وصور المركبة المستخدمة في خدمة النقل.</span>
+                </div>
             </div>
-        </div>
 
-        <div class="row g-4">
+            <div class="form-grid mb-4">
+                <div class="form-field full">
+                    <label class="form-label">موديل المركبة</label>
+                    <input type="text" name="vehicle_model" value="{{ profile.vehicle_model }}" class="premium-input">
+                </div>
+            </div>
 
-            <!-- استمارة المركبة -->
-            <div class="col-md-4">
+            <div class="documents-grid">
                 <div class="doc-box">
-                    <h6 class="mb-3">استمارة المركبة</h6>
-
+                    <div class="doc-title"><i class="bi bi-file-earmark-text"></i>استمارة المركبة</div>
                     {% if profile.vehicle_registration_image %}
-                    <img src="{{ profile.vehicle_registration_image.url }}" class="doc-preview">
+                        <img src="{{ profile.vehicle_registration_image.url }}" class="doc-preview" alt="استمارة المركبة">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
                     {% endif %}
-
                     <input type="file" name="vehicle_registration_image" class="form-control">
                 </div>
-            </div>
 
-            <!-- تأمين المركبة -->
-            <div class="col-md-4">
                 <div class="doc-box">
-                    <h6 class="mb-3">تأمين المركبة</h6>
-
+                    <div class="doc-title"><i class="bi bi-shield-check"></i>تأمين المركبة</div>
                     {% if profile.vehicle_insurance_image %}
-                    <img src="{{ profile.vehicle_insurance_image.url }}" class="doc-preview">
+                        <img src="{{ profile.vehicle_insurance_image.url }}" class="doc-preview" alt="تأمين المركبة">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
                     {% endif %}
-
                     <input type="file" name="vehicle_insurance_image" class="form-control">
                 </div>
-            </div>
 
-            <!-- صورة أمامية -->
-            <div class="col-md-4">
                 <div class="doc-box">
-                    <h6 class="mb-3">صورة أمامية للمركبة</h6>
-
+                    <div class="doc-title"><i class="bi bi-image"></i>صورة أمامية للمركبة</div>
                     {% if profile.vehicle_front_image %}
-                    <img src="{{ profile.vehicle_front_image.url }}" class="doc-preview">
+                        <img src="{{ profile.vehicle_front_image.url }}" class="doc-preview" alt="صورة أمامية للمركبة">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
                     {% endif %}
-
                     <input type="file" name="vehicle_front_image" class="form-control">
                 </div>
-            </div>
 
-            <!-- صورة خلفية -->
-            <div class="col-md-4">
                 <div class="doc-box">
-                    <h6 class="mb-3">صورة خلفية للمركبة</h6>
-
+                    <div class="doc-title"><i class="bi bi-image"></i>صورة خلفية للمركبة</div>
                     {% if profile.vehicle_back_image %}
-                    <img src="{{ profile.vehicle_back_image.url }}" class="doc-preview">
+                        <img src="{{ profile.vehicle_back_image.url }}" class="doc-preview" alt="صورة خلفية للمركبة">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
                     {% endif %}
-
                     <input type="file" name="vehicle_back_image" class="form-control">
                 </div>
-            </div>
 
-            <!-- صورة جانبية -->
-            <div class="col-md-4">
                 <div class="doc-box">
-                    <h6 class="mb-3">صورة جانبية للمركبة</h6>
-
+                    <div class="doc-title"><i class="bi bi-image"></i>صورة جانبية للمركبة</div>
                     {% if profile.vehicle_side_image %}
-                    <img src="{{ profile.vehicle_side_image.url }}" class="doc-preview">
+                        <img src="{{ profile.vehicle_side_image.url }}" class="doc-preview" alt="صورة جانبية للمركبة">
+                    {% else %}
+                        <div class="doc-empty">لم يتم رفع صورة</div>
                     {% endif %}
-
                     <input type="file" name="vehicle_side_image" class="form-control">
                 </div>
             </div>
+        </section>
 
-        </div>
-    </div>
-
-
-    <!-- ================= SAVE BUTTON ================= -->
-    {% if profile.verification_status != "pending" %}
-    <div class="text-end mt-4">
-        <button type="submit" class="btn btn-accent px-5 py-2">
-            حفظ التعديلات وإرسال للمراجعة
-        </button>
-    </div>
-    {% else %}
-    <div class="alert alert-warning mt-4">
-        لا يمكنك التعديل أثناء المراجعة.
-    </div>
-    {% endif %}
-
-</form>
-
-
-</form>
-
-<hr class="my-5">
-
-<div class="text-center">
-
-    <h5 class="text-danger fw-bold mb-3">
-        حذف الحساب
-    </h5>
-
-    <p class="text-muted mb-4">
-
-        حذف الحساب سيؤدي إلى تعطيل الحساب وإخفائه من المنصة.
-
-        لا يمكن حذف الحساب إذا كان لديك اشتراكات مرتبطة بحسابك
-        أو رصيد في المحفظة.
-
-    </p>
-
-    <form method="POST"
-          action="{% url 'driver:delete_account' %}">
-
-        {% csrf_token %}
-
-        <button
-            type="submit"
-            class="btn btn-danger px-4 py-2"
-            onclick="return confirm(
-                'هل أنت متأكد من حذف حسابك؟ سيتم تعطيل الحساب ويمكنك إعادة تنشيطه لاحقًا.'
-            );">
-
-            حذف الحساب
-
-        </button>
-
+        {% if profile.verification_status != "pending" %}
+            <div class="save-actions">
+                <button type="submit" class="btn btn-accent px-5 py-2 rounded-pill">
+                    <i class="bi bi-check2-circle me-2"></i>
+                    حفظ التعديلات وإرسال للمراجعة
+                </button>
+            </div>
+        {% else %}
+            <div class="pending-edit-alert">
+                لا يمكنك التعديل أثناء المراجعة.
+            </div>
+        {% endif %}
     </form>
 
+    <section class="profile-card danger-zone">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-exclamation-triangle"></i></span>
+            <div>
+                <h5 class="text-danger fw-bold mb-1">حذف الحساب</h5>
+                <span class="text-muted">إجراء حساس يؤثر على ظهور حسابك في المنصة.</span>
+            </div>
+        </div>
+
+        <p>
+            حذف الحساب سيؤدي إلى تعطيل الحساب وإخفائه من المنصة. لا يمكن حذف الحساب إذا كان لديك
+            اشتراكات مرتبطة بحسابك أو رصيد في المحفظة.
+        </p>
+
+        <button type="button"
+                class="btn btn-danger rounded-pill px-4"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteAccountModal">
+            <i class="bi bi-trash me-2"></i>
+            حذف الحساب
+        </button>
+    </section>
 </div>
 
+<div class="modal fade confirm-modal" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center p-4">
+                <div class="confirm-modal-icon">
+                    <i class="bi bi-trash"></i>
+                </div>
+
+                <h5 class="fw-bold mb-2">حذف الحساب؟</h5>
+                <p class="text-muted mb-4">
+                    سيتم تعطيل الحساب وإخفاؤه من المنصة، ويمكنك إعادة تنشيطه لاحقاً حسب سياسة النظام.
+                </p>
+
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <button type="button"
+                            class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">
+                        تراجع
+                    </button>
+
+                    <form method="POST" action="{% url 'driver:delete_account' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">
+                            نعم، حذف الحساب
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
