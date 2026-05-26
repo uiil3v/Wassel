@@ -3,310 +3,595 @@
 {% block student_content %}
 
 <style>
-/* ===== Wallet Summary Cards ===== */
+    .wallet-page {
+        display: grid;
+        gap: 26px;
+    }
 
-.wallet-card {
-    background: white;
-    border-radius: 35px;
-    padding: 30px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-    height: 100%;
-}
+    .wallet-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border: 1px solid rgba(200, 169, 81, 0.22);
+        border-radius: 30px;
+        padding: 32px;
+        box-shadow: 0 24px 58px rgba(0, 0, 0, 0.05);
+    }
 
-.wallet-icon {
-    width: 55px;
-    height: 55px;
-    background: linear-gradient(135deg, var(--accent-color), #d4af37);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 20px;
-    margin-bottom: 15px;
-}
+    .wallet-hero-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 22px;
+        margin-bottom: 26px;
+    }
 
-.wallet-number {
-    font-size: 1.8rem;
-    font-weight: 700;
-}
+    .wallet-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
 
-.wallet-label {
-    color: var(--soft-color);
-}
+    .wallet-hero p {
+        color: var(--soft-color);
+        line-height: 1.9;
+        max-width: 720px;
+        margin: 0;
+    }
 
-/* ===== Transactions Section ===== */
+    .wallet-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
 
-.wallet-section {
-    background: white;
-    border-radius: 35px;
-    padding: 35px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-}
+    .wallet-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 46px;
+        border-radius: 22px;
+        padding-inline: 18px;
+        white-space: nowrap;
+    }
 
-/* ===== Transaction Badges ===== */
+    .balance-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
 
-.transaction-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    background: #f5f5f5;
-    color: #444;
-    border: 1px solid #e9e9e9;
-}
+    .balance-card {
+        background-color: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(200, 169, 81, 0.22);
+        border-radius: 24px;
+        padding: 22px;
+    }
+
+    .balance-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+        margin-bottom: 16px;
+    }
+
+    .balance-number {
+        color: var(--dark-color);
+        font-size: 1.7rem;
+        font-weight: 700;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    .balance-label {
+        color: var(--soft-color);
+        margin-top: 7px;
+    }
+
+    .wallet-section {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+    }
+
+    .section-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: var(--accent-color);
+    }
+
+    .transactions-table-wrap {
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 22px;
+        overflow: hidden;
+    }
+
+    .transactions-table {
+        margin-bottom: 0;
+        width: 100%;
+    }
+
+    .transactions-table thead th {
+        background-color: var(--light-bg);
+        color: var(--soft-color);
+        border-bottom: 1px solid rgba(74, 63, 53, 0.08);
+        font-size: 0.92rem;
+        font-weight: 600;
+        padding: 16px;
+        white-space: nowrap;
+        text-align: right;
+    }
+
+    .transactions-table tbody td {
+        padding: 16px;
+        border-bottom: 1px solid rgba(74, 63, 53, 0.06);
+        vertical-align: middle;
+        text-align: right;
+    }
+
+    .transactions-table th:nth-child(2),
+    .transactions-table td:nth-child(2),
+    .transactions-table th:nth-child(3),
+    .transactions-table td:nth-child(3) {
+        text-align: center;
+    }
+
+    .transactions-table th:nth-child(4),
+    .transactions-table td:nth-child(4) {
+        text-align: left;
+    }
+
+    .transactions-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .transaction-type {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--dark-color);
+        font-weight: 700;
+        white-space: nowrap;
+        justify-content: flex-start;
+    }
+
+    .transaction-icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        color: var(--accent-color);
+        border: 1px solid rgba(200, 169, 81, 0.24);
+    }
+
+    .transaction-amount {
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .transaction-amount.income {
+        color: #198754;
+    }
+
+    .transaction-amount.outcome {
+        color: #dc3545;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 16px;
+        padding: 5px 10px;
+        background-color: rgba(25, 135, 84, 0.11);
+        color: #198754;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        border: 1px dashed rgba(200, 169, 81, 0.45);
+        border-radius: 24px;
+        padding: 38px 22px;
+        text-align: center;
+        color: var(--soft-color);
+    }
+
+    .empty-state i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background-color: rgba(200, 169, 81, 0.13);
+        color: var(--accent-color);
+        font-size: 1.7rem;
+        margin-bottom: 16px;
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 26px;
+    }
+
+    .wallet-input {
+        border-radius: 18px;
+        min-height: 48px;
+    }
+
+    @media (max-width: 992px) {
+        .balance-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .wallet-hero,
+        .wallet-section {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .wallet-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .wallet-hero-head,
+        .section-head {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .wallet-actions {
+            justify-content: stretch;
+        }
+
+        .wallet-actions .btn,
+        .section-head .btn {
+            width: 100%;
+        }
+
+        .transactions-table-wrap {
+            border: none;
+            border-radius: 0;
+            overflow: visible;
+        }
+
+        .transactions-table,
+        .transactions-table thead,
+        .transactions-table tbody,
+        .transactions-table tr,
+        .transactions-table th,
+        .transactions-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .transactions-table thead {
+            display: none;
+        }
+
+        .transactions-table tbody {
+            display: grid;
+            gap: 12px;
+        }
+
+        .transactions-table tbody tr {
+            background-color: var(--light-bg);
+            border: 1px solid rgba(74, 63, 53, 0.06);
+            border-radius: 20px;
+            padding: 14px;
+        }
+
+        .transactions-table tbody td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid rgba(74, 63, 53, 0.06);
+            padding: 10px 0;
+            text-align: right;
+        }
+
+        .transactions-table th:nth-child(2),
+        .transactions-table td:nth-child(2),
+        .transactions-table th:nth-child(3),
+        .transactions-table td:nth-child(3),
+        .transactions-table th:nth-child(4),
+        .transactions-table td:nth-child(4) {
+            text-align: right;
+        }
+
+        .transactions-table tbody td:last-child {
+            border-bottom: none;
+        }
+
+        .transactions-table tbody td::before {
+            content: attr(data-label);
+            color: var(--soft-color);
+            font-size: 0.88rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .transaction-type {
+            justify-content: flex-end;
+            white-space: normal;
+        }
+
+        .transaction-icon {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+        }
+    }
 </style>
 
+<div class="wallet-page">
 
-<!-- ===== Summary Cards ===== -->
-<div class="row g-4 mb-5">
-
-    <div class="col-md-4">
-        <div class="wallet-card">
-            <div class="wallet-icon">
-                <i class="bi bi-wallet2"></i>
+    <section class="wallet-hero">
+        <div class="wallet-hero-head">
+            <div>
+                <h4 class="fw-bold">محفظتي</h4>
+                <p>
+                    تابع رصيدك المتاح والمبالغ المجمدة، واشحن أو اسحب من محفظتك، وراجع سجل العمليات المالية.
+                </p>
             </div>
-            <div class="wallet-number">{{ wallet.balance }} ر.س</div>
-            <div class="wallet-label">الرصيد المتاح</div>
+
+            <div class="wallet-actions">
+                <button class="btn btn-accent"
+                        data-bs-toggle="modal"
+                        data-bs-target="#depositModal">
+                    <i class="bi bi-plus-circle"></i>
+                    شحن الرصيد
+                </button>
+
+                <button class="btn btn-outline-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#withdrawModal">
+                    <i class="bi bi-dash-circle"></i>
+                    سحب مبلغ
+                </button>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="wallet-card">
-            <div class="wallet-icon">
-                <i class="bi bi-lock-fill"></i>
+        <div class="balance-grid">
+            <div class="balance-card">
+                <div class="balance-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="balance-number">{{ wallet.balance|floatformat:2 }} ر.س</div>
+                <div class="balance-label">الرصيد المتاح</div>
             </div>
-            <div class="wallet-number">{{ wallet.frozen_balance }} ر.س</div>
-            <div class="wallet-label">الرصيد المجمد</div>
+
+            <div class="balance-card">
+                <div class="balance-icon">
+                    <i class="bi bi-lock-fill"></i>
+                </div>
+                <div class="balance-number">{{ wallet.frozen_balance|floatformat:2 }} ر.س</div>
+                <div class="balance-label">الرصيد المجمد</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-icon">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="balance-number">{{ wallet_total|floatformat:2 }} ر.س</div>
+                <div class="balance-label">إجمالي المحفظة</div>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <div class="col-md-4">
-        <div class="wallet-card">
-            <div class="wallet-icon">
-                <i class="bi bi-cash-stack"></i>
-            </div>
-            <div class="wallet-number">
-                {{ wallet.balance|floatformat:2 }} ر.س
-            </div>
-            <div class="wallet-label">إجمالي المحفظة</div>
+    <section class="wallet-section">
+        <div class="section-head">
+            <h5 class="section-title fw-bold">
+                <span class="section-icon"><i class="bi bi-receipt"></i></span>
+                سجل العمليات
+            </h5>
+
+            <a href="{% url 'payment:export_wallet_csv' %}"
+               class="btn btn-outline-dark rounded-pill px-4">
+                <i class="bi bi-download me-2"></i>
+                تصدير CSV
+            </a>
         </div>
-    </div>
 
-    <div class="d-flex gap-3 mb-4">
+        {% if transactions %}
+        <div class="transactions-table-wrap">
+            <table class="table transactions-table align-middle">
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>المبلغ</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td data-label="النوع">
+                            <div class="transaction-type">
+                                <span class="transaction-icon">
+                                    {% if tx.type == "deposit" %}
+                                    <i class="bi bi-plus-circle"></i>
+                                    {% elif tx.type == "withdraw" %}
+                                    <i class="bi bi-dash-circle"></i>
+                                    {% elif tx.type == "freeze" %}
+                                    <i class="bi bi-lock"></i>
+                                    {% elif tx.type == "release" %}
+                                    <i class="bi bi-unlock"></i>
+                                    {% elif tx.type == "refund" %}
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    {% elif tx.type == "commission" %}
+                                    <i class="bi bi-percent"></i>
+                                    {% else %}
+                                    <i class="bi bi-receipt"></i>
+                                    {% endif %}
+                                </span>
 
-    <!-- زر الشحن -->
-    <button class="btn btn-accent px-4"
-            data-bs-toggle="modal"
-            data-bs-target="#depositModal">
-        <i class="bi bi-plus-circle me-2"></i>
-        شحن الرصيد
-    </button>
+                                <span>
+                                    {% if tx.type == "deposit" %}
+                                    إيداع
+                                    {% elif tx.type == "withdraw" %}
+                                    سحب
+                                    {% elif tx.type == "freeze" %}
+                                    تجميد
+                                    {% elif tx.type == "release" %}
+                                    فك التجميد
+                                    {% elif tx.type == "refund" %}
+                                    استرجاع
+                                    {% elif tx.type == "commission" %}
+                                    عمولة
+                                    {% else %}
+                                    عملية مالية
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </td>
 
-    <!-- زر السحب -->
-    <button class="btn btn-outline-danger px-4"
-            data-bs-toggle="modal"
-            data-bs-target="#withdrawModal">
-        <i class="bi bi-dash-circle me-2"></i>
-        سحب مبلغ
-    </button>
-
-</div>
-
-</div>
-
-
-<!-- ===== Transactions ===== -->
-<div class="wallet-section">
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-    <h5 class="fw-bold mb-0">
-        سجل العمليات
-    </h5>
-
-    <a href="{% url 'payment:export_wallet_csv' %}"
-       class="btn btn-outline-dark">
-
-        <i class="bi bi-download me-2"></i>
-        تصدير CSV
-
-    </a>
-
-</div>
-
-    <div class="table-responsive">
-        <table class="table align-middle">
-
-            <thead>
-                <tr>
-                    <th>المبلغ</th>
-                    <th>النوع</th>
-                    <th>الحالة</th>
-                    <th>التاريخ</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for tx in transactions %}
-                <tr>
-
-                    <td class="fw-bold">
-
-                        {% if tx.type == "deposit" or tx.type == "refund" %}
-                            <span class="text-success">
+                        <td data-label="المبلغ">
+                            {% if tx.type == "deposit" or tx.type == "refund" %}
+                            <span class="transaction-amount income">
                                 + {{ tx.amount|floatformat:2 }} ريال
                             </span>
-                        {% else %}
-                            <span class="text-danger">
+                            {% else %}
+                            <span class="transaction-amount outcome">
                                 - {{ tx.amount|floatformat:2 }} ريال
                             </span>
-                        {% endif %}
+                            {% endif %}
+                        </td>
 
-                    </td>
-
-
-                                        
-                    <td>
-
-                        {% if tx.type == "deposit" %}
-                            <span class="badge transaction-badge">
-                                إيداع
+                        <td data-label="الحالة">
+                            <span class="status-chip">
+                                <i class="bi bi-check-circle"></i>
+                                {{ tx.get_status_display }}
                             </span>
+                        </td>
 
-                        {% elif tx.type == "withdraw" %}
-                            <span class="badge transaction-badge">
-                                سحب
-                            </span>
-
-                        {% elif tx.type == "freeze" %}
-                            <span class="badge transaction-badge">
-                                تجميد
-                            </span>
-
-                        {% elif tx.type == "release" %}
-                            <span class="badge transaction-badge">
-                                فك التجميد
-                            </span>
-
-                        {% elif tx.type == "refund" %}
-                            <span class="badge transaction-badge">
-                                استرجاع
-                            </span>
-
-                        {% elif tx.type == "commission" %}
-                            <span class="badge transaction-badge">
-                                عمولة
-                            </span>
-
-                        {% endif %}
-
-                    </td>              
-
-
-                    <td>
-                        <span class="badge bg-success-subtle text-success transaction-badge">
-                            {{ tx.get_status_display }}
-                        </span>
-                    </td>
-
-                    <td>
-                        {{ tx.created_at|date:"d/m/Y - h:i" }}
-                    </td>
-
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted">
-                        لا توجد عمليات حتى الآن
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-
-        </table>
-    </div>
-
+                        <td class="text-muted" dir="ltr" data-label="التاريخ">
+                            {{ tx.created_at|date:"d/m/Y - h:i" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h5 class="fw-bold text-dark">لا توجد عمليات حتى الآن</h5>
+            <p class="mb-0">ستظهر عمليات الشحن والسحب والاسترجاع هنا عند حدوثها.</p>
+        </div>
+        {% endif %}
+    </section>
 </div>
 
 <!-- ===== Deposit Modal ===== -->
 <div class="modal fade" id="depositModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content rounded-4 p-3">
-
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="deposit">
 
                 <div class="modal-header border-0">
-                    <h5 class="fw-bold">شحن الرصيد</h5>
-                    <button type="button" class="btn-close"
+                    <h5 class="fw-bold mb-0">شحن الرصيد</h5>
+                    <button type="button"
+                            class="btn-close"
                             data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-
                     <label class="form-label">المبلغ</label>
                     <input type="number"
                            name="amount"
                            step="0.01"
                            min="1"
-                           class="form-control"
+                           class="form-control wallet-input"
                            required>
-
                 </div>
 
                 <div class="modal-footer border-0">
-                    <button type="submit" class="btn btn-accent w-100">
+                    <button type="submit" class="btn btn-accent w-100 rounded-pill">
                         تأكيد الشحن
                     </button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>
+
 <!-- ===== Withdraw Modal ===== -->
 <div class="modal fade" id="withdrawModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content rounded-4 p-3">
-
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="withdraw">
 
                 <div class="modal-header border-0">
-                    <h5 class="fw-bold text-danger">سحب مبلغ</h5>
-                    <button type="button" class="btn-close"
+                    <h5 class="fw-bold text-danger mb-0">سحب مبلغ</h5>
+                    <button type="button"
+                            class="btn-close"
                             data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-
                     <label class="form-label">المبلغ</label>
                     <input type="number"
                            name="amount"
                            step="0.01"
                            min="1"
-                           class="form-control"
+                           class="form-control wallet-input"
                            required>
 
-                    <small class="text-muted">
-                        الرصيد المتاح: {{ wallet.balance }} ر.س
+                    <small class="text-muted d-block mt-2">
+                        الرصيد المتاح: {{ wallet.balance|floatformat:2 }} ر.س
                     </small>
-
                 </div>
 
                 <div class="modal-footer border-0">
                     <button type="submit"
-                            class="btn btn-danger w-100">
+                            class="btn btn-danger w-100 rounded-pill">
                         تأكيد السحب
                     </button>
                 </div>
-
             </form>
-
         </div>
     </div>
 </div>

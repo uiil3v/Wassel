@@ -3,277 +3,403 @@
 {% block student_content %}
 
 <style>
-    .page-header {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
+    .my-subscriptions-page {
+        display: grid;
+        gap: 26px;
     }
 
-    .subscription-card {
-        background: white;
+    .subscriptions-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border: 1px solid rgba(200, 169, 81, 0.22);
         border-radius: 30px;
-        padding: 25px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-        transition: 0.3s ease;
-        height: 100%;
+        padding: 32px;
+        box-shadow: 0 24px 58px rgba(0, 0, 0, 0.05);
     }
 
-    .subscription-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 30px 70px rgba(0,0,0,0.08);
+    .subscriptions-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 12px;
     }
 
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-    }
-
-    .info-row span:first-child {
+    .subscriptions-hero p {
         color: var(--soft-color);
+        line-height: 1.9;
+        max-width: 760px;
+        margin-bottom: 24px;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .summary-tile {
+        background-color: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(200, 169, 81, 0.2);
+        border-radius: 20px;
+        padding: 16px;
+    }
+
+    .summary-tile span {
+        display: block;
+        color: var(--soft-color);
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .summary-tile strong {
+        color: var(--dark-color);
+        font-size: 1.7rem;
+        line-height: 1;
+    }
+
+    .subscription-section {
+        display: grid;
+        gap: 16px;
+    }
+
+    .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
     }
 
     .section-title {
-        margin: 30px 0 15px;
-        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .section-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: var(--accent-color);
+        font-size: 1rem;
+    }
+
+    .section-count {
+        color: var(--soft-color);
+        font-size: 0.94rem;
+    }
+
+    .subscriptions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .subscription-card {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 24px;
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.05);
+        transition: 0.25s ease;
+    }
+
+    .subscription-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(200, 169, 81, 0.45);
+        box-shadow: 0 28px 62px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .card-title {
+        margin-bottom: 7px;
+        font-size: 1.15rem;
+    }
+
+    .driver-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+        font-size: 0.93rem;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 18px;
+        padding: 7px 11px;
+        font-size: 0.84rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-chip.active {
+        color: #198754;
+        background-color: rgba(25, 135, 84, 0.12);
+    }
+
+    .status-chip.pending {
+        color: #8a6500;
+        background-color: rgba(255, 193, 7, 0.18);
+    }
+
+    .status-chip.expired {
+        color: #2f2a25;
+        background-color: rgba(74, 63, 53, 0.12);
+    }
+
+    .status-chip.cancelled {
+        color: #b02a37;
+        background-color: rgba(220, 53, 69, 0.11);
+    }
+
+    .info-list {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(74, 63, 53, 0.07);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+    }
+
+    .info-value {
+        color: var(--dark-color);
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .card-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .review-done {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 18px;
+        padding: 8px 12px;
+        color: #198754;
+        background-color: rgba(25, 135, 84, 0.11);
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .empty-state {
+        background: #ffffff;
+        border: 1px dashed rgba(200, 169, 81, 0.45);
+        border-radius: 28px;
+        padding: 44px 24px;
+        text-align: center;
+        color: var(--soft-color);
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.04);
+    }
+
+    .empty-state i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background-color: rgba(200, 169, 81, 0.13);
+        color: var(--accent-color);
+        font-size: 1.8rem;
+        margin-bottom: 18px;
+    }
+
+    @media (max-width: 1200px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .subscriptions-hero,
+        .subscription-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .subscriptions-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .subscriptions-grid,
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-head,
+        .card-head {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .info-item {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-value {
+            text-align: right;
+        }
+
+        .card-actions {
+            justify-content: stretch;
+        }
+
+        .card-actions .btn,
+        .card-actions form,
+        .card-actions form button {
+            width: 100%;
+        }
     }
 </style>
 
-<!-- ===== Header ===== -->
-<div class="page-header">
-    <h4 class="fw-bold mb-2">اشتراكاتي</h4>
-    <p class="text-muted">
-        يمكنك مشاهدة جميع اشتراكاتك الحالية والسابقة.
-    </p>
-</div>
+<div class="my-subscriptions-page">
 
+    <section class="subscriptions-hero">
+        <h4 class="fw-bold">اشتراكاتي</h4>
+        <p>
+            تابع اشتراكاتك الحالية والسابقة، راجع التفاصيل، قيّم السائق بعد انتهاء الاشتراك،
+            أو ألغِ الطلب إذا كان لا يزال قيد المراجعة.
+        </p>
 
-<!-- ================= ACTIVE ================= -->
-{% if active %}
-<h5 class="section-title">🟢 الاشتراكات النشطة</h5>
-
-<div class="row g-4">
-    {% for req in active %}
-    <div class="col-md-6">
-        <div class="subscription-card">
-
-            <div class="d-flex justify-content-between mb-3">
-                <strong>{{ req.subscription.neighborhood }}</strong>
-                <span class="badge bg-success">نشط</span>
+        <div class="summary-grid">
+            <div class="summary-tile">
+                <span>نشطة</span>
+                <strong>{{ active|length }}</strong>
             </div>
-
-            <div class="info-row">
-                <span>المدينة</span>
-                <span>{{ req.subscription.driver.user.city.name_ar }}</span>
+            <div class="summary-tile">
+                <span>قيد الانتظار</span>
+                <strong>{{ pending|length }}</strong>
             </div>
-
-            <div class="info-row">
-                <span>السائق</span>
-                <span>{{ req.subscription.driver.user.get_full_name }}</span>
+            <div class="summary-tile">
+                <span>منتهية</span>
+                <strong>{{ expired|length }}</strong>
             </div>
-
-            <div class="info-row">
-                <span>السعر</span>
-                <span>{{ req.price_snapshot }} ر.س</span>
+            <div class="summary-tile">
+                <span>ملغية</span>
+                <strong>{{ cancelled|length }}</strong>
             </div>
-
-            <div class="info-row">
-                <span>النهاية</span>
-                <span>{{ req.subscription.end_date|date:"d/m/Y" }}</span>
-            </div>
-
-
-
-            <div class="mt-3 text-end">
-                <a href="{% url 'student:subscription_detail' req.id %}" class="btn btn-sm btn-accent">
-                    التفاصيل
-                </a>
-            </div>
-
         </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+    </section>
 
-
-<!-- ================= PENDING ================= -->
-{% if pending %}
-<h5 class="section-title">🟡 طلبات قيد الانتظار</h5>
-
-<div class="row g-4">
-    {% for req in pending %}
-    <div class="col-md-6">
-        <div class="subscription-card">
-
-            <div class="d-flex justify-content-between mb-3">
-                <strong>{{ req.subscription.neighborhood }}</strong>
-                <span class="badge bg-warning text-dark">قيد المراجعة</span>
-            </div>
-
-            <div class="info-row">
-                <span>المدينة</span>
-                <span>{{ req.subscription.driver.user.city.name_ar }}</span>
-            </div>
-
-            <div class="info-row">
-                <span>السائق</span>
-                <span>{{ req.subscription.driver.user.get_full_name }}</span>
-            </div>
-
-            <div class="info-row">
-                <span>السعر</span>
-                <span>{{ req.price_snapshot }} ر.س</span>
-            </div>
-
-            <div class="info-row">
-                <span>تاريخ النهاية</span>
-
-                <span dir="ltr">
-                    {{ req.subscription.end_date|date:"d/m/Y" }}
-                </span>
-            </div>
-
-            <div class="mt-3 text-end">
-                <a href="{% url 'student:subscription_detail' req.id %}"
-                class="btn btn-sm btn-accent">
-                    التفاصيل
-                </a>
-            </div>
-
-            <form method="post" action="{% url 'student:cancel_request' req.id %}">
-                {% csrf_token %}
-                <button class="btn btn-outline-danger btn-sm mt-3">
-                    إلغاء الطلب
-                </button>
-            </form> 
-
+    {% if active %}
+    <section class="subscription-section">
+        <div class="section-head">
+            <h5 class="section-title">
+                <span class="section-icon"><i class="bi bi-check-circle"></i></span>
+                الاشتراكات النشطة
+            </h5>
+            <span class="section-count">{{ active|length }} اشتراك</span>
         </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
 
-
-<!-- ================= EXPIRED ================= -->
-{% if expired %}
-<h5 class="section-title">⚪ الاشتراكات المنتهية</h5>
-
-<div class="row g-4">
-    {% for req in expired %}
-    <div class="col-md-6">
-        <div class="subscription-card">
-
-            <div class="d-flex justify-content-between mb-3">
-                <strong>{{ req.subscription.neighborhood }}</strong>
-                <span class="badge bg-secondary">منتهي</span>
-            </div>
-
-            <div class="info-row">
-                <span>المدينة</span>
-                <span>{{ req.subscription.driver.user.city.name_ar }}</span>
-            </div>
-
-            <div class="info-row">
-                <span>السائق</span>
-                <span>{{ req.subscription.driver.user.get_full_name }}</span>
-            </div>
-
-            <div class="info-row">
-                <span>السعر</span>
-                <span>{{ req.price_snapshot }} ر.س</span>
-            </div>
-
-            <div class="info-row">
-                <span>انتهى في</span>
-                <span>{{ req.subscription.end_date|date:"d/m/Y" }}</span>
-            </div>
-
-            {% if not req.already_reviewed %}
-            <div class="mt-3 text-end">
-                <a href="{% url 'reviews:create_review' req.id %}"
-                class="btn btn-dark btn-sm rounded-pill px-3">
-                    قيّم السائق ⭐
-                </a>
-            </div>
-            {% else %}
-
-            <div class="mt-3 text-success fw-bold">
-                تم إضافة تقييمك ✅
-            </div>
-
-            {% endif %}
-
-            <div class="mt-3 text-end">
-                <a href="{% url 'student:subscription_detail' req.id %}" class="btn btn-sm btn-accent">
-                    التفاصيل
-                </a>
-            </div>
-
+        <div class="subscriptions-grid">
+            {% for req in active %}
+            {% include "student/partials/subscription_card.html" with req=req status_label="نشط" status_class="active" date_label="النهاية" show_cancel=False show_review=False %}
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+    </section>
+    {% endif %}
 
-
-<!-- ================= CANCELLED ================= -->
-{% if cancelled %}
-<h5 class="section-title">🔴 الاشتراكات الملغية</h5>
-
-<div class="row g-4">
-    {% for req in cancelled %}
-    <div class="col-md-6">
-        <div class="subscription-card">
-
-            <div class="d-flex justify-content-between mb-3">
-                <strong>{{ req.subscription.neighborhood }}</strong>
-                <span class="badge bg-danger">ملغي</span>
-            </div>
-
-            <div class="info-row">
-                <span>المدينة</span>
-                <span>{{ req.subscription.driver.user.city.name_ar }}</span>
-            </div>
-
-            <div class="info-row">
-                <span>السائق</span>
-                <span>{{ req.subscription.driver.user.get_full_name }}</span>
-            </div>
-
-            <div class="info-row">
-                <span>السعر</span>
-                <span>{{ req.price_snapshot }} ر.س</span>
-            </div>
-
-            <div class="info-row">
-                <span>تاريخ النهاية</span>
-
-                <span dir="ltr">
-                    {{ req.subscription.end_date|date:"d/m/Y" }}
-                </span>
-            </div>
-
-            <div class="mt-3 text-end">
-                <a href="{% url 'student:subscription_detail' req.id %}" class="btn btn-sm btn-accent">
-                    التفاصيل
-                </a>
-            </div>
-
+    {% if pending %}
+    <section class="subscription-section">
+        <div class="section-head">
+            <h5 class="section-title">
+                <span class="section-icon"><i class="bi bi-clock"></i></span>
+                طلبات قيد الانتظار
+            </h5>
+            <span class="section-count">{{ pending|length }} طلب</span>
         </div>
+
+        <div class="subscriptions-grid">
+            {% for req in pending %}
+            {% include "student/partials/subscription_card.html" with req=req status_label="قيد المراجعة" status_class="pending" date_label="النهاية" show_cancel=True show_review=False %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if expired %}
+    <section class="subscription-section">
+        <div class="section-head">
+            <h5 class="section-title">
+                <span class="section-icon"><i class="bi bi-calendar-x"></i></span>
+                الاشتراكات المنتهية
+            </h5>
+            <span class="section-count">{{ expired|length }} اشتراك</span>
+        </div>
+
+        <div class="subscriptions-grid">
+            {% for req in expired %}
+            {% include "student/partials/subscription_card.html" with req=req status_label="منتهي" status_class="expired" date_label="انتهى في" show_cancel=False show_review=True %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if cancelled %}
+    <section class="subscription-section">
+        <div class="section-head">
+            <h5 class="section-title">
+                <span class="section-icon"><i class="bi bi-x-circle"></i></span>
+                الاشتراكات الملغية
+            </h5>
+            <span class="section-count">{{ cancelled|length }} اشتراك</span>
+        </div>
+
+        <div class="subscriptions-grid">
+            {% for req in cancelled %}
+            {% include "student/partials/subscription_card.html" with req=req status_label="ملغي" status_class="cancelled" date_label="النهاية" show_cancel=False show_review=False %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if not active and not pending and not expired and not cancelled %}
+    <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <h5 class="fw-bold text-dark">لا توجد اشتراكات حالياً</h5>
+        <p class="mb-4">ابدأ باستعراض الاشتراكات المتاحة في مدينتك واختيار الأنسب لك.</p>
+        <a href="{% url 'student:subscriptions' %}" class="btn btn-accent">
+            استعراض الاشتراكات
+        </a>
     </div>
-    {% endfor %}
+    {% endif %}
 </div>
-{% endif %}
-
-
-<!-- ===== Empty State ===== -->
-{% if not active and not pending and not expired and not cancelled %}
-<div class="text-center mt-5">
-    <h6 class="text-muted">لا توجد اشتراكات حالياً</h6>
-</div>
-{% endif %}
 
 {% endblock %}

@@ -1,651 +1,550 @@
-
-
 <style>
+    .public-profile-page {
+        display: grid;
+        gap: 24px;
+        width: 100%;
+    }
 
-.main-profile-wrapper {
-    width: 100%;
-    overflow-x: hidden;
-}
+    .public-profile-hero,
+    .public-card {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
 
-/* ===== HERO ===== */
+    .public-profile-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border-color: rgba(200, 169, 81, 0.22);
+    }
 
-.profile-cover {
-    background: linear-gradient(
-        135deg,
-        #c8a951 0%,
-        #b99638 100%
-    );
+    .hero-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 230px;
+        gap: 24px;
+        align-items: center;
+    }
 
-    border-radius: 40px;
-    padding: 60px 40px;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 35px;
-    color: white;
-}
+    .profile-identity {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        min-width: 0;
+    }
 
-.profile-cover::before {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 50%;
-    top: -120px;
-    left: -120px;
-}
-
-.profile-cover::after {
-    content: "";
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 50%;
-    bottom: -100px;
-    right: -80px;
-}
-
-.profile-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-}
-
-.profile-avatar {
-    width: 140px;
-    height: 140px;
-
-    background: rgba(255,255,255,0.18);
-
-    border: 4px solid rgba(255,255,255,0.25);
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin: auto;
-    margin-bottom: 25px;
-
-    font-size: 58px;
-
-    backdrop-filter: blur(8px);
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,0.08),
-        inset 0 2px 10px rgba(255,255,255,0.15);
-}
-
-.profile-name {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.profile-role {
-    font-size: 1rem;
-    opacity: 0.9;
-}
-
-.profile-badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.18);
-    padding: 8px 18px;
-    border-radius: 50px;
-    margin-top: 15px;
-    font-size: 0.95rem;
-}
-
-/* ===== GENERAL CARDS ===== */
-
-.dashboard-card {
-    background: white;
-    border-radius: 35px;
-    padding: 35px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-
-    width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-}
-
-.section-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 25px;
-}
-
-/* ===== RATING ===== */
-
-.rating-box {
-    text-align: center;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    height: 100%;
-}
-
-.rating-number {
-    font-size: 4rem;
-    font-weight: 800;
-    color: var(--accent-color);
-    line-height: 1;
-}
-
-.rating-stars {
-    color: #f5b301;
-    font-size: 1.5rem;
-    margin: 15px 0;
-}
-
-.rating-count {
-    color: var(--soft-color);
-}
-
-/* ===== INFO ===== */
-
-.info-item {
-    background: var(--light-bg);
-    border-radius: 22px;
-    padding: 18px 22px;
-    margin-bottom: 15px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 20px;
-}
-
-.info-label {
-    color: var(--soft-color);
-}
-
-.info-value {
-    font-weight: 600;
-    text-align: left;
-}
-
-/* ===== REVIEWS ===== */
-
-.review-card {
-    background: var(--light-bg);
-    border-radius: 28px;
-    padding: 25px;
-    margin-bottom: 20px;
-
-    width: 100%;
-    overflow: hidden;
-
-    transition: 0.3s ease;
-}
-
-.review-card:hover {
-    transform: translateY(-4px);
-}
-
-.review-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-
-    margin-bottom: 15px;
-}
-
-.review-user {
-    font-weight: 700;
-    font-size: 1.05rem;
-}
-
-.review-date {
-    color: var(--soft-color);
-    font-size: 0.9rem;
-}
-
-.review-stars {
-    color: #f5b301;
-    margin-bottom: 12px;
-    font-size: 1.1rem;
-}
-
-.review-comment {
-    color: #444;
-    line-height: 1.8;
-    word-wrap: break-word;
-}
-
-/* ===== EMPTY ===== */
-
-.empty-box {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--soft-color);
-}
-
-.empty-box i {
-    font-size: 50px;
-    margin-bottom: 20px;
-    color: var(--accent-color);
-    opacity: 0.6;
-}
-
-/* ===== FIX OVERFLOW ===== */
-
-.row {
-    --bs-gutter-x: 1.5rem;
-    margin-right: 0;
-    margin-left: 0;
-}
-
-[class*="col-"] {
-    padding-right: 12px;
-    padding-left: 12px;
-}
-
-@media (max-width: 768px) {
-
-    .profile-cover {
-        padding: 40px 25px;
+    .profile-avatar {
+        width: 86px;
+        height: 86px;
+        min-width: 86px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 16px 34px rgba(200, 169, 81, 0.3);
+        font-size: 2rem;
     }
 
     .profile-name {
-        font-size: 1.8rem;
+        color: var(--dark-color);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        line-height: 1.4;
     }
 
-    .dashboard-card {
-        padding: 25px;
+    .profile-chips {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex-wrap: wrap;
     }
 
-    .review-top,
-    .info-item {
-        flex-direction: column;
-        align-items: flex-start;
+    .profile-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 18px;
+        padding: 6px 11px;
+        background-color: rgba(200, 169, 81, 0.13);
+        color: var(--accent-color);
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .profile-chip.muted {
+        color: var(--soft-color);
+        background-color: rgba(74, 63, 53, 0.07);
+    }
+
+    .rating-summary {
+        background-color: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(200, 169, 81, 0.22);
+        border-radius: 24px;
+        padding: 20px;
+        text-align: center;
     }
 
     .rating-number {
-        font-size: 3rem;
+        color: var(--dark-color);
+        font-size: 2.4rem;
+        font-weight: 800;
+        line-height: 1;
     }
-}
 
+    .rating-stars {
+        color: #d49a00;
+        font-size: 1.15rem;
+        margin: 10px 0 8px;
+        letter-spacing: 1px;
+    }
+
+    .rating-count {
+        color: var(--soft-color);
+        font-size: 0.92rem;
+    }
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.26);
+    }
+
+    .info-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .info-item {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 18px;
+        padding: 16px;
+    }
+
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+        font-size: 0.9rem;
+        margin-bottom: 7px;
+    }
+
+    .info-value {
+        color: var(--dark-color);
+        font-weight: 700;
+    }
+
+    .reviews-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .review-card {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 22px;
+        padding: 18px;
+    }
+
+    .review-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 10px;
+    }
+
+    .review-user {
+        color: var(--dark-color);
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .review-date,
+    .review-subscription {
+        color: var(--soft-color);
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    .review-stars {
+        color: #d49a00;
+        white-space: nowrap;
+    }
+
+    .review-comment {
+        color: var(--dark-color);
+        line-height: 1.9;
+        margin-top: 12px;
+    }
+
+    .review-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    .btn-wassel-outline {
+        border: 1px solid rgba(200, 169, 81, 0.75);
+        color: var(--accent-color);
+        background-color: transparent;
+        transition: 0.22s ease;
+    }
+
+    .btn-wassel-outline:hover {
+        background-color: rgba(200, 169, 81, 0.12);
+        color: var(--accent-color);
+    }
+
+    .empty-box {
+        border: 1px dashed rgba(200, 169, 81, 0.45);
+        border-radius: 24px;
+        padding: 38px 22px;
+        text-align: center;
+        color: var(--soft-color);
+    }
+
+    .empty-box i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        color: var(--accent-color);
+        background-color: rgba(200, 169, 81, 0.13);
+        font-size: 1.7rem;
+        margin-bottom: 16px;
+    }
+
+    .confirm-modal .modal-content {
+        border: none;
+        border-radius: 26px;
+        padding: 8px;
+    }
+
+    .confirm-modal-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+        font-size: 1.55rem;
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 992px) {
+        .hero-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .rating-summary {
+            text-align: right;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .public-profile-hero,
+        .public-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .profile-identity,
+        .review-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .profile-avatar {
+            width: 74px;
+            height: 74px;
+            min-width: 74px;
+            font-size: 1.7rem;
+        }
+
+        .profile-name {
+            font-size: 1.55rem;
+        }
+
+        .rating-number {
+            font-size: 2rem;
+        }
+    }
 </style>
 
+<div class="public-profile-page">
 
-
-<div class="main-profile-wrapper">
-
-    <!-- ===== HERO ===== -->
-    <div class="profile-cover">
-
-        <div class="profile-content">
-
-            <div class="profile-avatar">
-
-                {% if profile_user.role == "driver" %}
+    <section class="public-profile-hero">
+        <div class="hero-layout">
+            <div class="profile-identity">
+                <div class="profile-avatar">
+                    {% if profile_user.role == "driver" %}
                     <i class="bi bi-person-fill"></i>
-                {% else %}
+                    {% elif profile_user.role == "student" %}
                     <i class="bi bi-mortarboard-fill"></i>
-                {% endif %}
-
-            </div>
-
-            <div class="profile-name">
-                {{ profile_user.get_full_name }}
-            </div>
-
-            <div class="profile-role">
-
-                {% if profile_user.role == "driver" %}
-                    سائق
-                {% else %}
-                    طالب
-                {% endif %}
-
-            </div>
-
-            <div class="profile-badge">
-
-                {% if profile_user.status == "active" %}
-                    حساب نشط ✅
-                {% else %}
-                    الحساب موقوف 🚫
-                {% endif %}
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ===== TOP SECTION ===== -->
-    <div class="row g-4 mb-4">
-
-        <!-- Rating -->
-        <div class="col-lg-5 d-flex">
-
-            <div class="dashboard-card">
-
-                <div class="section-title">
-                    التقييم
-                </div>
-
-                <div class="rating-box">
-
-                    {% if driver_profile %}
-
-                        <div class="rating-number">
-                            {{ driver_profile.average_rating }}
-                        </div>
-
-                        <div class="rating-stars">
-                            ⭐⭐⭐⭐⭐
-                        </div>
-
-                        <div class="rating-count">
-                            {{ driver_profile.reviews_count }}
-                            تقييم
-                        </div>
-
+                    {% else %}
+                    <i class="bi bi-person-gear"></i>
                     {% endif %}
-
-
-
-                    {% if student_profile %}
-
-                        <div class="rating-number">
-                            {{ student_profile.average_rating }}
-                        </div>
-
-                        <div class="rating-stars">
-                            ⭐⭐⭐⭐⭐
-                        </div>
-
-                        <div class="rating-count">
-                            {{ student_profile.reviews_count }}
-                            تقييم
-                        </div>
-
-                    {% endif %}
-
                 </div>
 
-            </div>
+                <div>
+                    <div class="profile-name">{{ profile_user.get_full_name }}</div>
 
-        </div>
+                    <div class="profile-chips">
+                        {% if profile_user.role == "driver" %}
+                        <span class="profile-chip"><i class="bi bi-car-front"></i> سائق</span>
+                        {% elif profile_user.role == "student" %}
+                        <span class="profile-chip"><i class="bi bi-mortarboard"></i> طالب</span>
+                        {% elif profile_user.role == "admin" %}
+                        <span class="profile-chip"><i class="bi bi-shield-lock"></i> مشرف</span>
+                        {% endif %}
 
+                        {% if profile_user.status == "active" %}
+                        <span class="profile-chip"><i class="bi bi-check-circle"></i> حساب نشط</span>
+                        {% else %}
+                        <span class="profile-chip muted"><i class="bi bi-dash-circle"></i> الحساب غير نشط</span>
+                        {% endif %}
 
-
-        <!-- Info -->
-        <div class="col-lg-7 d-flex">
-
-            <div class="dashboard-card">
-
-                <div class="section-title">
-                    المعلومات الشخصية
-                </div>
-
-
-                {% if driver_profile %}
-
-                    <div class="info-item">
-                        <div class="info-label">السيارة</div>
-
-                        <div class="info-value">
-                            {{ driver_profile.vehicle_model }}
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">المدينة</div>
-
-                        <div class="info-value">
-                            {{ profile_user.city }}
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-
-                        <div class="info-label">
-                            الجنس
-                        </div>
-
-                        <div class="info-value">
-
-                            {% if driver_profile.gender == "male" %}
-                                ذكر
-                            {% elif driver_profile.gender == "female" %}
-                                أنثى
-                            {% else %}
-                                غير محدد
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-                    
-
-                    <div class="info-item">
-                        <div class="info-label">في المنصة منذ</div>
-
-                        <div class="info-value">
-                            {{ profile_user.date_joined|date:"d/m/Y" }}
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">الحالة</div>
-
-                        <div class="info-value">
-
+                        {% if driver_profile %}
                             {% if driver_profile.verification_status == "approved" %}
-                                موثق 
+                            <span class="profile-chip"><i class="bi bi-shield-check"></i> موثق</span>
                             {% else %}
-                                غير موثق
+                            <span class="profile-chip muted"><i class="bi bi-shield"></i> غير موثق</span>
                             {% endif %}
-
-                        </div>
+                        {% endif %}
                     </div>
-
-                {% endif %}
-
-
-
-                {% if student_profile %}
-
-                
-
-                    <div class="info-item">
-                        <div class="info-label">المدينة</div>
-
-                        <div class="info-value">
-                            {{ profile_user.city }}
-                        </div>
-                    </div>
-
-
-
-                    <div class="info-item">
-
-                        <div class="info-label">
-                            الجنس
-                        </div>
-
-                        <div class="info-value">
-
-                            {% if student_profile.gender == "male" %}
-                                ذكر
-                            {% elif student_profile.gender == "female" %}
-                                أنثى
-                            {% else %}
-                                غير محدد
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-                                        <div class="info-item">
-                        <div class="info-label">الجامعة</div>
-
-                        <div class="info-value">
-                            {{ student_profile.university_name }}
-                        </div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label">في المنصة منذ</div>
-
-                        <div class="info-value">
-                            {{ profile_user.date_joined|date:"d/m/Y" }}
-                        </div>
-                    </div>
-
-                {% endif %}
-
+                </div>
             </div>
 
+            <div class="rating-summary">
+                {% if driver_profile %}
+                    {% if driver_profile.reviews_count > 0 %}
+                    <div class="rating-number">{{ driver_profile.average_rating|floatformat:1 }}</div>
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= driver_profile.average_rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="rating-count">{{ driver_profile.reviews_count }} تقييم</div>
+                    {% else %}
+                    <div class="rating-number">جديد</div>
+                    <div class="rating-count mt-2">لا توجد تقييمات بعد</div>
+                    {% endif %}
+                {% elif student_profile %}
+                    {% if student_profile.reviews_count > 0 %}
+                    <div class="rating-number">{{ student_profile.average_rating|floatformat:1 }}</div>
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= student_profile.average_rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="rating-count">{{ student_profile.reviews_count }} تقييم</div>
+                    {% else %}
+                    <div class="rating-number">جديد</div>
+                    <div class="rating-count mt-2">لا توجد تقييمات بعد</div>
+                    {% endif %}
+                {% else %}
+                    <div class="rating-number">-</div>
+                    <div class="rating-count mt-2">لا توجد تقييمات</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="public-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-info-circle"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">المعلومات العامة</h5>
+                <span class="text-muted">بيانات تساعدك على معرفة المستخدم.</span>
+            </div>
         </div>
 
-    </div>
+        <div class="info-grid">
+            {% if driver_profile %}
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-car-front"></i> السيارة</div>
+                <div class="info-value">{{ driver_profile.vehicle_model|default:"غير محدد" }}</div>
+            </div>
 
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-geo"></i> المدينة</div>
+                <div class="info-value">{{ profile_user.city.name_ar|default:profile_user.city }}</div>
+            </div>
 
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-person"></i> الجنس</div>
+                <div class="info-value">
+                    {% if driver_profile.gender == "male" %}ذكر{% elif driver_profile.gender == "female" %}أنثى{% else %}غير محدد{% endif %}
+                </div>
+            </div>
 
-    <!-- ===== REVIEWS ===== -->
-    <div class="dashboard-card">
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-calendar-check"></i> في المنصة منذ</div>
+                <div class="info-value" dir="ltr">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
+            </div>
+            {% elif student_profile %}
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-geo"></i> المدينة</div>
+                <div class="info-value">{{ profile_user.city.name_ar|default:profile_user.city }}</div>
+            </div>
 
-        <div class="section-title">
-            ⭐ التقييمات والتعليقات
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-mortarboard"></i> الجامعة</div>
+                <div class="info-value">{{ student_profile.university_name|default:"غير محدد" }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-person"></i> الجنس</div>
+                <div class="info-value">
+                    {% if student_profile.gender == "male" %}ذكر{% elif student_profile.gender == "female" %}أنثى{% else %}غير محدد{% endif %}
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-calendar-check"></i> في المنصة منذ</div>
+                <div class="info-value" dir="ltr">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
+            </div>
+            {% else %}
+            <div class="info-item">
+                <div class="info-label"><i class="bi bi-calendar-check"></i> في المنصة منذ</div>
+                <div class="info-value" dir="ltr">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="public-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-chat-square-heart"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">التقييمات والتعليقات</h5>
+                <span class="text-muted">آخر التقييمات المرتبطة بالاشتراكات.</span>
+            </div>
         </div>
 
         {% if reviews %}
-
+        <div class="reviews-list">
             {% for review in reviews %}
-
-                <div class="review-card">
-
-                    <div class="review-top">
-
+            <article class="review-card">
+                <div class="review-top">
+                    <div>
                         <div class="review-user">
-
                             {% if review.is_anonymous and review.reviewer.role == "student" %}
-                                طالب مجهول
+                            طالب مجهول
                             {% else %}
-                                {{ review.reviewer.get_full_name }}
+                            {{ review.reviewer.get_full_name }}
                             {% endif %}
-
                         </div>
-
-                        <div class="text-end">
-
-                            <div class="review-date mb-2">
-                                {{ review.created_at|date:"d/m/Y" }}
-                            </div>
-
-                            {% if review.updated_at %}
-
-                                <div class="small text-muted mb-2">
-                                    تم تعديل التقييم
-                                </div>
-
-                            {% endif %}
-
-                            {% if request.user == review.reviewer %}
-
-                                <div class="d-flex gap-2 justify-content-end flex-wrap">
-
-                                    {% if review.can_edit %}
-
-                                        <a href="{% url 'reviews:edit_review' review.id %}"
-                                        class="btn btn-sm btn-outline-primary rounded-pill">
-
-                                            <i class="bi bi-pencil"></i>
-                                            تعديل
-
-                                        </a>
-
-                                    {% endif %}
-
-                                    <form method="POST"
-                                        action="{% url 'reviews:delete_review' review.id %}">
-
-                                        {% csrf_token %}
-
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger rounded-pill">
-
-                                            <i class="bi bi-trash"></i>
-                                            حذف
-
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            {% endif %}
-
-                        </div>
-
+                        <div class="review-date" dir="ltr">{{ review.created_at|date:"d/m/Y" }}</div>
                     </div>
 
                     <div class="review-stars">
-
                         {% for i in "12345" %}
-
-                            {% if forloop.counter <= review.rating %}
-                                ⭐
-                            {% else %}
-                                ☆
-                            {% endif %}
-
+                            {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
                         {% endfor %}
-
                     </div>
+                </div>
 
-                    <div class="small text-muted mb-2">
+                <div class="review-subscription">
+                    مرتبط باشتراك:
+                    {{ review.subscription_request.subscription.neighborhood }}
+                    -
+                    {{ review.subscription_request.subscription.get_duration_display }}
+                    {% if review.updated_at %}
+                    <span class="d-inline-block ms-2">تم تعديل التقييم</span>
+                    {% endif %}
+                </div>
 
-                        مرتبط باشتراك:
-                        {{ review.subscription_request.subscription.neighborhood }}
+                {% if review.comment %}
+                <div class="review-comment">{{ review.comment }}</div>
+                {% endif %}
 
-                        -
-                        {{ review.subscription_request.subscription.get_duration_display }}
-
-                    </div>
-
-                    {% if review.comment %}
-
-                        <div class="review-comment">
-                            {{ review.comment }}
-                        </div>
-
+                {% if request.user == review.reviewer %}
+                <div class="review-actions">
+                    {% if review.can_edit %}
+                    <a href="{% url 'reviews:edit_review' review.id %}"
+                       class="btn btn-sm btn-wassel-outline rounded-pill">
+                        <i class="bi bi-pencil"></i>
+                        تعديل
+                    </a>
                     {% endif %}
 
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger rounded-pill"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteReviewModal{{ review.id }}">
+                            <i class="bi bi-trash"></i>
+                            حذف
+                    </button>
                 </div>
+                {% endif %}
+            </article>
 
-            {% endfor %}
+            {% if request.user == review.reviewer %}
+            <div class="modal fade confirm-modal" id="deleteReviewModal{{ review.id }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body text-center p-4">
+                            <div class="confirm-modal-icon">
+                                <i class="bi bi-trash"></i>
+                            </div>
 
-        {% else %}
+                            <h5 class="fw-bold mb-2">حذف التقييم؟</h5>
+                            <p class="text-muted mb-4">
+                                سيتم حذف تقييمك وتعليقك من الملف العام ولا يمكن التراجع عن العملية.
+                            </p>
 
-            <div class="empty-box">
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <button type="button"
+                                        class="btn btn-light rounded-pill px-4"
+                                        data-bs-dismiss="modal">
+                                    تراجع
+                                </button>
 
-                <i class="fa-regular fa-message"></i>
-
-                <div>
-                    لا توجد تقييمات حتى الآن
+                                <form method="POST" action="{% url 'reviews:delete_review' review.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger rounded-pill px-4">
+                                        نعم، حذف
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
             </div>
-
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-box">
+            <i class="bi bi-chat-left-text"></i>
+            <div>لا توجد تقييمات حتى الآن</div>
+        </div>
         {% endif %}
-
-    </div>
-
+    </section>
 </div>
-

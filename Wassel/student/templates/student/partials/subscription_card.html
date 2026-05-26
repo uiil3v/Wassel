@@ -1,0 +1,73 @@
+<article class="subscription-card">
+    <div class="card-head">
+        <div>
+            <h6 class="card-title fw-bold">{{ req.subscription.neighborhood }}</h6>
+            <div class="driver-line">
+                <i class="bi bi-person"></i>
+                {{ req.subscription.driver.user.get_full_name }}
+            </div>
+        </div>
+
+        <span class="status-chip {{ status_class }}">
+            {% if status_class == "active" %}
+            <i class="bi bi-check-circle"></i>
+            {% elif status_class == "pending" %}
+            <i class="bi bi-clock"></i>
+            {% elif status_class == "expired" %}
+            <i class="bi bi-calendar-x"></i>
+            {% else %}
+            <i class="bi bi-x-circle"></i>
+            {% endif %}
+            {{ status_label }}
+        </span>
+    </div>
+
+    <div class="info-list">
+        <div class="info-item">
+            <span class="info-label"><i class="bi bi-geo"></i> المدينة</span>
+            <span class="info-value">{{ req.subscription.driver.user.city.name_ar }}</span>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label"><i class="bi bi-cash-coin"></i> السعر</span>
+            <span class="info-value">{{ req.price_snapshot }} ر.س</span>
+        </div>
+
+        <div class="info-item">
+            <span class="info-label"><i class="bi bi-calendar2-week"></i> {{ date_label }}</span>
+            <span class="info-value" dir="ltr">{{ req.subscription.end_date|date:"d/m/Y" }}</span>
+        </div>
+    </div>
+
+    <div class="card-actions">
+        {% if show_review %}
+            {% if not req.already_reviewed %}
+            <a href="{% url 'reviews:create_review' req.id %}"
+               class="btn btn-dark btn-sm rounded-pill px-3">
+                <i class="bi bi-star me-1"></i>
+                قيّم السائق
+            </a>
+            {% else %}
+            <span class="review-done">
+                <i class="bi bi-check-circle"></i>
+                تم إضافة تقييمك
+            </span>
+            {% endif %}
+        {% endif %}
+
+        <a href="{% url 'student:subscription_detail' req.id %}" class="btn btn-sm btn-accent">
+            التفاصيل
+            <i class="bi bi-arrow-left ms-1"></i>
+        </a>
+
+        {% if show_cancel %}
+        <form method="post" action="{% url 'student:cancel_request' req.id %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-x-circle me-1"></i>
+                إلغاء الطلب
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</article>

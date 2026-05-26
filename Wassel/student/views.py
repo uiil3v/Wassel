@@ -229,6 +229,12 @@ def available_subscriptions(request):
     # ================= RESULTS COUNT =================
     results_count = subscriptions.count()
 
+    today = timezone.now().date()
+    has_active_request = request.user.student_profile.subscription_requests.filter(
+        Q(status="pending") |
+        Q(status="approved", subscription__end_date__gte=today)
+    ).exists()
+
     # ================= CONTEXT =================
     context = {
         "subscriptions": subscriptions,
@@ -238,6 +244,7 @@ def available_subscriptions(request):
         "max_price": max_price,
         "sort": sort,
         "results_count": results_count,
+        "has_active_request": has_active_request,
     }
 
     return render(request, "student/subscriptions.html", context)

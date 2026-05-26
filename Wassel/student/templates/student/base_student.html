@@ -2,214 +2,298 @@
 
 {% block extra_css %}
 <style>
-
-/* ===== Layout ===== */
-.student-layout {
-    display: flex;
-    gap: 35px;
-}
-
-.student-page-bg {
-    background: linear-gradient(135deg, #f6f2ea, #ebe3d6);
-    padding: 50px;
-    border-radius: 45px;
-}
-
-@media (max-width: 768px) {
     .student-page-bg {
-        padding: 20px;
-        border-radius: 25px;
+        background: linear-gradient(135deg, #f6f2ea, #ebe3d6);
+        border-radius: 38px;
+        padding: 34px;
     }
-}
-
-/* ===== Sidebar ===== */
-.student-sidebar {
-    width: 270px;
-    background: white;
-    border-radius: 40px;
-    padding: 30px 20px;
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.05);
-    height: fit-content;
-}
-
-/* ===== Profile Box ===== */
-.student-profile-box {
-    text-align: center;
-    padding-bottom: 25px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    margin-bottom: 25px;
-}
-
-.student-avatar {
-    width: 85px;
-    height: 85px;
-    background: linear-gradient(135deg, var(--accent-color), #d4af37);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: auto;
-    color: white;
-    font-size: 30px;
-    box-shadow: 0 15px 35px rgba(200, 169, 81, 0.35);
-}
-
-.student-status {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 13px;
-    padding: 4px 14px;
-    border-radius: 20px;
-    background-color: rgba(200, 169, 81, 0.15);
-    color: var(--accent-color);
-}
-
-/* ===== Links ===== */
-.student-link {
-    display: flex;
-    align-items: center;
-    padding: 12px 18px;
-    border-radius: 22px;
-    margin-bottom: 10px;
-    text-decoration: none;
-    color: var(--dark-color);
-    font-weight: 500;
-    transition: 0.3s ease;
-    position: relative;
-}
-
-.student-link:hover {
-    background-color: rgba(200, 169, 81, 0.15);
-    color: var(--accent-color);
-    transform: translateX(-6px);
-}
-
-.student-link.active {
-    background-color: rgba(200, 169, 81, 0.2);
-    color: var(--accent-color);
-}
-
-.student-link.active::before {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 20%;
-    height: 60%;
-    width: 4px;
-    background-color: var(--accent-color);
-    border-radius: 5px;
-}
-
-.student-content {
-    flex: 1;
-}
-
-/* ===== Mobile Toggle ===== */
-.sidebar-toggle-btn {
-    display: none;
-    margin-bottom: 20px;
-}
-
-@media (max-width: 991px) {
 
     .student-layout {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 270px minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    .student-content {
+        min-width: 0;
     }
 
     .student-sidebar {
+        position: sticky;
+        top: 145px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 22px;
+        box-shadow: 0 24px 58px rgba(0, 0, 0, 0.05);
+    }
+
+    .student-profile-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        padding-bottom: 20px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid rgba(74, 63, 53, 0.08);
+    }
+
+    .student-avatar {
+        width: 72px;
+        height: 72px;
+        min-width: 72px;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 27px;
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+    }
+
+    .student-name {
+        color: var(--dark-color);
+        font-weight: 700;
+        font-size: 1.03rem;
+        margin-bottom: 6px;
+        line-height: 1.5;
+    }
+
+    .student-status {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        font-size: 0.78rem;
+        padding: 4px 10px;
+        border-radius: 16px;
+        background-color: rgba(200, 169, 81, 0.14);
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+
+    .student-university {
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-top: 8px;
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+
+    .student-nav {
+        display: grid;
+        gap: 8px;
+    }
+
+    .student-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 10px 14px;
+        border-radius: 18px;
+        text-decoration: none;
+        color: var(--dark-color);
+        font-weight: 500;
+        transition: 0.22s ease;
+        position: relative;
+    }
+
+    .student-link i {
+        color: var(--soft-color);
+        transition: 0.22s ease;
+    }
+
+    .student-link:hover {
+        background-color: rgba(200, 169, 81, 0.12);
+        color: var(--accent-color);
+        transform: translateX(-4px);
+    }
+
+    .student-link:hover i {
+        color: var(--accent-color);
+    }
+
+    .student-link.active {
+        background-color: rgba(200, 169, 81, 0.16);
+        color: var(--accent-color);
+        font-weight: 700;
+    }
+
+    .student-link.active i {
+        color: var(--accent-color);
+    }
+
+    .student-link.active::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 24%;
+        height: 52%;
+        width: 4px;
+        background-color: var(--accent-color);
+        border-radius: 999px;
+    }
+
+    .mobile-student-bar {
         display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 22px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.04);
+    }
+
+    .mobile-student-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--dark-color);
+        font-weight: 700;
     }
 
     .sidebar-toggle-btn {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 18px;
+        min-height: 42px;
     }
-}
 
-/* ===== Offcanvas ===== */
-.student-offcanvas {
-    background-color: var(--light-bg);
-    border-left: 3px solid var(--accent-color);
-}
+    .student-offcanvas {
+        background-color: var(--light-bg);
+        border-left: 3px solid var(--accent-color);
+    }
 
-.student-offcanvas .offcanvas-body {
-    padding: 25px;
-}
+    .student-offcanvas .offcanvas-header {
+        padding: 22px 24px 10px;
+    }
 
+    .student-offcanvas .offcanvas-body {
+        padding: 18px 24px 24px;
+    }
+
+    @media (max-width: 991px) {
+        .student-page-bg {
+            padding: 20px;
+            border-radius: 28px;
+        }
+
+        .student-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .student-sidebar {
+            display: none;
+        }
+
+        .mobile-student-bar {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .student-page-bg {
+            padding: 14px;
+            border-radius: 22px;
+        }
+
+        .mobile-student-bar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .sidebar-toggle-btn {
+            width: 100%;
+        }
+    }
 </style>
 {% endblock %}
 
 
 {% block content %}
 
-<!-- ===== Mobile Toggle ===== -->
-<button class="btn btn-accent sidebar-toggle-btn"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#studentSidebarMobile">
-    <i class="bi bi-mortarboard me-2"></i>
-    لوحة الطالب
-</button>
-
 <div class="student-page-bg">
+    <div class="mobile-student-bar">
+        <div class="mobile-student-title">
+            <i class="bi bi-mortarboard"></i>
+            لوحة الطالب
+        </div>
+
+        <button class="btn btn-accent sidebar-toggle-btn"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#studentSidebarMobile">
+            <i class="bi bi-list"></i>
+            القائمة
+        </button>
+    </div>
+
     <div class="student-layout">
 
-        <!-- ===== Desktop Sidebar ===== -->
-        <div class="student-sidebar d-none d-lg-block">
-
+        <aside class="student-sidebar d-none d-lg-block">
             <div class="student-profile-box">
                 <div class="student-avatar">
                     <i class="bi bi-person-fill"></i>
                 </div>
 
-                <h6 class="mt-3 mb-1">{{ user.get_full_name }}</h6>
+                <div>
+                    <div class="student-name">{{ user.get_full_name }}</div>
+                    <span class="student-status">طالب جامعي</span>
 
-                <span class="student-status">طالب جامعي</span>
-
-                {% if user.student_profile.university_name %}
-                <p class="small text-muted mt-2 mb-0">
-                    {{ user.student_profile.university_name }}
-                </p>
-                {% endif %}
+                    {% if user.student_profile.university_name %}
+                    <p class="student-university">
+                        {{ user.student_profile.university_name }}
+                    </p>
+                    {% endif %}
+                </div>
             </div>
 
-            <a href="{% url 'student:dashboard' %}"
-               class="student-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                <i class="bi bi-speedometer2 me-2"></i>
-                الرئيسية
-            </a>
+            <nav class="student-nav">
+                <a href="{% url 'student:dashboard' %}"
+                   class="student-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    الرئيسية
+                </a>
 
-            <a href="{% url 'student:my_subscriptions' %}"
-            class="student-link {% if request.resolver_match.url_name == 'my_subscriptions' %}active{% endif %}">
-                <i class="bi bi-collection me-2"></i>
-                اشتراكاتي
-            </a>
+                <a href="{% url 'student:my_subscriptions' %}"
+                   class="student-link {% if request.resolver_match.url_name == 'my_subscriptions' or request.resolver_match.url_name == 'subscription_detail' %}active{% endif %}">
+                    <i class="bi bi-collection"></i>
+                    اشتراكاتي
+                </a>
 
-            <a href="{% url 'student:subscriptions' %}"
-               class="student-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
-                <i class="bi bi-ticket-perforated me-2"></i>
-                الاشتراكات المتاحة
-            </a>
+                <a href="{% url 'student:subscriptions' %}"
+                   class="student-link {% if request.resolver_match.url_name == 'subscriptions' or request.resolver_match.url_name == 'subscription_detail_view' or request.resolver_match.url_name == 'create_request' %}active{% endif %}">
+                    <i class="bi bi-ticket-perforated"></i>
+                    الاشتراكات المتاحة
+                </a>
 
-            <a href="{% url 'payment:wallet' %}"
-            class="student-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
-                <i class="bi bi-wallet2 me-2"></i>
-                محفظتي
-            </a>
+                <a href="{% url 'payment:wallet' %}"
+                   class="student-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
+                    <i class="bi bi-wallet2"></i>
+                    محفظتي
+                </a>
 
-            <a href="{% url 'student:notifications' %}"
-                class="student-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
-                <i class="bi bi-bell me-2"></i>
-                الإشعارات
-            </a>
+                <a href="{% url 'student:notifications' %}"
+                   class="student-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+                    <i class="bi bi-bell"></i>
+                    الإشعارات
+                </a>
 
-            <a href="{% url 'student:profile' %}"
-               class="student-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                <i class="bi bi-person me-2"></i>
-                الملف الشخصي
-            </a>
+                <a href="{% url 'student:profile' %}"
+                   class="student-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                    <i class="bi bi-person"></i>
+                    الملف الشخصي
+                </a>
+            </nav>
+        </aside>
 
-        </div>
-
-        <!-- ===== Content ===== -->
         <div class="student-content">
             {% block student_content %}{% endblock %}
         </div>
@@ -218,50 +302,66 @@
 </div>
 
 
-<!-- ===== Mobile Offcanvas ===== -->
 <div class="offcanvas offcanvas-start student-offcanvas"
      tabindex="-1"
      id="studentSidebarMobile">
 
     <div class="offcanvas-header border-0">
-        <h5 class="fw-bold">لوحة الطالب</h5>
+        <h5 class="fw-bold mb-0">لوحة الطالب</h5>
         <button type="button"
                 class="btn-close"
                 data-bs-dismiss="offcanvas"></button>
     </div>
 
     <div class="offcanvas-body">
+        <div class="student-profile-box">
+            <div class="student-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
 
-        <a href="{% url 'student:dashboard' %}"
-           class="student-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-            <i class="bi bi-speedometer2 me-2"></i>
-            الرئيسية
-        </a>
+            <div>
+                <div class="student-name">{{ user.get_full_name }}</div>
+                <span class="student-status">طالب جامعي</span>
+            </div>
+        </div>
 
-        <a href="{% url 'student:my_subscriptions' %}"
-        class="student-link {% if request.resolver_match.url_name == 'my_subscriptions' %}active{% endif %}">
-            <i class="bi bi-collection me-2"></i>
-            اشتراكاتي
-        </a>
+        <nav class="student-nav">
+            <a href="{% url 'student:dashboard' %}"
+               class="student-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
+                الرئيسية
+            </a>
 
-        <a href="{% url 'student:subscriptions' %}"
-           class="student-link {% if request.resolver_match.url_name == 'subscriptions' %}active{% endif %}">
-            <i class="bi bi-ticket-perforated me-2"></i>
-            الاشتراكات المتاحة
-        </a>
+            <a href="{% url 'student:my_subscriptions' %}"
+               class="student-link {% if request.resolver_match.url_name == 'my_subscriptions' or request.resolver_match.url_name == 'subscription_detail' %}active{% endif %}">
+                <i class="bi bi-collection"></i>
+                اشتراكاتي
+            </a>
 
-        <a href="{% url 'payment:wallet' %}"
-        class="student-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
-            <i class="bi bi-wallet2 me-2"></i>
-            محفظتي
-        </a>
+            <a href="{% url 'student:subscriptions' %}"
+               class="student-link {% if request.resolver_match.url_name == 'subscriptions' or request.resolver_match.url_name == 'subscription_detail_view' or request.resolver_match.url_name == 'create_request' %}active{% endif %}">
+                <i class="bi bi-ticket-perforated"></i>
+                الاشتراكات المتاحة
+            </a>
 
-        <a href="{% url 'student:profile' %}"
-           class="student-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-            <i class="bi bi-person me-2"></i>
-            الملف الشخصي
-        </a>
+            <a href="{% url 'payment:wallet' %}"
+               class="student-link {% if request.resolver_match.url_name == 'wallet' %}active{% endif %}">
+                <i class="bi bi-wallet2"></i>
+                محفظتي
+            </a>
 
+            <a href="{% url 'student:notifications' %}"
+               class="student-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
+                <i class="bi bi-bell"></i>
+                الإشعارات
+            </a>
+
+            <a href="{% url 'student:profile' %}"
+               class="student-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <i class="bi bi-person"></i>
+                الملف الشخصي
+            </a>
+        </nav>
     </div>
 </div>
 

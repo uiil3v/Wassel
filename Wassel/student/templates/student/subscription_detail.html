@@ -3,372 +3,543 @@
 {% block student_content %}
 
 <style>
-.detail-card {
-    background: white;
-    border-radius: 35px;
-    padding: 35px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.info-row span:first-child {
-    color: var(--soft-color);
-}
-
-/* ===== Schedule Styling ===== */
-
-.schedule-row {
-    padding: 18px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.schedule-row:last-child {
-    border-bottom: none;
-}
-
-.day-name {
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--dark-color);
-}
-
-.time-box {
-    display: flex;
-    gap: 25px;
-    flex-wrap: wrap;
-}
-
-.time-label {
-    display: block;
-    font-size: 12px;
-    color: var(--soft-color);
-}
-
-.time-item {
-    background: var(--light-bg);
-    padding: 8px 14px;
-    border-radius: 15px;
-    font-weight: 500;
-}
-
-@media (max-width: 576px) {
-    .time-box {
-        gap: 10px;
+    .subscription-detail-page {
+        display: grid;
+        gap: 24px;
     }
-}
 
-.driver-profile-box {
-    background: var(--light-bg);
-    border-radius: 25px;
-    padding: 20px;
+    .detail-hero,
+    .detail-card {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .detail-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border-color: rgba(200, 169, 81, 0.22);
+    }
 
-    transition: 0.3s ease;
+    .hero-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 14px;
+    }
 
-    border: 1px solid rgba(0,0,0,0.03);
+    .detail-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 0;
+    }
 
-    cursor: pointer;
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 18px;
+        padding: 8px 13px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
 
-    margin-bottom: 25px;
-}
+    .status-chip.pending {
+        color: #8a6500;
+        background-color: rgba(255, 193, 7, 0.18);
+    }
 
-.driver-profile-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-}
+    .status-chip.rejected {
+        color: #b02a37;
+        background-color: rgba(220, 53, 69, 0.12);
+    }
 
-.driver-profile-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+    .status-chip.cancelled,
+    .status-chip.inactive {
+        color: var(--soft-color);
+        background-color: rgba(74, 63, 53, 0.08);
+    }
 
-.driver-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    .status-chip.expired {
+        color: #2f2a25;
+        background-color: rgba(74, 63, 53, 0.13);
+    }
 
-    background: var(--accent-color);
-    color: white;
+    .status-chip.active {
+        color: #198754;
+        background-color: rgba(25, 135, 84, 0.12);
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    .section-stack {
+        display: grid;
+        gap: 24px;
+    }
 
-    font-size: 24px;
-}
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
 
-.driver-name {
-    font-weight: 700;
-    color: #222;
-}
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+    }
 
-.driver-meta {
-    color: var(--soft-color);
-    font-size: 0.9rem;
-    margin-top: 4px;
-}
+    .driver-profile-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        background: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 24px;
+        padding: 20px;
+        text-decoration: none;
+        color: var(--dark-color);
+        transition: 0.25s ease;
+    }
 
-.driver-profile-action {
-    color: var(--accent-color);
-    font-weight: 600;
+    .driver-profile-box:hover {
+        color: var(--dark-color);
+        transform: translateY(-3px);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.06);
+        border-color: rgba(200, 169, 81, 0.35);
+    }
 
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    .driver-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+    }
 
-    transition: 0.3s ease;
-}
+    .driver-avatar {
+        width: 62px;
+        height: 62px;
+        min-width: 62px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
 
-.driver-profile-box:hover .driver-profile-action {
-    transform: translateX(-5px);
-}
+    .driver-name {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 5px;
+    }
+
+    .driver-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: var(--soft-color);
+        font-size: 0.9rem;
+    }
+
+    .rating-chip,
+    .verified-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 16px;
+        padding: 4px 9px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .rating-chip {
+        background-color: rgba(255, 193, 7, 0.14);
+        color: #9a6b00;
+    }
+
+    .rating-chip i {
+        color: #d49a00;
+    }
+
+    .verified-chip {
+        background-color: rgba(25, 135, 84, 0.11);
+        color: #198754;
+    }
+
+    .verified-chip.muted {
+        background-color: rgba(74, 63, 53, 0.07);
+        color: var(--soft-color);
+    }
+
+    .profile-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent-color);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .info-tile {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 20px;
+        padding: 18px;
+    }
+
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 9px;
+    }
+
+    .info-value {
+        color: var(--dark-color);
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .notes-box {
+        background-color: var(--light-bg);
+        border-right: 5px solid var(--accent-color);
+        border-radius: 20px;
+        padding: 20px;
+        color: var(--soft-color);
+        line-height: 2;
+    }
+
+    .schedule-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .schedule-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 20px;
+        padding: 16px 18px;
+    }
+
+    .day-name {
+        color: var(--dark-color);
+        font-weight: 700;
+    }
+
+    .time-box {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .time-item,
+    .off-chip {
+        border-radius: 16px;
+        padding: 8px 12px;
+        font-weight: 600;
+    }
+
+    .time-item {
+        background-color: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.2);
+        color: var(--dark-color);
+    }
+
+    .time-label {
+        display: block;
+        color: var(--soft-color);
+        font-size: 0.78rem;
+        margin-bottom: 3px;
+    }
+
+    .off-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: #b02a37;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .contract-card,
+    .action-card {
+        text-align: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .soft-alert {
+        border: none;
+        border-radius: 20px;
+        padding: 16px 18px;
+        line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+        .detail-hero,
+        .detail-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .hero-head,
+        .driver-profile-box,
+        .schedule-row {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .detail-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-action {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .time-box {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .driver-main {
+            align-items: flex-start;
+        }
+
+        .driver-avatar {
+            width: 54px;
+            height: 54px;
+            min-width: 54px;
+            font-size: 21px;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
 </style>
 
+<div class="subscription-detail-page">
 
-<!-- ===== Main Card ===== -->
-<div class="detail-card">
+    <section class="detail-hero">
+        <div class="hero-head">
+            <div>
+                <h4 class="fw-bold">{{ req.subscription.neighborhood }}</h4>
+            </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0">تفاصيل اشتراكك</h4>
-        {% if req.status == "pending" %}
-
-            <span class="badge bg-warning text-dark">
-                قيد الانتظار
-            </span>
-
-        {% elif req.status == "rejected" %}
-
-            <span class="badge bg-danger">
-                مرفوض
-            </span>
-
-        {% elif req.status == "cancelled" %}
-
-            <span class="badge bg-secondary">
-                ملغي
-            </span>
-
-        {% elif req.status == "approved" %}
-
-            {% if req.subscription.current_status == "expired" %}
-
-                <span class="badge bg-dark">
-                    منتهي
-                </span>
-
-            {% elif req.subscription.current_status == "inactive" %}
-
-                <span class="badge bg-secondary">
-                    موقوف
-                </span>
-
-            {% else %}
-
-                <span class="badge bg-success">
-                    نشط
-                </span>
-
+            {% if req.status == "pending" %}
+            <span class="status-chip pending"><i class="bi bi-clock"></i> قيد الانتظار</span>
+            {% elif req.status == "rejected" %}
+            <span class="status-chip rejected"><i class="bi bi-x-circle"></i> مرفوض</span>
+            {% elif req.status == "cancelled" %}
+            <span class="status-chip cancelled"><i class="bi bi-dash-circle"></i> ملغي</span>
+            {% elif req.status == "approved" %}
+                {% if req.subscription.current_status == "expired" %}
+                <span class="status-chip expired"><i class="bi bi-calendar-x"></i> منتهي</span>
+                {% elif req.subscription.current_status == "inactive_by_driver" or req.subscription.current_status == "inactive_by_admin" or req.subscription.current_status == "inactive" %}
+                <span class="status-chip inactive"><i class="bi bi-pause-circle"></i> موقوف</span>
+                {% else %}
+                <span class="status-chip active"><i class="bi bi-check-circle"></i> نشط</span>
+                {% endif %}
             {% endif %}
+        </div>
 
-        {% endif %}
+        <p class="text-muted mb-0" style="line-height: 2; max-width: 760px;">
+            هنا تجد بيانات السائق، تفاصيل الاشتراك، جدول المواعيد، والعقد الإلكتروني إن وجد.
+        </p>
+    </section>
+
+    <div class="section-stack">
+
+        <section class="detail-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-person-badge"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">بيانات السائق</h5>
+                    <span class="text-muted">معلومات التواصل والملف الشخصي للسائق.</span>
+                </div>
             </div>
 
-    <!-- ===== Driver Info ===== -->
-    <h6 class="fw-bold mt-4 mb-3">بيانات السائق</h6>
-
-    <a href="{% url 'accounts:public_profile' req.subscription.driver.user.id %}"
-    class="text-decoration-none">
-
-        <div class="driver-profile-box">
-
-            <div class="driver-profile-left">
-
-                <div class="driver-avatar">
-                    <i class="bi bi-person-fill"></i>
-                </div>
-
-                <div>
-
-                    <div class="driver-name">
-                        {{ req.subscription.driver.user.get_full_name }}
+            <a href="{% url 'accounts:public_profile' req.subscription.driver.user.id %}"
+               class="driver-profile-box">
+                <div class="driver-main">
+                    <div class="driver-avatar">
+                        <i class="bi bi-person-fill"></i>
                     </div>
 
-                    <div class="driver-meta">
+                    <div>
+                        <div class="driver-name">
+                            {{ req.subscription.driver.user.get_full_name }}
+                        </div>
 
-                        {% if req.subscription.driver.average_rating %}
-                            ⭐ {{ req.subscription.driver.average_rating|floatformat:2 }}
-                        {% endif %}
+                        <div class="driver-meta">
+                            {% if req.subscription.driver.average_rating > 0 %}
+                            <span class="rating-chip">
+                                <i class="bi bi-star-fill"></i>
+                                {{ req.subscription.driver.average_rating|floatformat:1 }}
+                            </span>
+                            {% else %}
+                            <span class="verified-chip muted">جديد</span>
+                            {% endif %}
 
-                        •
+                            {% if req.subscription.driver.verification_status == "approved" %}
+                            <span class="verified-chip">
+                                <i class="bi bi-shield-check"></i>
+                                موثق
+                            </span>
+                            {% else %}
+                            <span class="verified-chip muted">غير موثق</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
-                        {% if req.subscription.driver.verification_status == "approved" %}
-                            موثق ✅
+                <span class="profile-action">
+                    عرض الملف الشخصي
+                    <i class="bi bi-arrow-left"></i>
+                </span>
+            </a>
+
+            <div class="info-grid mt-3">
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-telephone"></i> الهاتف</div>
+                    <div class="info-value" dir="ltr">{{ req.subscription.driver.user.phone }}</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="detail-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-info-circle"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">معلومات الاشتراك</h5>
+                    <span class="text-muted">تفاصيل الطلب والأسعار والتواريخ.</span>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-card-list"></i> رقم الطلب</div>
+                    <div class="info-value">{{ req.request_code }}</div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                    <div class="info-value">{{ req.price_snapshot }} ر.س / {{ req.subscription.get_duration_display }}</div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-geo"></i> المدينة</div>
+                    <div class="info-value">{{ req.subscription.driver.user.city.name_ar }}</div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-signpost"></i> الحي</div>
+                    <div class="info-value">{{ req.subscription.neighborhood }}</div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-calendar-check"></i> تاريخ البداية</div>
+                    <div class="info-value" dir="ltr">{{ req.subscription.start_date|date:"d/m/Y" }}</div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-calendar-x"></i> تاريخ النهاية</div>
+                    <div class="info-value" dir="ltr">{{ req.subscription.end_date|date:"d/m/Y" }}</div>
+                </div>
+
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-person-check"></i> تاريخ الانضمام</div>
+                    <div class="info-value" dir="ltr">
+                        {% if req.joined_at %}
+                        {{ req.joined_at|date:"d/m/Y" }}
                         {% else %}
-                            غير موثق
+                        -
                         {% endif %}
-
                     </div>
-
                 </div>
 
-            </div>
-
-            <div class="driver-profile-action">
-
-                عرض الملف الشخصي
-
-                <i class="bi bi-arrow-left-short"></i>
-
-            </div>
-
-        </div>
-
-    </a>
-
-    <!-- <div class="info-row">
-        <span>الاسم</span>
-        <span>{{ req.subscription.driver.user.get_full_name }}</span>
-    </div> -->
-
-    <div class="info-row">
-        <span>الهاتف</span>
-        <span>{{ req.subscription.driver.user.phone }}</span>
-    </div>
-
-    <hr>
-
-    <!-- ===== Subscription Info ===== -->
-    <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
-
-    <div class="info-row">
-        <span>نوع الاشتراك</span>
-
-        {% if req.subscription.duration == "monthly" %}
-            <span>شهري</span>
-
-        {% elif req.subscription.duration == "semester" %}
-            <span>فصلي</span>
-
-        {% else %}
-            <span>-</span>
-        {% endif %}
-    </div>
-
-    <div class="info-row">
-        <span>المدينة</span>
-        <span>{{ req.subscription.driver.user.city.name_ar }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>الحي</span>
-        <span>{{ req.subscription.neighborhood }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>السعر</span>
-        <span>{{ req.price_snapshot }} ر.س</span>
-    </div>
-
-    <div class="info-row">
-        <span>تاريخ البداية</span>
-        <span>{{ req.subscription.start_date|date:"d/m/Y" }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>تاريخ النهاية</span>
-        <span>{{ req.subscription.end_date|date:"d/m/Y" }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>تاريخ الانضمام</span>
-        <span>{{ req.joined_at|date:"d/m/Y" }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>رقم الطلب</span>
-        <span>{{ req.request_code }}</span>
-    </div>
-
-    {% if req.subscription.notes %}
-
-    <hr>
-
-    <div class="mt-4">
-
-        <h6 class="fw-bold mb-3">
-            ملاحظات السائق
-        </h6>
-
-        <div class="p-3 rounded-4"
-             style="
-                background: var(--light-bg);
-                line-height: 1.9;
-             ">
-
-            {{ req.subscription.notes }}
-
-        </div>
-
-    </div>
-
-{% endif %}
-
-    {% if req.status == "pending" or req.status == "approved" and req.subscription.current_status != "expired" and req.subscription.current_status != "inactive" %}
-    <hr>
-
-    <div class="text-start mt-4">
-
-        <button class="btn btn-outline-danger px-4"
-                data-bs-toggle="modal"
-                data-bs-target="#cancelModal">
-            <i class="bi bi-x-circle me-2"></i>
-            إلغاء الاشتراك
-        </button>
-
-    </div>
-    {% endif %}
-
-</div>
-
-
-<!-- ===== Weekly Schedule Card ===== -->
-<div class="detail-card">
-
-    <h5 class="fw-bold mb-4">الجدول الأسبوعي</h5>
-
-    {% if schedule %}
-
-        {% for day in schedule %}
-        <div class="schedule-row">
-
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-
-                <!-- اسم اليوم -->
-                <div class="day-name mb-2 mb-md-0">
-                    {{ day.get_day_of_week_display }}
+                <div class="info-tile">
+                    <div class="info-label"><i class="bi bi-calendar2-week"></i> نوع الاشتراك</div>
+                    <div class="info-value">{{ req.subscription.get_duration_display }}</div>
                 </div>
+            </div>
+        </section>
 
-                <!-- الأوقات -->
+        {% if req.subscription.notes %}
+        <section class="detail-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-card-text"></i></span>
                 <div>
+                    <h5 class="fw-bold mb-1">ملاحظات السائق</h5>
+                    <span class="text-muted">معلومات إضافية عن الاشتراك أو الرحلة.</span>
+                </div>
+            </div>
+
+            <div class="notes-box">
+                {{ req.subscription.notes }}
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="detail-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-calendar-week"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">الجدول الأسبوعي</h5>
+                    <span class="text-muted">أوقات الذهاب والعودة المسجلة لهذا الاشتراك.</span>
+                </div>
+            </div>
+
+            {% if schedule %}
+            <div class="schedule-list">
+                {% for day in schedule %}
+                <div class="schedule-row">
+                    <div class="day-name">{{ day.get_day_of_week_display }}</div>
 
                     {% if day.is_off_day %}
-                        <span class="badge bg-danger-subtle text-danger px-3 py-2">
-                            إجازة
-                        </span>
+                    <span class="off-chip">
+                        <i class="bi bi-moon"></i>
+                        إجازة
+                    </span>
                     {% else %}
-
                     <div class="time-box">
-
                         <div class="time-item">
                             <span class="time-label">ذهاب</span>
                             {% with pickup=day.pickup_time|time:"h:i A" %}
@@ -384,49 +555,59 @@
                                 {% if "AM" in ret %} ص {% else %} م {% endif %}
                             {% endwith %}
                         </div>
-
                     </div>
-
                     {% endif %}
-
                 </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="notes-box">
+                لم يتم تحديد جدول بعد.
+            </div>
+            {% endif %}
+        </section>
 
+        {% if req.contract %}
+        <section class="detail-card contract-card">
+            <div class="card-title-row justify-content-center">
+                <span class="title-icon"><i class="bi bi-file-earmark-pdf"></i></span>
+                <div class="text-start">
+                    <h5 class="fw-bold mb-1">العقد الإلكتروني</h5>
+                    <span class="text-muted">يمكنك تحميل العقد الإلكتروني الخاص باشتراك النقل.</span>
+                </div>
             </div>
 
-        </div>
-        {% endfor %}
+            <a href="{% url 'contracts:download_contract_pdf' req.contract.id %}"
+               class="btn btn-dark px-5">
+                <i class="bi bi-download me-2"></i>
+                تحميل العقد PDF
+            </a>
+        </section>
+        {% endif %}
 
-    {% else %}
-        <p class="text-muted">لم يتم تحديد جدول بعد.</p>
-    {% endif %}
+        {% if req.status == "pending" or req.status == "approved" and req.subscription.current_status != "expired" and req.subscription.current_status != "inactive" and req.subscription.current_status != "inactive_by_driver" and req.subscription.current_status != "inactive_by_admin" %}
+        <section class="detail-card action-card">
+            <div class="card-title-row justify-content-center">
+                <span class="title-icon"><i class="bi bi-x-circle"></i></span>
+                <div class="text-start">
+                    <h5 class="fw-bold mb-1">إلغاء الاشتراك</h5>
+                    <span class="text-muted">يمكنك إلغاء الطلب أو الاشتراك حسب حالة الاشتراك الحالية.</span>
+                </div>
+            </div>
 
+            <div class="action-buttons">
+                <button class="btn btn-outline-danger px-4"
+                        data-bs-toggle="modal"
+                        data-bs-target="#cancelModal">
+                    <i class="bi bi-x-circle me-2"></i>
+                    إلغاء الاشتراك
+                </button>
+            </div>
+        </section>
+        {% endif %}
 
+    </div>
 </div>
-
-{% if req.contract %}
-
-<div class="detail-card text-center">
-
-    <h5 class="fw-bold mb-3">
-        📄 العقد الإلكتروني
-    </h5>
-
-    <p class="text-muted mb-4">
-        يمكنك تحميل العقد الإلكتروني الخاص باشتراك النقل.
-    </p>
-
-    <a
-        href="{% url 'contracts:download_contract_pdf' req.contract.id %}"
-        class="btn btn-dark px-5"
-    >
-
-        📥 تحميل العقد PDF
-
-    </a>
-
-</div>
-
-{% endif %}
 
 <!-- ===== Cancel Modal ===== -->
 <div class="modal fade" id="cancelModal" tabindex="-1">
@@ -435,24 +616,23 @@
 
             <div class="modal-header border-0">
                 <h5 class="modal-title fw-bold">تأكيد الإلغاء</h5>
-                <button type="button" class="btn-close"
+                <button type="button"
+                        class="btn-close"
                         data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body text-center">
-
                 {% if req.status == "pending" %}
-                    <p class="text-muted">
-                        سيتم استرجاع المبلغ كاملاً إلى محفظتك.
-                    </p>
+                <p class="text-muted">
+                    سيتم استرجاع المبلغ كاملاً إلى محفظتك.
+                </p>
                 {% elif req.status == "approved" %}
-                    <p class="text-muted">
-                        سيتم احتساب مبلغ الاسترجاع حسب المدة المتبقية من الاشتراك.
-                    </p>
+                <p class="text-muted">
+                    سيتم احتساب مبلغ الاسترجاع حسب المدة المتبقية من الاشتراك.
+                </p>
                 {% endif %}
 
-                <div class="mt-4 d-flex justify-content-center gap-3">
-
+                <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
                     <button type="button"
                             class="btn btn-light px-4"
                             data-bs-dismiss="modal">
@@ -467,9 +647,7 @@
                             نعم، إلغاء
                         </button>
                     </form>
-
                 </div>
-
             </div>
 
         </div>

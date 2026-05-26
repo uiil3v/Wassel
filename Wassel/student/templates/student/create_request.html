@@ -3,161 +3,396 @@
 {% block student_content %}
 
 <style>
-    .detail-card {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
+    .request-page {
+        display: grid;
+        gap: 24px;
+    }
+
+    #subscriptionRequestForm {
+        display: grid;
+        gap: 24px;
+    }
+
+    .request-hero,
+    .request-card {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
+
+    .request-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border-color: rgba(200, 169, 81, 0.22);
+    }
+
+    .request-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+
+    .request-hero p {
+        color: var(--soft-color);
+        line-height: 1.9;
+        max-width: 760px;
+        margin-bottom: 0;
+    }
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .summary-tile {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 20px;
+        padding: 18px;
+    }
+
+    .summary-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 9px;
+    }
+
+    .summary-value {
+        color: var(--dark-color);
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .schedule-list {
+        display: grid;
+        gap: 14px;
     }
 
     .schedule-row {
-        padding: 18px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 22px;
+        padding: 18px;
+        transition: 0.2s ease;
     }
 
-    .schedule-row:last-child {
-        border-bottom: none;
+    .schedule-row.day-off {
+        opacity: 0.72;
+    }
+
+    .schedule-layout {
+        display: grid;
+        grid-template-columns: 150px minmax(0, 1fr) 110px;
+        gap: 16px;
+        align-items: center;
     }
 
     .day-name {
-        font-weight: 600;
-        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--dark-color);
+        font-weight: 700;
+    }
+
+    .day-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-color);
+        background-color: rgba(200, 169, 81, 0.13);
+    }
+
+    .time-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .time-field label {
+        color: var(--soft-color);
+        font-size: 0.86rem;
+        margin-bottom: 6px;
     }
 
     .time-input {
-        max-width: 140px;
+        border-radius: 16px;
+        min-height: 46px;
+        border: 1.5px solid rgba(74, 63, 53, 0.1);
+        background: #ffffff;
     }
 
-    .info-row {
+    .time-input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 8px 18px rgba(200, 169, 81, 0.15);
+    }
+
+    .off-toggle {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        color: var(--soft-color);
+        white-space: nowrap;
     }
 
-    .info-row span:first-child {
+    .off-toggle .form-check-input {
+        width: 1.15rem;
+        height: 1.15rem;
+        border-color: rgba(200, 169, 81, 0.45);
+    }
+
+    .off-toggle .form-check-input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+    .form-error {
+        display: none;
+        border-radius: 20px;
+        padding: 14px 16px;
+        color: #b02a37;
+        background-color: rgba(220, 53, 69, 0.1);
+        line-height: 1.8;
+        margin-bottom: 18px;
+    }
+
+    .submit-card {
+        text-align: center;
+    }
+
+    .submit-card p {
         color: var(--soft-color);
+        line-height: 1.9;
+        margin-bottom: 22px;
+    }
+
+    .submit-btn {
+        min-height: 52px;
+        min-width: 220px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 24px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 1200px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .schedule-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .off-toggle {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .request-hero,
+        .request-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .request-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .summary-grid,
+        .time-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .submit-btn {
+            width: 100%;
+        }
     }
 </style>
 
+<div class="request-page">
 
-<!-- ===== Subscription Info ===== -->
-<div class="detail-card">
+    <section class="request-hero">
+        <h4 class="fw-bold">طلب اشتراك</h4>
+        <p>
+            راجع بيانات الاشتراك، ثم حدد جدولك الأسبوعي للذهاب والعودة. يمكنك اختيار إجازة للأيام التي لا تحتاج فيها النقل.
+        </p>
+    </section>
 
-    <h4 class="fw-bold mb-4">طلب اشتراك</h4>
+    <section class="request-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-info-circle"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">ملخص الاشتراك</h5>
+                <span class="text-muted">تفاصيل الاشتراك الذي سترسل عليه الطلب.</span>
+            </div>
+        </div>
 
-    <div class="info-row">
-        <span>المدينة</span>
-        <span>{{ subscription.driver.user.city.name_ar }}</span>
-    </div>
+        <div class="summary-grid">
+            <div class="summary-tile">
+                <div class="summary-label"><i class="bi bi-geo"></i> المدينة</div>
+                <div class="summary-value">{{ subscription.driver.user.city.name_ar }}</div>
+            </div>
 
-    <div class="info-row">
-        <span>الحي</span>
-        <span>{{ subscription.neighborhood }}</span>
-    </div>
+            <div class="summary-tile">
+                <div class="summary-label"><i class="bi bi-signpost"></i> الحي</div>
+                <div class="summary-value">{{ subscription.neighborhood }}</div>
+            </div>
 
-    <div class="info-row">
-        <span>السعر</span>
-        <span>{{ subscription.price }} ر.س</span>
-    </div>
+            <div class="summary-tile">
+                <div class="summary-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                <div class="summary-value">{{ subscription.price }} ر.س / {{ subscription.get_duration_display }}</div>
+            </div>
 
-    <div class="info-row">
-        <span>السائق</span>
-        <span>{{ subscription.driver.user.get_full_name }}</span>
-    </div>
+            <div class="summary-tile">
+                <div class="summary-label"><i class="bi bi-person"></i> السائق</div>
+                <div class="summary-value">{{ subscription.driver.user.get_full_name }}</div>
+            </div>
+        </div>
+    </section>
 
-</div>
+    <form method="post" id="subscriptionRequestForm">
+        {% csrf_token %}
 
-
-<!-- ===== Schedule Form ===== -->
-<form method="post">
-    {% csrf_token %}
-
-    <div class="detail-card">
-
-        <h5 class="fw-bold mb-4">حدد جدولك الأسبوعي</h5>
-
-        {% for day_code, day_label in days %}
-
-        <div class="schedule-row">
-
-            <div
-                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-
-                <!-- Day Name -->
-                <div class="day-name">
-                    {{ day_label }}
+        <section class="request-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-calendar-week"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">جدولك الأسبوعي</h5>
+                    <span class="text-muted">حدد وقت الذهاب والعودة لكل يوم، أو اجعل اليوم إجازة.</span>
                 </div>
+            </div>
 
-                <!-- Time Inputs -->
-                <div class="d-flex gap-3 align-items-center flex-wrap">
+            <div class="form-error" id="scheduleError"></div>
 
-                    <div>
-                        <label class="small text-muted">ذهاب</label><br>
-                        <input type="time" name="{{ day_code }}_pickup" class="form-control time-input">
-                    </div>
+            <div class="schedule-list">
+                {% for day_code, day_label in days %}
+                <div class="schedule-row">
+                    <div class="schedule-layout">
+                        <div class="day-name">
+                            <span class="day-icon"><i class="bi bi-calendar-day"></i></span>
+                            {{ day_label }}
+                        </div>
 
-                    <div>
-                        <label class="small text-muted">عودة</label><br>
-                        <input type="time" name="{{ day_code }}_return" class="form-control time-input">
-                    </div>
+                        <div class="time-grid">
+                            <div class="time-field">
+                                <label>ذهاب</label>
+                                <input type="time"
+                                       name="{{ day_code }}_pickup"
+                                       class="form-control time-input">
+                            </div>
 
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" name="{{ day_code }}_off"
-                            id="{{ day_code }}_off">
-                        <label class="form-check-label small" for="{{ day_code }}_off">
+                            <div class="time-field">
+                                <label>عودة</label>
+                                <input type="time"
+                                       name="{{ day_code }}_return"
+                                       class="form-control time-input">
+                            </div>
+                        </div>
+
+                        <label class="off-toggle">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="{{ day_code }}_off"
+                                   id="{{ day_code }}_off">
                             إجازة
                         </label>
                     </div>
-
                 </div>
-
+                {% endfor %}
             </div>
+        </section>
 
-        </div>
+        <section class="request-card submit-card">
+            <h5 class="fw-bold mb-2">إرسال الطلب</h5>
+            <p>
+                بعد الإرسال سيتم تجميد مبلغ الاشتراك من محفظتك مؤقتاً حتى يراجع السائق الطلب.
+            </p>
 
-        {% endfor %}
-
-    </div>
-
-
-    <!-- ===== Submit Button ===== -->
-    <div class="detail-card text-center">
-        <button type="submit" class="btn btn-accent px-5">
-            إرسال الطلب
-        </button>
-    </div>
-
-</form>
+            <button type="submit" class="btn btn-accent submit-btn">
+                <i class="bi bi-send-check"></i>
+                إرسال الطلب
+            </button>
+        </section>
+    </form>
+</div>
 
 <script>
-document.querySelector("form").addEventListener("submit", function(e) {
+document.querySelectorAll(".schedule-row").forEach(function(row) {
+    const off = row.querySelector('input[type="checkbox"]');
+    const inputs = row.querySelectorAll('input[type="time"]');
 
+    off.addEventListener("change", function() {
+        row.classList.toggle("day-off", off.checked);
+        inputs.forEach(function(input) {
+            input.disabled = off.checked;
+            if (off.checked) {
+                input.value = "";
+            }
+        });
+    });
+});
+
+document.getElementById("subscriptionRequestForm").addEventListener("submit", function(e) {
     const rows = document.querySelectorAll(".schedule-row");
+    const errorBox = document.getElementById("scheduleError");
+
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
 
     for (let row of rows) {
-
+        let dayName = row.querySelector(".day-name").innerText.trim();
         let pickup = row.querySelector('input[name$="_pickup"]');
         let ret = row.querySelector('input[name$="_return"]');
         let off = row.querySelector('input[type="checkbox"]');
 
-        if (!off.checked && pickup.value && ret.value) {
-
-            if (ret.value <= pickup.value) {
-                alert("❌ وقت العودة لازم يكون بعد وقت الذهاب");
-                e.preventDefault();
-                return;
-            }
+        if (!off.checked && pickup.value && ret.value && ret.value <= pickup.value) {
+            errorBox.textContent = "وقت العودة في يوم " + dayName + " يجب أن يكون بعد وقت الذهاب.";
+            errorBox.style.display = "block";
+            row.scrollIntoView({ behavior: "smooth", block: "center" });
+            e.preventDefault();
+            return;
         }
 
-        // 🔥 منع ترك الحقول فاضية بدون إجازة
         if (!off.checked && (!pickup.value || !ret.value)) {
-            alert("يجب تحديد وقت الذهاب والعودة او اختيار اجازة");
+            errorBox.textContent = "يرجى تحديد وقت الذهاب والعودة ليوم " + dayName + " أو اختيار إجازة.";
+            errorBox.style.display = "block";
+            row.scrollIntoView({ behavior: "smooth", block: "center" });
             e.preventDefault();
             return;
         }
     }
-
 });
 </script>
 

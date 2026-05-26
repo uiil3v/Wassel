@@ -1,267 +1,417 @@
-
 {% extends "student/base_student.html" %}
 
 {% block student_content %}
 
 <style>
+    .review-page {
+        display: grid;
+        gap: 24px;
+    }
 
-.review-card {
-    background: white;
-    border-radius: 35px;
-    padding: 40px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-}
+    .review-hero,
+    .review-card {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
 
-.review-header {
-    margin-bottom: 35px;
-}
+    .review-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border-color: rgba(200, 169, 81, 0.22);
+    }
 
-.review-user-box {
-    background: var(--light-bg);
-    border-radius: 25px;
-    padding: 20px;
-    margin-bottom: 30px;
-}
+    .review-hero h4 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
 
-.review-user-name {
-    font-weight: 700;
-    font-size: 1.2rem;
-}
+    .review-hero p {
+        color: var(--soft-color);
+        line-height: 1.9;
+        max-width: 760px;
+        margin-bottom: 0;
+    }
 
-.review-user-role {
-    color: var(--soft-color);
-    font-size: 0.95rem;
-}
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
 
-.form-label {
-    font-weight: 600;
-    margin-bottom: 10px;
-}
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+    }
 
-.form-control {
-    border-radius: 18px;
-    padding: 14px 18px;
-    border: 1px solid #e5ddd0;
-    transition: 0.3s ease;
-}
+    .review-target {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 24px;
+        padding: 20px;
+    }
 
-.form-control:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 0.15rem rgba(200, 169, 81, 0.2);
-}
+    .target-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
 
-.review-submit-btn {
-    border-radius: 25px;
-    padding: 12px 30px;
-    font-weight: 500;
-}
+    .target-avatar {
+        width: 62px;
+        height: 62px;
+        min-width: 62px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: var(--accent-color);
+        font-size: 1.5rem;
+    }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-}
+    .target-name {
+        color: var(--dark-color);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
 
-.info-row span:first-child {
-    color: var(--soft-color);
-}
+    .target-role {
+        display: inline-flex;
+        border-radius: 16px;
+        padding: 4px 10px;
+        color: var(--accent-color);
+        background-color: rgba(200, 169, 81, 0.13);
+        font-size: 0.84rem;
+        font-weight: 700;
+    }
 
-/* ===== Google Stars ===== */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
 
-.google-stars {
-    display: flex;
-    gap: 10px;
-    font-size: 2rem;
-    margin-top: 15px;
-}
+    .info-tile {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 20px;
+        padding: 16px;
+    }
 
-.star {
-    cursor: pointer;
-    color: #d6d6d6;
-    transition: 0.2s ease;
-}
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+        font-size: 0.9rem;
+        margin-bottom: 7px;
+    }
 
-.star.active {
-    color: #f4c542;
-}
+    .info-value {
+        color: var(--dark-color);
+        font-weight: 700;
+    }
 
-.star:hover {
-    transform: scale(1.12);
-}
+    .review-form-card form {
+        display: grid;
+        gap: 22px;
+    }
 
-.rating-text {
-    color: var(--soft-color);
-    font-size: 0.95rem;
-    margin-top: 10px;
-}
+    .form-label {
+        color: var(--dark-color);
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
 
+    #id_rating {
+        display: none;
+    }
+
+    .star-picker {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .google-stars {
+        display: inline-flex;
+        gap: 8px;
+        font-size: 2.25rem;
+        line-height: 1;
+    }
+
+    .star {
+        cursor: pointer;
+        color: #d8d1c6;
+        transition: 0.18s ease;
+    }
+
+    .star.active {
+        color: #d49a00;
+    }
+
+    .star:hover {
+        transform: translateY(-2px) scale(1.08);
+    }
+
+    .rating-text {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        border-radius: 18px;
+        padding: 6px 12px;
+        color: var(--accent-color);
+        background-color: rgba(200, 169, 81, 0.13);
+        font-weight: 700;
+    }
+
+    #id_comment {
+        width: 100%;
+        min-height: 140px;
+        border-radius: 20px;
+        padding: 14px 16px;
+        border: 1.5px solid rgba(74, 63, 53, 0.1);
+        background: #fdfcf9;
+        resize: vertical;
+    }
+
+    #id_comment:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 10px 25px rgba(200, 169, 81, 0.16);
+        outline: none;
+    }
+
+    .anonymous-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        border-radius: 20px;
+        padding: 12px 14px;
+        background-color: var(--light-bg);
+        color: var(--soft-color);
+    }
+
+    .anonymous-box input {
+        width: 1.1rem;
+        height: 1.1rem;
+        border-color: rgba(200, 169, 81, 0.45);
+    }
+
+    .anonymous-box input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+    .submit-row {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .review-submit-btn {
+        min-height: 50px;
+        min-width: 180px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 24px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .review-hero,
+        .review-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .review-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .review-target {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .google-stars {
+            font-size: 2rem;
+        }
+
+        .submit-row,
+        .review-submit-btn,
+        .anonymous-box {
+            width: 100%;
+        }
+    }
 </style>
 
+<div class="review-page">
 
-<div class="review-card">
-
-    <!-- ===== Header ===== -->
-    <div class="review-header">
-
-        <h3 class="fw-bold mb-2">
-
+    <section class="review-hero">
+        <h4 class="fw-bold">
             {% if is_edit %}
-                تعديل التقييم ✏️
+            تعديل التقييم
             {% else %}
-                إضافة تقييم ⭐
+            إضافة تقييم
             {% endif %}
+        </h4>
 
-        </h3>
-
-        <p class="text-muted mb-0">
-
+        <p>
             {% if is_edit %}
-                يمكنك تعديل تقييمك طالما لم تنتهِ مدة التعديل.
+            يمكنك تعديل تقييمك طالما لم تنته مدة التعديل.
             {% else %}
-                شارك تجربتك لمساعدة المستخدمين الآخرين وتعزيز الموثوقية.
+            شارك تجربتك لمساعدة المستخدمين الآخرين وتعزيز الثقة داخل منصة وصل.
             {% endif %}
-
         </p>
+    </section>
 
-    </div>
-
-
-    <!-- ===== Reviewed User ===== -->
-    <div class="review-user-box">
-
-        <div class="review-user-name">
-            {{ reviewed_user.get_full_name }}
+    <section class="review-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-person-check"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">المستخدم الذي ستقيّمه</h5>
+                <span class="text-muted">سيظهر تقييمك في ملفه العام بعد الإرسال.</span>
+            </div>
         </div>
 
-        <div class="review-user-role mt-1">
+        <div class="review-target">
+            <div class="target-main">
+                <div class="target-avatar">
+                    {% if reviewed_user.role == "driver" %}
+                    <i class="bi bi-person-fill"></i>
+                    {% else %}
+                    <i class="bi bi-mortarboard-fill"></i>
+                    {% endif %}
+                </div>
 
-            {% if reviewed_user.role == "driver" %}
-                سائق
-            {% else %}
-                طالب
+                <div>
+                    <div class="target-name">{{ reviewed_user.get_full_name }}</div>
+                    <span class="target-role">
+                        {% if reviewed_user.role == "driver" %}
+                        سائق
+                        {% else %}
+                        طالب
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="review-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-ticket-perforated"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">تفاصيل الاشتراك</h5>
+                <span class="text-muted">التقييم مرتبط بهذا الاشتراك.</span>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-tile">
+                <div class="info-label"><i class="bi bi-signpost"></i> الحي</div>
+                <div class="info-value">{{ subscription_request.subscription.neighborhood }}</div>
+            </div>
+
+            <div class="info-tile">
+                <div class="info-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                <div class="info-value">{{ subscription_request.price_snapshot }} ر.س</div>
+            </div>
+
+            <div class="info-tile">
+                <div class="info-label"><i class="bi bi-calendar-check"></i> تاريخ البداية</div>
+                <div class="info-value" dir="ltr">{{ subscription_request.subscription.start_date|date:"d/m/Y" }}</div>
+            </div>
+
+            <div class="info-tile">
+                <div class="info-label"><i class="bi bi-calendar-x"></i> تاريخ النهاية</div>
+                <div class="info-value" dir="ltr">{{ subscription_request.subscription.end_date|date:"d/m/Y" }}</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="review-card review-form-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-star"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">تقييم التجربة</h5>
+                <span class="text-muted">اختر عدد النجوم واكتب تعليقاً مختصراً إذا رغبت.</span>
+            </div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div>
+                <label class="form-label">التقييم</label>
+                {{ form.rating }}
+
+                <div class="star-picker">
+                    <div class="google-stars" aria-label="اختيار التقييم">
+                        <i class="bi bi-star-fill star" data-value="1"></i>
+                        <i class="bi bi-star-fill star" data-value="2"></i>
+                        <i class="bi bi-star-fill star" data-value="3"></i>
+                        <i class="bi bi-star-fill star" data-value="4"></i>
+                        <i class="bi bi-star-fill star" data-value="5"></i>
+                    </div>
+
+                    <div class="rating-text">اختر تقييمك</div>
+                </div>
+            </div>
+
+            <div>
+                <label class="form-label">التعليق</label>
+                {{ form.comment }}
+            </div>
+
+            {% if request.user.role == "student" %}
+            <label class="anonymous-box">
+                {{ form.is_anonymous }}
+                <span>إخفاء اسمي عند عرض التقييم</span>
+            </label>
             {% endif %}
 
-        </div>
-
-    </div>
-
-
-    <!-- ===== Subscription Info ===== -->
-    <div class="review-user-box">
-
-        <h6 class="fw-bold mb-4">
-            تفاصيل الاشتراك
-        </h6>
-
-        <div class="info-row">
-            <span>الحي</span>
-            <span>{{ subscription_request.subscription.neighborhood }}</span>
-        </div>
-
-        <div class="info-row">
-            <span>السعر</span>
-            <span>{{ subscription_request.price_snapshot }} ر.س</span>
-        </div>
-
-        <div class="info-row">
-            <span>تاريخ البداية</span>
-            <span>
-                {{ subscription_request.subscription.start_date|date:"d/m/Y" }}
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span>تاريخ النهاية</span>
-            <span>
-                {{ subscription_request.subscription.end_date|date:"d/m/Y" }}
-            </span>
-        </div>
-
-    </div>
-
-
-    <!-- ===== Form ===== -->
-    <form method="POST">
-
-        {% csrf_token %}
-
-        <!-- Rating -->
-        <div class="mb-4">
-
-            <label class="form-label">
-                التقييم
-            </label>
-
-            {{ form.rating }}
-
-            <div class="google-stars">
-
-                <i class="bi bi-star-fill star" data-value="1"></i>
-                <i class="bi bi-star-fill star" data-value="2"></i>
-                <i class="bi bi-star-fill star" data-value="3"></i>
-                <i class="bi bi-star-fill star" data-value="4"></i>
-                <i class="bi bi-star-fill star" data-value="5"></i>
-
-            </div>
-
-            <div class="rating-text">
-                اختر تقييمك
-            </div>
-
-        </div>
-
-
-        <!-- Comment -->
-        <div class="mb-4">
-
-            <label class="form-label">
-                التعليق
-            </label>
-
-            {{ form.comment }}
-
-        </div>
-
-        {% if request.user.role == "student" %}
-
-        <div class="form-check mb-4">
-
-            {{ form.is_anonymous }}
-
-            <label class="form-check-label me-2">
-                إخفاء اسمي عند عرض التقييم
-            </label>
-
-        </div>
-
-        {% endif %}
-
-
-        <!-- Submit -->
-        <div class="text-end">
-
-            <button type="submit"
-                    class="btn btn-accent review-submit-btn">
-
-               {% if is_edit %}
+            <div class="submit-row">
+                <button type="submit" class="btn btn-accent review-submit-btn">
+                    {% if is_edit %}
+                    <i class="bi bi-check2-circle"></i>
                     حفظ التعديلات
-                {% else %}
+                    {% else %}
+                    <i class="bi bi-send-check"></i>
                     إرسال التقييم
-                {% endif %}
-
-            </button>
-
-        </div>
-
-    </form>
-
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </section>
 </div>
 
-
 <script>
-
 const stars = document.querySelectorAll(".star");
 const ratingInput = document.getElementById("id_rating");
+const ratingText = document.querySelector(".rating-text");
 
 const ratingTexts = {
     1: "سيئ جدًا",
@@ -271,54 +421,25 @@ const ratingTexts = {
     5: "رائع جدًا"
 };
 
-// ===== Load Existing Rating (Edit Mode) =====
+function setRating(value) {
+    ratingInput.value = value;
 
-const currentRating = ratingInput.value;
-
-if (currentRating) {
-
-    stars.forEach(s => {
-
-        if (s.dataset.value <= currentRating) {
-            s.classList.add("active");
-        }
-
+    stars.forEach(function(star) {
+        star.classList.toggle("active", Number(star.dataset.value) <= Number(value));
     });
 
-    document.querySelector(".rating-text").innerText =
-        ratingTexts[currentRating];
+    ratingText.innerText = ratingTexts[value] || "اختر تقييمك";
 }
 
-// ===== Click Stars =====
+if (ratingInput && ratingInput.value) {
+    setRating(ratingInput.value);
+}
 
-stars.forEach(star => {
-
-    star.addEventListener("click", () => {
-
-        const value = star.dataset.value;
-
-        ratingInput.value = value;
-
-        stars.forEach(s => {
-            s.classList.remove("active");
-        });
-
-        stars.forEach(s => {
-
-            if (s.dataset.value <= value) {
-                s.classList.add("active");
-            }
-
-        });
-
-        document.querySelector(".rating-text").innerText =
-            ratingTexts[value];
-
+stars.forEach(function(star) {
+    star.addEventListener("click", function() {
+        setRating(star.dataset.value);
     });
-
 });
-
 </script>
 
 {% endblock %}
-

@@ -3,265 +3,427 @@
 {% block student_content %}
 
 <style>
-    .detail-card {
-        background: white;
-        border-radius: 35px;
-        padding: 35px;
-        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
-        margin-bottom: 30px;
+    .subscription-detail-page {
+        display: grid;
+        gap: 24px;
     }
 
-    .info-row {
-        display: flex;
-        justify-content: space-between;
+    .detail-hero {
+        background: linear-gradient(135deg, #ffffff, #f4eee4);
+        border: 1px solid rgba(200, 169, 81, 0.22);
+        border-radius: 30px;
+        padding: 32px;
+        box-shadow: 0 24px 58px rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-hero h4 {
+        font-size: 2rem;
         margin-bottom: 12px;
     }
 
-    .info-row span:first-child {
-        color: var(--soft-color);
+    .detail-layout {
+        display: grid;
+        gap: 24px;
+    }
+
+    .subscription-main {
+        display: grid;
+        gap: 24px;
+    }
+
+    .detail-card {
+        background: #ffffff;
+        border: 1px solid rgba(200, 169, 81, 0.18);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .title-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background: linear-gradient(135deg, var(--accent-color), #d4af37);
+        box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
     }
 
     .driver-profile-box {
-    background: var(--light-bg);
-    border-radius: 25px;
-    padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        background: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 24px;
+        padding: 20px;
+        text-decoration: none;
+        color: var(--dark-color);
+        transition: 0.25s ease;
+    }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .driver-profile-box:hover {
+        color: var(--dark-color);
+        transform: translateY(-3px);
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.06);
+        border-color: rgba(200, 169, 81, 0.35);
+    }
 
-    transition: 0.3s ease;
-}
+    .driver-main {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+    }
 
-.driver-profile-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-}
+    .driver-avatar {
+        width: 62px;
+        height: 62px;
+        min-width: 62px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
 
-.driver-profile-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+    .driver-name {
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 5px;
+    }
 
-.driver-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    .driver-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: var(--soft-color);
+        font-size: 0.9rem;
+    }
 
-    background: var(--accent-color);
-    color: white;
+    .rating-chip,
+    .verified-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 16px;
+        padding: 4px 9px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    .rating-chip {
+        background-color: rgba(255, 193, 7, 0.14);
+        color: #9a6b00;
+    }
 
-    font-size: 24px;
-}
+    .rating-chip i {
+        color: #d49a00;
+    }
 
-.driver-name {
-    font-weight: 700;
-    color: #222;
-}
+    .verified-chip {
+        background-color: rgba(25, 135, 84, 0.11);
+        color: #198754;
+    }
 
-.driver-meta {
-    color: var(--soft-color);
-    font-size: 0.9rem;
-    margin-top: 4px;
-}
+    .verified-chip.muted {
+        background-color: rgba(74, 63, 53, 0.07);
+        color: var(--soft-color);
+    }
 
-.driver-profile-action {
-    color: var(--accent-color);
-    font-weight: 600;
-}
+    .profile-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent-color);
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
-.driver-profile-box {
-    background: var(--light-bg);
-    border-radius: 25px;
-    padding: 20px;
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .info-tile {
+        background-color: var(--light-bg);
+        border: 1px solid rgba(74, 63, 53, 0.06);
+        border-radius: 20px;
+        padding: 18px;
+    }
 
-    transition: 0.3s ease;
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--soft-color);
+        font-size: 0.92rem;
+        margin-bottom: 9px;
+    }
 
-    border: 1px solid rgba(0,0,0,0.03);
+    .info-value {
+        color: var(--dark-color);
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
 
-    cursor: pointer;
-}
+    .seat-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
 
-.driver-profile-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-}
+    .remaining-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        width: fit-content;
+        border-radius: 16px;
+        padding: 5px 10px;
+        background-color: rgba(200, 169, 81, 0.12);
+        color: var(--accent-color);
+        font-size: 0.84rem;
+    }
 
-.driver-profile-action {
-    color: var(--accent-color);
-    font-weight: 600;
+    .notes-box {
+        background-color: var(--light-bg);
+        border-right: 5px solid var(--accent-color);
+        border-radius: 20px;
+        padding: 20px;
+        color: var(--soft-color);
+        line-height: 2;
+    }
 
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    .request-btn {
+        width: 100%;
+        min-height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 24px;
+        font-weight: 600;
+    }
 
-    transition: 0.3s ease;
-}
+    .soft-alert {
+        border: none;
+        border-radius: 20px;
+        padding: 16px 18px;
+        line-height: 1.8;
+    }
 
-.driver-profile-box:hover .driver-profile-action {
-    transform: translateX(-5px);
-}
+    @media (max-width: 768px) {
+        .detail-hero,
+        .detail-card {
+            border-radius: 24px;
+            padding: 22px;
+        }
+
+        .detail-hero h4 {
+            font-size: 1.55rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .driver-profile-box {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .profile-action {
+            width: 100%;
+            justify-content: flex-end;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .driver-main {
+            align-items: flex-start;
+        }
+
+        .driver-avatar {
+            width: 54px;
+            height: 54px;
+            min-width: 54px;
+            font-size: 21px;
+        }
+    }
 </style>
 
+<div class="subscription-detail-page">
 
-<div class="detail-card">
+    <section class="detail-hero">
+        <h4 class="fw-bold">راجع الاشتراك قبل إرسال الطلب</h4>
+        <p class="text-muted mb-0" style="line-height: 2; max-width: 760px;">
+            هنا تجد بيانات السائق وتفاصيل الاشتراك المهمة. إذا كانت مناسبة لك، ستجد إجراء طلب الاشتراك في نهاية الصفحة.
+        </p>
+    </section>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-bold mb-0">تفاصيل الاشتراك</h4>
+    <div class="detail-layout">
+        <div class="subscription-main">
 
-        {% if subscription.available_seats <= 2 %} <span class="badge bg-danger">مقاعد قليلة</span>
-            {% else %}
-            <span class="badge bg-success">متاح</span>
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <span class="title-icon"><i class="bi bi-person-badge"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-1">بيانات السائق</h5>
+                        <span class="text-muted">اطلع على الملف والتقييم قبل إرسال الطلب.</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'accounts:public_profile' subscription.driver.user.id %}"
+                   class="driver-profile-box">
+                    <div class="driver-main">
+                        <div class="driver-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div>
+                            <div class="driver-name">
+                                {{ subscription.driver.user.get_full_name }}
+                            </div>
+
+                            <div class="driver-meta">
+                                {% if subscription.driver.average_rating > 0 %}
+                                <span class="rating-chip">
+                                    <i class="bi bi-star-fill"></i>
+                                    {{ subscription.driver.average_rating|floatformat:1 }}
+                                </span>
+                                {% else %}
+                                <span class="verified-chip muted">جديد</span>
+                                {% endif %}
+
+                                {% if subscription.driver.verification_status == "approved" %}
+                                <span class="verified-chip">
+                                    <i class="bi bi-shield-check"></i>
+                                    موثق
+                                </span>
+                                {% else %}
+                                <span class="verified-chip muted">غير موثق</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="profile-action">
+                        عرض الملف الشخصي
+                        <i class="bi bi-arrow-left"></i>
+                    </span>
+                </a>
+            </section>
+
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <span class="title-icon"><i class="bi bi-info-circle"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-1">معلومات الاشتراك</h5>
+                        <span class="text-muted">راجع تفاصيل الاشتراك قبل المتابعة.</span>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-geo"></i> المدينة</div>
+                        <div class="info-value">{{ subscription.driver.user.city.name_ar }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-signpost"></i> الحي</div>
+                        <div class="info-value">{{ subscription.neighborhood }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                        <div class="info-value">{{ subscription.price }} ر.س / {{ subscription.get_duration_display }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-people"></i> المقاعد</div>
+                        <div class="info-value seat-stack">
+                            <span>{{ subscription.seats }} مقاعد إجمالاً</span>
+                            <span class="remaining-chip">
+                                <i class="bi bi-check2-circle"></i>
+                                {{ subscription.available_seats }} متبقية
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-calendar-check"></i> تاريخ البداية</div>
+                        <div class="info-value" dir="ltr">{{ subscription.start_date|date:"d/m/Y" }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-calendar-x"></i> تاريخ النهاية</div>
+                        <div class="info-value" dir="ltr">{{ subscription.end_date|date:"d/m/Y" }}</div>
+                    </div>
+                </div>
+            </section>
+
+            {% if subscription.notes %}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <span class="title-icon"><i class="bi bi-card-text"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-1">ملاحظات السائق</h5>
+                        <span class="text-muted">معلومات إضافية عن الاشتراك أو الرحلة.</span>
+                    </div>
+                </div>
+
+                <div class="notes-box">
+                    {{ subscription.notes }}
+                </div>
+            </section>
             {% endif %}
-    </div>
+        </div>
 
-
-<!-- ===== Driver Info ===== -->
-<h6 class="fw-bold mb-3">
-    بيانات السائق
-</h6>
-
-<a href="{% url 'accounts:public_profile' subscription.driver.user.id %}"
-   class="text-decoration-none">
-
-    <div class="driver-profile-box">
-
-        <div class="driver-profile-left">
-
-            <div class="driver-avatar">
-                <i class="bi bi-person-fill"></i>
-            </div>
-
-            <div>
-
-                <div class="driver-name">
-                    {{ subscription.driver.user.get_full_name }}
+        <aside class="detail-card action-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-send-check"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">طلب الاشتراك</h5>
+                    <span class="text-muted">تأكد من التفاصيل ثم تابع للطلب.</span>
                 </div>
-
-                <div class="driver-meta">
-
-                    {% if subscription.driver.average_rating %}
-                        ⭐ {{ subscription.driver.average_rating|floatformat:2 }}
-                    {% endif %}
-
-                    •
-
-                    {% if subscription.driver.verification_status == "approved" %}
-                        موثق ✅
-                    {% else %}
-                        غير موثق
-                    {% endif %}
-
-                </div>
-
             </div>
 
-        </div>
+            <p class="text-muted mb-4" style="line-height: 2;">
+                عند طلب الاشتراك ستنتقل للخطوة التالية لتحديد جدول الذهاب والعودة، ثم يتم إرسال الطلب للسائق.
+            </p>
 
-        <div class="driver-profile-action">
-            عرض الملف الشخصي
-            <i class="bi bi-arrow-left-short"></i>
-        </div>
-
-    </div>
-
-</a>
-
-
-    <!-- ===== Subscription Info ===== -->
-    <h6 class="fw-bold mt-4 mb-3">تفاصيل الاشتراك</h6>
-
-    <div class="info-row">
-        <span>المدينة</span>
-        <span>{{ subscription.driver.user.city.name_ar }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>الحي</span>
-        <span>{{ subscription.neighborhood }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>السعر</span>
-        <span>{{ subscription.price }} ر.س</span>
-    </div>
-
-    <div class="info-row">
-        <span>المدة</span>
-        <span>{{ subscription.get_duration_display }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>المقاعد المتبقية</span>
-        <span>{{ subscription.available_seats }} / {{ subscription.seats }}</span>
-    </div>
-
-    <div class="info-row">
-        <span>تاريخ البداية</span>
-        <span dir="ltr">
-            {{ subscription.start_date|date:"d/m/Y" }}
-        </span>
-    </div>
-
-    <div class="info-row">
-        <span>تاريخ النهاية</span>
-        <span dir="ltr">
-            {{ subscription.end_date|date:"d/m/Y" }}
-        </span>
-    </div>
-
-    {% if subscription.notes %}
-
-        <hr class="my-4">
-
-        <div>
-
-            <h6 class="fw-bold mb-3">
-                ملاحظات السائق
-            </h6>
-
-            <div class="p-3 rounded-4"
-                style="
-                    background: var(--light-bg);
-                    line-height: 1.9;
-                ">
-
-                {{ subscription.notes }}
-
+            {% if has_active_request %}
+            <div class="alert alert-warning soft-alert mb-0">
+                لديك طلب أو اشتراك قائم بالفعل، لذلك لا يمكنك إرسال طلب جديد حالياً.
             </div>
-
-        </div>
-
-    {% endif %}
-
-</div>
-
-
-<!-- ===== Request Button ===== -->
-<div class="detail-card text-center">
-
-    {% if has_active_request %}
-    <div class="alert alert-warning">
-        لديك طلب اشتراك قائم بالفعل.
+            {% elif subscription.available_seats <= 0 %}
+            <div class="alert alert-danger soft-alert mb-0">
+                لا توجد مقاعد متاحة حالياً في هذا الاشتراك.
+            </div>
+            {% else %}
+            <a href="{% url 'student:create_request' subscription.id %}" class="btn btn-accent request-btn">
+                <i class="bi bi-plus-circle"></i>
+                طلب اشتراك
+            </a>
+            {% endif %}
+        </aside>
     </div>
-    {% elif subscription.available_seats <= 0 %} <div class="alert alert-danger">
-        لا توجد مقاعد متاحة حالياً.
-</div>
-{% else %}
-<a href="{% url 'student:create_request' subscription.id %}" class="btn btn-accent px-5">
-    طلب اشتراك
-</a>
-{% endif %}
-
 </div>
 
 {% endblock %}

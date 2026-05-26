@@ -154,6 +154,7 @@ def wallet_view(request):
         )
     
     frozen_amount = max(wallet.balance - available_to_withdraw, Decimal("0.00"))
+    wallet_total = wallet.balance + wallet.frozen_balance
 
     context = {
         "wallet": wallet,
@@ -161,6 +162,7 @@ def wallet_view(request):
         "is_driver_blocked": is_driver_blocked,  # 🔥 مهم
         "available_to_withdraw": available_to_withdraw,  # 🔥 الجديد
         "frozen_amount": frozen_amount,  # 🔥 الجديد
+        "wallet_total": wallet_total,
     }
 
     return render(request, template, context)
