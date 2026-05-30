@@ -3,149 +3,785 @@
 {% block admin_content %}
 
 <style>
-.section-card {
-    background: white;
+.requests-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+}
+
+.requests-hero,
+.requests-filters,
+.request-stat,
+.requests-panel,
+.request-item {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.requests-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
     border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+    padding: 28px;
 }
 
-.view-btn {
-    background: #e7f1ff;
-    color: #0d6efd;
-    padding: 6px 14px;
-    border-radius: 15px;
+.hero-main,
+.panel-title,
+.item-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.hero-icon,
+.stat-icon,
+.panel-icon,
+.item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
+}
+
+.hero-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    font-size: 24px;
+}
+
+.requests-hero h2 {
+    margin: 0 0 6px;
+    color: var(--dark-color);
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.requests-hero p,
+.panel-title p,
+.item-meta {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.count-pill,
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 999px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.count-pill {
+    min-height: 40px;
+    padding: 8px 15px;
+    background: #f7f2e7;
+    color: #9a7a26;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+}
+
+.stats-section {
+    display: none;
+}
+
+.stats-section.active {
+    display: grid;
+}
+
+.request-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+    border-radius: 22px;
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    font-size: 18px;
+}
+
+.stat-label {
+    margin-bottom: 4px;
+    color: #877a6d;
     font-size: 13px;
+    font-weight: 700;
+}
+
+.stat-value {
+    color: var(--dark-color);
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.requests-filters,
+.requests-panel {
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-section {
+    display: none;
+}
+
+.filter-section.active {
+    display: block;
+}
+
+.quick-search {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.advanced-search {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    padding: 9px 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: rgba(200, 169, 81, 0.58);
+    box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn,
+.reset-btn,
+.details-link {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-weight: 800;
     text-decoration: none;
+    white-space: nowrap;
 }
 
-.status-badge {
-    padding: 6px 14px;
+.filter-btn {
+    border: 0;
+    background: var(--accent-color);
+    color: white;
+}
+
+.reset-btn {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    color: var(--dark-color);
+}
+
+.panel-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.tab-btn {
+    min-height: 42px;
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: #f1eee8;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.tab-btn.active {
+    background: var(--accent-color);
+    color: white;
+}
+
+.panel-section {
+    display: none;
+}
+
+.panel-section.active {
+    display: block;
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.panel-icon,
+.item-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+    font-size: 19px;
+}
+
+.panel-title h3 {
+    margin: 0 0 4px;
+    color: var(--dark-color);
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.cards-list {
+    display: grid;
+    gap: 12px;
+}
+
+.request-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
     border-radius: 20px;
+    box-shadow: none;
+}
+
+.request-item.request-subscription {
+    align-items: stretch;
+}
+
+.request-subscription .item-main {
+    align-items: flex-start;
+}
+
+.request-summary {
+    min-width: 0;
+}
+
+.item-title {
+    margin: 0 0 5px;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.item-meta {
     font-size: 13px;
-    font-weight: 600;
 }
 
-.pending {
-    background: #fff3cd;
-    color: #856404;
+.request-meta-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 9px;
 }
 
-.approved {
-    background: #d4edda;
-    color: #155724;
+.request-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    color: #776a5f;
+    font-size: 13px;
+    line-height: 1.8;
 }
 
-.rejected {
-    background: #f8d7da;
-    color: #721c24;
+.request-meta-bit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
 }
 
-.cancelled {
-    background: #e2e3e5;
-    color: #383d41;
+.request-meta-bit i {
+    color: var(--accent-color);
+    font-size: 13px;
+}
+
+.request-meta-label {
+    color: #8b7b6e;
+    font-weight: 800;
+}
+
+.request-meta-value {
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.status-pill {
+    min-height: 32px;
+    padding: 6px 11px;
+    font-size: 13px;
+}
+
+.status-pending {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.status-approved {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.status-rejected {
+    background: #fde8e8;
+    color: #9b2c2c;
+}
+
+.status-cancelled,
+.status-incomplete {
+    background: #eeeeee;
+    color: #666;
+}
+
+.details-link {
+    min-height: 38px;
+    color: var(--accent-color);
+    background: rgba(200, 169, 81, 0.12);
+}
+
+.empty-state {
+    padding: 28px;
+    border-radius: 20px;
+    background: #fbfaf7;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    color: #887a6d;
+    text-align: center;
+}
+
+@media (max-width: 991px) {
+    .quick-search,
+    .advanced-search {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .requests-hero,
+    .requests-filters,
+    .requests-panel {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .requests-hero,
+    .panel-head {
+        flex-direction: column;
+    }
+
+    .hero-pills {
+        justify-content: flex-start;
+    }
+
+    .requests-hero h2 {
+        font-size: 25px;
+    }
+
+    .quick-search,
+    .advanced-search,
+    .request-item {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions,
+    .item-actions {
+        width: 100%;
+    }
+
+    .filter-btn,
+    .reset-btn,
+    .details-link {
+        flex: 1;
+    }
 }
 </style>
 
-<h3 class="mb-4 fw-bold">📦 إدارة الطلبات</h3>
+<div class="requests-page">
 
-<!-- ================= Requests ================= -->
+    <section class="requests-hero">
+        <div class="hero-main">
+            <span class="hero-icon"><i class="bi bi-clipboard-check"></i></span>
+            <div>
+                <h2>إدارة الطلبات</h2>
+                <p>تابع طلبات الاشتراك وتوثيق السائقين مع بحث سريع وفلاتر دقيقة.</p>
+            </div>
+        </div>
+        <!-- <div class="hero-pills">
+            <span class="count-pill"><i class="bi bi-ticket-detailed"></i>{{ requests_count }} طلب اشتراك</span>
+            <span class="count-pill"><i class="bi bi-person-vcard"></i>{{ drivers_count }} توثيق سائق</span>
+        </div> -->
+    </section>
 
-<div class="section-card">
+    <section id="subscriptionStats" class="stats-grid stats-section {% if active_tab != 'drivers' %}active{% endif %}">
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-hourglass-split"></i></span>
+            <div>
+                <div class="stat-label">اشتراكات قيد الانتظار</div>
+                <div class="stat-value">{{ pending_requests_count }}</div>
+            </div>
+        </div>
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-check-circle"></i></span>
+            <div>
+                <div class="stat-label">اشتراكات مقبولة</div>
+                <div class="stat-value">{{ approved_requests_count }}</div>
+            </div>
+        </div>
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-x-circle"></i></span>
+            <div>
+                <div class="stat-label">اشتراكات مرفوضة</div>
+                <div class="stat-value">{{ rejected_requests_count }}</div>
+            </div>
+        </div>
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-slash-circle"></i></span>
+            <div>
+                <div class="stat-label">اشتراكات ملغية</div>
+                <div class="stat-value">{{ cancelled_requests_count }}</div>
+            </div>
+        </div>
+    </section>
 
+    <section id="driverStats" class="stats-grid stats-section {% if active_tab == 'drivers' %}active{% endif %}">
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-pencil-square"></i></span>
+            <div>
+                <div class="stat-label">توثيق غير مكتمل</div>
+                <div class="stat-value">{{ incomplete_drivers_count }}</div>
+            </div>
+        </div>
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-person-badge"></i></span>
+            <div>
+                <div class="stat-label">سائقون قيد المراجعة</div>
+                <div class="stat-value">{{ pending_drivers_count }}</div>
+            </div>
+        </div>
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-shield-check"></i></span>
+            <div>
+                <div class="stat-label">سائقون معتمدون</div>
+                <div class="stat-value">{{ approved_drivers_count }}</div>
+            </div>
+        </div>
+        <div class="request-stat">
+            <span class="stat-icon"><i class="bi bi-person-x"></i></span>
+            <div>
+                <div class="stat-label">توثيق مرفوض</div>
+                <div class="stat-value">{{ rejected_drivers_count }}</div>
+            </div>
+        </div>
+    </section>
 
-<h5 class="mb-3">طلبات الاشتراك</h5>
+    <section class="requests-panel">
+        <div class="panel-tabs" role="tablist">
+            <button type="button" class="tab-btn {% if active_tab != 'drivers' %}active{% endif %}" data-tab="subscriptions">طلبات الاشتراك</button>
+            <button type="button" class="tab-btn {% if active_tab == 'drivers' %}active{% endif %}" data-tab="drivers">توثيق السائقين</button>
+        </div>
+    </section>
 
-<table class="table text-center align-middle">
-    <thead>
-        <tr>
-            <th>الطالب</th>
-            <th>السائق</th>
-            <th>الحي</th>
-            <th>الحالة</th>
-            <th>عرض</th>
-        </tr>
-    </thead>
+    <section class="requests-filters">
+        <div id="subscriptionFilters" class="filter-section {% if active_tab != 'drivers' %}active{% endif %}">
+            <form method="get" class="filter-form">
+                <input type="hidden" name="tab" value="subscriptions">
 
-    <tbody>
-    {% for req in requests %}
-        <tr>
-            <td>{{ req.student.user.full_name }}</td>
-            <td>{{ req.subscription.driver.user.full_name }}</td>
-            <td>{{ req.subscription.neighborhood }}</td>
+                <div class="quick-search">
+                    <div class="filter-field">
+                        <label for="requestSearch">بحث طلبات الاشتراك</label>
+                        <input id="requestSearch" type="text" name="request_search" placeholder="اسم الطالب، السائق، الحي، البريد أو رقم الطلب" value="{{ request_search|default:'' }}">
+                    </div>
 
-            <td>
-                <span class="status-badge 
-                    {% if req.status == 'pending' %}pending
-                    {% elif req.status == 'approved' %}approved
-                    {% elif req.status == 'rejected' %}rejected
-                    {% elif req.status == 'cancelled' %}cancelled
-                    {% endif %}
-                ">
-                    {{ req.get_status_display }}
-                </span>
-            </td>
+                    <div class="filter-actions">
+                        <button type="submit" class="filter-btn">
+                            <i class="bi bi-search"></i>
+                            تطبيق
+                        </button>
+                        <a href="{% url 'admin_panel:requests' %}?tab=subscriptions" class="reset-btn">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            إعادة
+                        </a>
+                    </div>
+                </div>
 
-            <td>
-                <a href="{% url 'admin_panel:request_detail' req.id %}" class="view-btn">
-                    👁️ عرض
-                </a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
+                <div class="advanced-search">
+                    <div class="filter-field">
+                        <label for="requestStatus">حالة الطلب</label>
+                        <select id="requestStatus" name="request_status">
+                            <option value="">كل الحالات</option>
+                            <option value="pending" {% if request_status == "pending" %}selected{% endif %}>قيد الانتظار</option>
+                            <option value="approved" {% if request_status == "approved" %}selected{% endif %}>مقبول</option>
+                            <option value="rejected" {% if request_status == "rejected" %}selected{% endif %}>مرفوض</option>
+                            <option value="cancelled" {% if request_status == "cancelled" %}selected{% endif %}>ملغي</option>
+                        </select>
+                    </div>
 
-</table>
+                    <div class="filter-field">
+                        <label for="requestDateFrom">من تاريخ الطلب</label>
+                        <input id="requestDateFrom" type="date" name="request_date_from" value="{{ request_date_from }}">
+                    </div>
 
+                    <div class="filter-field">
+                        <label for="requestDateTo">إلى تاريخ الطلب</label>
+                        <input id="requestDateTo" type="date" name="request_date_to" value="{{ request_date_to }}">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="driverFilters" class="filter-section {% if active_tab == 'drivers' %}active{% endif %}">
+            <form method="get" class="filter-form">
+                <input type="hidden" name="tab" value="drivers">
+
+                <div class="quick-search">
+                    <div class="filter-field">
+                        <label for="driverSearch">بحث توثيق السائقين</label>
+                        <input id="driverSearch" type="text" name="driver_search" placeholder="اسم السائق، البريد، الجوال أو موديل السيارة" value="{{ driver_search|default:'' }}">
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="filter-btn">
+                            <i class="bi bi-search"></i>
+                            تطبيق
+                        </button>
+                        <a href="{% url 'admin_panel:requests' %}?tab=drivers" class="reset-btn">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            إعادة
+                        </a>
+                    </div>
+                </div>
+
+                <div class="advanced-search">
+                    <div class="filter-field">
+                        <label for="driverStatus">حالة التوثيق</label>
+                        <select id="driverStatus" name="driver_status">
+                            <option value="">كل الحالات</option>
+                            <option value="incomplete" {% if driver_status == "incomplete" %}selected{% endif %}>غير مكتمل</option>
+                            <option value="pending" {% if driver_status == "pending" %}selected{% endif %}>قيد المراجعة</option>
+                            <option value="approved" {% if driver_status == "approved" %}selected{% endif %}>معتمد</option>
+                            <option value="rejected" {% if driver_status == "rejected" %}selected{% endif %}>مرفوض</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-field">
+                        <label for="driverDateFrom">من تاريخ</label>
+                        <input id="driverDateFrom" type="date" name="driver_date_from" value="{{ driver_date_from }}">
+                    </div>
+
+                    <div class="filter-field">
+                        <label for="driverDateTo">إلى تاريخ</label>
+                        <input id="driverDateTo" type="date" name="driver_date_to" value="{{ driver_date_to }}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="requests-panel">
+
+        <div id="subscriptionRequests" class="panel-section {% if active_tab != 'drivers' %}active{% endif %}">
+            <div class="panel-head">
+                <div class="panel-title">
+                    <span class="panel-icon"><i class="bi bi-ticket-perforated"></i></span>
+                    <div>
+                        <h3>طلبات الاشتراك</h3>
+                        <p>كل الطلبات المرسلة من الطلاب إلى السائقين حسب الفلاتر الحالية.</p>
+                    </div>
+                </div>
+                <span class="count-pill">{{ requests_count }} نتيجة</span>
+            </div>
+
+            <div class="cards-list">
+                {% for req in requests %}
+                <article class="request-item request-subscription">
+                    <div class="item-main">
+                        <span class="item-icon"><i class="bi bi-ticket-detailed"></i></span>
+                        <div class="request-summary">
+                            <p class="item-title">{{ req.student.user.full_name }}</p>
+                            <div class="request-meta-lines">
+                                <div class="request-meta-line">
+                                    <span class="request-meta-bit">
+                                        <i class="bi bi-person"></i>
+                                        <span class="request-meta-label">السائق:</span>
+                                        <span class="request-meta-value">{{ req.subscription.driver.user.full_name }}</span>
+                                    </span>
+                                    <span class="request-meta-bit">
+                                        <i class="bi bi-ticket-perforated"></i>
+                                        <span class="request-meta-label">الاشتراك:</span>
+                                        <span class="request-meta-value">{{ req.subscription.driver.user.city.name_ar|default:"مدينة غير محددة" }} - {{ req.subscription.neighborhood }}</span>
+                                    </span>
+                                </div>
+                                <div class="request-meta-line">
+                                    <span class="request-meta-bit">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span class="request-meta-label">تاريخ الطلب:</span>
+                                        <span class="request-meta-value">{{ req.request_date|date:"d/m/Y H:i" }}</span>
+                                    </span>
+                                    <span class="request-meta-bit">
+                                        <i class="bi bi-hash"></i>
+                                        <span class="request-meta-label">رقم الطلب:</span>
+                                        <span class="request-meta-value">{{ req.request_code|default:"غير محدد" }}</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <span class="status-pill
+                            {% if req.status == 'pending' %}status-pending
+                            {% elif req.status == 'approved' %}status-approved
+                            {% elif req.status == 'rejected' %}status-rejected
+                            {% else %}status-cancelled{% endif %}">
+                            {{ req.get_status_display }}
+                        </span>
+                        <a href="{% url 'admin_panel:subscription_request_detail' req.id %}" class="details-link">
+                            التفاصيل
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="empty-state">لا توجد طلبات اشتراك مطابقة للفلاتر الحالية.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="driverRequests" class="panel-section {% if active_tab == 'drivers' %}active{% endif %}">
+            <div class="panel-head">
+                <div class="panel-title">
+                    <span class="panel-icon"><i class="bi bi-person-vcard"></i></span>
+                    <div>
+                        <h3>طلبات توثيق السائقين</h3>
+                        <p>ملفات السائقين وحالة مراجعة التوثيق.</p>
+                    </div>
+                </div>
+                <span class="count-pill">{{ drivers_count }} نتيجة</span>
+            </div>
+
+            <div class="cards-list">
+                {% for d in drivers %}
+                <article class="request-item">
+                    <div class="item-main">
+                        <span class="item-icon"><i class="bi bi-car-front"></i></span>
+                        <div>
+                            <p class="item-title">{{ d.user.full_name }}</p>
+                            <p class="item-meta">
+                                {{ d.vehicle_model|default:"السيارة غير محددة" }} ·
+                                {% if d.user.city %}{{ d.user.city.name_ar }}{% else %}مدينة غير محددة{% endif %} ·
+                                {{ d.submitted_at|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <span class="status-pill
+                            {% if d.verification_status == 'pending' %}status-pending
+                            {% elif d.verification_status == 'approved' %}status-approved
+                            {% elif d.verification_status == 'rejected' %}status-rejected
+                            {% else %}status-incomplete{% endif %}">
+                            {{ d.get_verification_status_display }}
+                        </span>
+                        <a href="{% url 'admin_panel:driver_detail' d.id %}" class="details-link">
+                            التفاصيل
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="empty-state">لا توجد طلبات توثيق مطابقة للفلاتر الحالية.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
 
 </div>
 
-<!-- ================= Drivers ================= -->
+<script>
+document.querySelectorAll(".tab-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+        const tab = button.dataset.tab;
 
-<div class="section-card">
+        document.querySelectorAll(".tab-btn").forEach((item) => item.classList.remove("active"));
+        document.querySelectorAll(".panel-section").forEach((section) => section.classList.remove("active"));
+        document.querySelectorAll(".filter-section").forEach((section) => section.classList.remove("active"));
+        document.querySelectorAll(".stats-section").forEach((section) => section.classList.remove("active"));
 
+        button.classList.add("active");
 
-<h5 class="mb-3">طلبات توثيق السائقين</h5>
-
-<table class="table text-center align-middle">
-    <thead>
-        <tr>
-            <th>السائق</th>
-            <th>السيارة</th>
-            <th>الحالة</th>
-            <th>عرض</th>
-        </tr>
-    </thead>
-
-    <tbody>
-    {% for d in drivers %}
-        <tr>
-            <td>{{ d.user.full_name }}</td>
-            <td>{{ d.vehicle_model }}</td>
-            <td>
-                <span class="status-badge 
-                    {% if d.verification_status == 'pending' %}pending
-                    {% elif d.verification_status == 'approved' %}approved
-                    {% else %}rejected
-                    {% endif %}
-                ">
-                    {{ d.get_verification_status_display }}
-                </span>
-            </td>
-
-            <td>
-                <a href="{% url 'admin_panel:driver_detail' d.id %}" class="view-btn">
-                    👁️ عرض
-                </a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-
-</table>
-
-
-</div>
+        if (tab === "drivers") {
+            document.getElementById("driverStats").classList.add("active");
+            document.getElementById("driverRequests").classList.add("active");
+            document.getElementById("driverFilters").classList.add("active");
+        } else {
+            document.getElementById("subscriptionStats").classList.add("active");
+            document.getElementById("subscriptionRequests").classList.add("active");
+            document.getElementById("subscriptionFilters").classList.add("active");
+        }
+    });
+});
+</script>
 
 {% endblock %}

@@ -3,168 +3,548 @@
 {% block admin_content %}
 
 <style>
-.section-card {
-    background: white;
-    border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
-}
-
-/* Search & Filters */
-.filter-box {
+.users-page {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 22px;
 }
 
-.filter-box input,
-.filter-box select {
-    border-radius: 15px;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
+.users-hero,
+.users-card,
+.filter-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
 }
 
-.search-btn {
-    border-radius: 15px;
+.users-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 28px;
+    padding: 26px;
+}
+
+.hero-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hero-icon,
+.stat-icon,
+.user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200, 169, 81, 0.15);
+    color: var(--accent-color);
+}
+
+.hero-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    font-size: 24px;
+}
+
+.users-hero h2 {
+    margin: 0 0 6px;
+    color: var(--dark-color);
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.users-hero p {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.results-pill {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 8px 16px;
-    background: black;
+    border-radius: 999px;
+    background: #f7f2e7;
+    color: #9a7a26;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.14);
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 14px;
+    font-size: 19px;
+}
+
+.stat-label {
+    color: #877a6d;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    color: var(--dark-color);
+    font-size: 23px;
+    line-height: 1;
+    font-weight: 800;
+}
+
+.filter-card,
+.users-card {
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) 170px 170px auto auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    padding: 9px 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: rgba(200, 169, 81, 0.55);
+    box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+}
+
+.action-btn,
+.reset-link,
+.view-link {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.action-btn {
+    border: 0;
+    background: var(--accent-color);
     color: white;
-    border: none;
 }
 
-/* Table */
-.table th {
-    font-weight: 600;
-    color: #555;
+.reset-link {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--dark-color);
+    background: white;
 }
 
-.table td {
+.view-link {
+    min-height: 38px;
+    color: var(--accent-color);
+    background: rgba(200, 169, 81, 0.12);
+}
+
+.users-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.users-card-header h3 {
+    margin: 0;
+    color: var(--dark-color);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.users-card-header p {
+    margin: 4px 0 0;
+    color: #887a6d;
+    font-size: 14px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+.users-table th {
+    padding: 15px;
+    background: #f5f1e9;
+    color: #7d6f62;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.users-table td {
+    padding: 16px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    color: var(--dark-color);
     vertical-align: middle;
 }
 
-/* Badges */
-.badge-role {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
+.users-table tr:last-child td {
+    border-bottom: 0;
 }
 
-.student { background: #e7f1ff; color: #0d6efd; }
-.driver { background: #d4edda; color: #155724; }
-.admin { background: #f8d7da; color: #721c24; }
-
-.active { background: #d4edda; color: #155724; }
-.banned { background: #f8d7da; color: #721c24; }
-.deleted {
-    background: #e2e3e5;
-    color: #495057;
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 190px;
 }
 
-/* View Button */
-.view-btn {
-    background: #e7f1ff;
-    color: #0d6efd;
-    padding: 6px 14px;
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
     border-radius: 15px;
-    text-decoration: none;
+    font-size: 18px;
 }
 
-/* Hover */
-.table tbody tr:hover {
-    background: #f9f9f9;
+.user-name {
+    margin: 0 0 3px;
+    font-weight: 800;
+}
+
+.user-date {
+    margin: 0;
+    color: #8b7e72;
+    font-size: 12px;
+}
+
+.email-text {
+    color: #6f6258;
+    direction: ltr;
+    text-align: right;
+}
+
+.badge-pill {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.role-student,
+.role-driver,
+.role-admin,
+.status-active,
+.status-banned,
+.status-deleted {
+    background: rgba(200, 169, 81, 0.13);
+    color: #9a7a26;
+}
+
+.status-banned {
+    background: #fde8e8;
+    color: #9b2c2c;
+}
+
+.status-deleted {
+    background: #eeeeee;
+    color: #666;
+}
+
+.mobile-users {
+    display: none;
+}
+
+.user-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 22px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.user-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.user-card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.empty-state {
+    padding: 30px;
+    text-align: center;
+    color: #887a6d;
+    background: #fbfaf7;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    border-radius: 22px;
+}
+
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .filter-form {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .users-hero {
+        flex-direction: column;
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .users-hero h2 {
+        font-size: 25px;
+    }
+
+    .stats-grid,
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .desktop-users {
+        display: none;
+    }
+
+    .mobile-users {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .users-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 </style>
 
-<h3 class="mb-4 fw-bold">إدارة المستخدمين</h3>
+<div class="users-page">
 
-<!-- ================= Filters ================= -->
+    <section class="users-hero">
+        <div class="hero-title">
+            <span class="hero-icon"><i class="bi bi-people"></i></span>
+            <div>
+                <h2>إدارة المستخدمين</h2>
+                <p>استعرض حسابات الطلاب والسائقين والمشرفين وتابع حالة كل حساب.</p>
+            </div>
+        </div>
+        <span class="results-pill">{{ results_count }} نتيجة</span>
+    </section>
 
-<div class="section-card">
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-people"></i></span>
+            <div>
+                <div class="stat-label">الإجمالي</div>
+                <div class="stat-value">{{ total_users }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-mortarboard"></i></span>
+            <div>
+                <div class="stat-label">الطلاب</div>
+                <div class="stat-value">{{ students_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-car-front"></i></span>
+            <div>
+                <div class="stat-label">السائقين</div>
+                <div class="stat-value">{{ drivers_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-shield-check"></i></span>
+            <div>
+                <div class="stat-label">المشرفين</div>
+                <div class="stat-value">{{ admins_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-slash-circle"></i></span>
+            <div>
+                <div class="stat-label">محظورين</div>
+                <div class="stat-value">{{ banned_users_count }}</div>
+            </div>
+        </div>
+    </section>
 
+    <section class="filter-card">
+        <form method="get" class="filter-form">
+            <div class="filter-field">
+                <label for="usersSearch">البحث</label>
+                <input id="usersSearch" type="text" name="search" placeholder="الاسم أو البريد الإلكتروني" value="{{ search|default:'' }}">
+            </div>
 
-<form method="get" class="filter-box">
+            <div class="filter-field">
+                <label for="roleFilter">الدور</label>
+                <select id="roleFilter" name="role">
+                    <option value="all">كل الأدوار</option>
+                    <option value="student" {% if role == "student" %}selected{% endif %}>طلاب</option>
+                    <option value="driver" {% if role == "driver" %}selected{% endif %}>سائقين</option>
+                    <option value="admin" {% if role == "admin" %}selected{% endif %}>مشرفين</option>
+                </select>
+            </div>
 
-    <input type="text" name="search" placeholder="بحث بالاسم أو الإيميل" value="{{ search|default:'' }}">
+            <div class="filter-field">
+                <label for="statusFilter">الحالة</label>
+                <select id="statusFilter" name="status">
+                    <option value="all">كل الحالات</option>
+                    <option value="active" {% if status == "active" %}selected{% endif %}>نشط</option>
+                    <option value="banned" {% if status == "banned" %}selected{% endif %}>محظور</option>
+                    <option value="deleted" {% if status == "deleted" %}selected{% endif %}>محذوف</option>
+                </select>
+            </div>
 
-    <select name="role">
-        <option value="all">كل الأدوار</option>
-        <option value="student" {% if role == "student" %}selected{% endif %}>طلاب</option>
-        <option value="driver" {% if role == "driver" %}selected{% endif %}>سائقين</option>
-        <option value="admin" {% if role == "admin" %}selected{% endif %}>أدمن</option>
-    </select>
+            <button type="submit" class="action-btn">
+                <i class="bi bi-search"></i>
+                بحث
+            </button>
 
-    <select name="status">
-        <option value="all">كل الحالات</option>
-        <option value="active" {% if status == "active" %}selected{% endif %}>نشط</option>
-        <option value="banned" {% if status == "banned" %}selected{% endif %}>محظور</option>
-    </select>
+            <a href="{% url 'admin_panel:users' %}" class="reset-link">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                إعادة
+            </a>
+        </form>
+    </section>
 
-    <button type="submit" class="search-btn">بحث</button>
+    <section class="users-card">
+        <div class="users-card-header">
+            <div>
+                <h3>قائمة المستخدمين</h3>
+                <p>اضغط على ملف المستخدم لمراجعة التفاصيل أو تعديل حالة الحساب.</p>
+            </div>
+        </div>
 
-</form>
+        <div class="table-responsive desktop-users">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>المستخدم</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>الدور</th>
+                        <th>الحالة</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <span class="user-avatar"><i class="bi bi-person"></i></span>
+                                <div>
+                                    <p class="user-name">{{ user.full_name|default:user.email }}</p>
+                                    <p class="user-date">انضم {{ user.date_joined|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="email-text">{{ user.email }}</td>
+                        <td>
+                            <span class="badge-pill role-{{ user.role }}">{{ user.get_role_display }}</span>
+                        </td>
+                        <td>
+                            <span class="badge-pill status-{{ user.status }}">{{ user.get_status_display }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'admin_panel:user_detail' user.id %}" class="view-link">
+                                <i class="bi bi-arrow-left"></i>
+                                ملف
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">لا يوجد مستخدمين مطابقين للفلاتر الحالية.</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-
-</div>
-
-<!-- ================= Users Table ================= -->
-
-<div class="section-card">
-
-
-<table class="table text-center align-middle">
-
-    <thead>
-        <tr>
-            <th>الاسم</th>
-            <th>الإيميل</th>
-            <th>الدور</th>
-            <th>الحالة</th>
-            <th>عرض</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-    {% for user in users %}
-        <tr>
-
-            <td>{{ user.full_name }}</td>
-            <td>{{ user.email }}</td>
-
-            <td>
-                <span class="badge-role {{ user.role }}">
-                    {{ user.get_role_display }}
-                </span>
-            </td>
-
-            <td>
-                <span class="badge-role {{ user.status }}">
-                    {{ user.get_status_display }}
-                </span>
-            </td>
-
-            <td>
-                <a href="{% url 'admin_panel:user_detail' user.id %}" class="view-btn">
-                    👁️ عرض
-                </a>
-            </td>
-
-        </tr>
-
-    {% empty %}
-        <tr>
-            <td colspan="5" class="text-muted">
-                لا يوجد مستخدمين
-            </td>
-        </tr>
-    {% endfor %}
-
-    </tbody>
-
-</table>
-
+        <div class="mobile-users">
+            {% for user in users %}
+            <div class="user-card">
+                <div class="user-card-top">
+                    <div class="user-cell">
+                        <span class="user-avatar"><i class="bi bi-person"></i></span>
+                        <div>
+                            <p class="user-name">{{ user.full_name|default:user.email }}</p>
+                            <p class="user-date">انضم {{ user.date_joined|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'admin_panel:user_detail' user.id %}" class="view-link">ملف</a>
+                </div>
+                <div class="email-text">{{ user.email }}</div>
+                <div class="user-card-badges">
+                    <span class="badge-pill role-{{ user.role }}">{{ user.get_role_display }}</span>
+                    <span class="badge-pill status-{{ user.status }}">{{ user.get_status_display }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">لا يوجد مستخدمين مطابقين للفلاتر الحالية.</div>
+            {% endfor %}
+        </div>
+    </section>
 
 </div>
 

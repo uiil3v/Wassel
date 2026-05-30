@@ -30,7 +30,7 @@
 
     .summary-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 14px;
     }
 
@@ -162,6 +162,11 @@
     .status-chip.cancelled {
         color: #b02a37;
         background-color: rgba(220, 53, 69, 0.11);
+    }
+
+    .status-chip.rejected {
+        color: #9b2c2c;
+        background-color: rgba(155, 44, 44, 0.11);
     }
 
     .info-list {
@@ -315,6 +320,10 @@
                 <span>ملغية</span>
                 <strong>{{ cancelled|length }}</strong>
             </div>
+            <div class="summary-tile">
+                <span>مرفوضة</span>
+                <strong>{{ rejected|length }}</strong>
+            </div>
         </div>
     </section>
 
@@ -372,6 +381,24 @@
     </section>
     {% endif %}
 
+    {% if rejected %}
+    <section class="subscription-section">
+        <div class="section-head">
+            <h5 class="section-title">
+                <span class="section-icon"><i class="bi bi-dash-circle"></i></span>
+                الطلبات المرفوضة
+            </h5>
+            <span class="section-count">{{ rejected|length }} طلب</span>
+        </div>
+
+        <div class="subscriptions-grid">
+            {% for req in rejected %}
+            {% include "student/partials/subscription_card.html" with req=req status_label="مرفوض" status_class="rejected" date_label="النهاية" show_cancel=False show_review=False %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
     {% if cancelled %}
     <section class="subscription-section">
         <div class="section-head">
@@ -390,7 +417,7 @@
     </section>
     {% endif %}
 
-    {% if not active and not pending and not expired and not cancelled %}
+    {% if not active and not pending and not expired and not cancelled and not rejected %}
     <div class="empty-state">
         <i class="bi bi-inbox"></i>
         <h5 class="fw-bold text-dark">لا توجد اشتراكات حالياً</h5>

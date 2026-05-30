@@ -3,402 +3,658 @@
 {% block admin_content %}
 
 <style>
-
-.profile-card {
-    background: white;
-    border-radius: 35px;
-    padding: 40px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-}
-
-/* ===== Header ===== */
-
-.profile-header {
+.user-detail-page {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 35px;
+    flex-direction: column;
+    gap: 22px;
 }
 
-.profile-user {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+.detail-hero,
+.detail-card,
+.action-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
 }
 
-.profile-avatar {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-
-    background: linear-gradient(
-        135deg,
-        var(--accent-color),
-        #d4af37
-    );
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: white;
-    font-size: 34px;
-    font-weight: bold;
-}
-
-.profile-name {
-    font-size: 30px;
-    font-weight: 700;
-}
-
-.profile-email {
-    color: var(--soft-color);
-    margin-top: 5px;
-}
-
-/* ===== Badges ===== */
-
-.badge-role,
-.badge-status {
-    padding: 8px 18px;
-    border-radius: 25px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.student {
-    background: #e7f1ff;
-    color: #0d6efd;
-}
-
-.driver {
-    background: #d4edda;
-    color: #155724;
-}
-
-.admin {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.active {
-    background: #d4edda;
-    color: #155724;
-}
-
-.banned {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* ===== Section ===== */
-
-.section-title {
-    font-weight: 700;
-    margin-bottom: 20px;
-    font-size: 20px;
-}
-
-/* ===== Grid ===== */
-
-.info-grid {
+.detail-hero {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: 1fr auto;
+    gap: 22px;
+    align-items: center;
+    border-radius: 30px;
+    padding: 28px;
+}
+
+.user-head {
+    display: flex;
+    align-items: center;
     gap: 18px;
 }
 
+.user-avatar,
+.section-icon,
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200, 169, 81, 0.15);
+    color: var(--accent-color);
+}
+
+.user-avatar {
+    width: 76px;
+    height: 76px;
+    flex: 0 0 76px;
+    border-radius: 24px;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.user-title h2 {
+    margin: 0 0 8px;
+    color: var(--dark-color);
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.user-title p {
+    margin: 0;
+    color: #7d7064;
+    direction: ltr;
+    text-align: right;
+}
+
+.hero-badges,
+.action-row,
+.profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.badge-pill {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.role-student,
+.role-driver,
+.role-admin,
+.status-active {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.status-banned {
+    background: #fde8e8;
+    color: #9b2c2c;
+}
+
+.status-deleted,
+.status-incomplete,
+.status-rejected {
+    background: #eeeeee;
+    color: #666;
+}
+
+.status-pending {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.status-approved {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.82fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.detail-card,
+.action-card {
+    border-radius: 28px;
+    padding: 24px;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.section-title h3 {
+    margin: 0 0 3px;
+    color: var(--dark-color);
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.section-title p {
+    margin: 0;
+    color: #887a6d;
+    font-size: 14px;
+}
+
+.section-icon,
+.info-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 15px;
+    font-size: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
 .info-box {
-    background: #faf9f6;
-    border-radius: 22px;
-    padding: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    min-height: 92px;
+    padding: 16px;
+    border-radius: 20px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
 }
 
 .info-label {
+    margin: 0 0 5px;
+    color: #887a6d;
     font-size: 13px;
-    color: var(--soft-color);
-    margin-bottom: 6px;
+    font-weight: 700;
 }
 
 .info-value {
-    font-size: 17px;
-    font-weight: 600;
+    margin: 0;
+    color: var(--dark-color);
+    font-weight: 800;
+    line-height: 1.7;
+    word-break: break-word;
 }
 
-/* ===== Buttons ===== */
-
-.action-buttons {
+.rating-value {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 35px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
 }
 
-.action-btn {
-    border: none;
-    border-radius: 18px;
-    padding: 12px 24px;
-    font-weight: 600;
+.rating-score {
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 900;
+}
+
+.rating-count {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(200, 169, 81, 0.13);
+    color: #8b7e72;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.stat-box {
+    padding: 18px;
+    border-radius: 20px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.stat-label {
+    color: #887a6d;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    color: var(--dark-color);
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.action-row {
+    margin-top: 18px;
+}
+
+.action-link,
+.danger-btn,
+.accent-btn,
+.muted-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-weight: 800;
     text-decoration: none;
-    transition: 0.3s;
+    border: 0;
+    white-space: nowrap;
 }
 
-.action-btn:hover {
-    transform: translateY(-2px);
-}
-
-.btn-ban {
-    background: #dc3545;
+.accent-btn {
+    background: var(--accent-color);
     color: white;
 }
 
-.btn-activate {
-    background: #28a745;
+.danger-btn {
+    background: #9b2c2c;
     color: white;
 }
 
-.btn-profile {
-    background: #111;
-    color: white;
+.muted-link {
+    background: #f1eee8;
+    color: var(--dark-color);
 }
 
+.action-link {
+    background: rgba(200, 169, 81, 0.13);
+    color: var(--accent-color);
+}
+
+.info-box .action-link {
+    min-height: 32px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    line-height: 1;
+    gap: 6px;
+}
+
+.action-link:hover,
+.muted-link:hover {
+    color: var(--accent-color);
+}
+
+.note-box {
+    padding: 16px;
+    border-radius: 20px;
+    background: #fbfaf7;
+    border: 1px solid rgba(200, 169, 81, 0.18);
+    color: #7f7165;
+    line-height: 1.8;
+}
+
+.modal-content {
+    border: 0;
+    border-radius: 24px;
+}
+
+.modal-header,
+.modal-footer {
+    border: 0;
+}
+
+@media (max-width: 991px) {
+    .detail-hero,
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .detail-hero,
+    .detail-card,
+    .action-card {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .user-head {
+        align-items: flex-start;
+    }
+
+    .user-avatar {
+        width: 62px;
+        height: 62px;
+        flex-basis: 62px;
+        border-radius: 20px;
+        font-size: 25px;
+    }
+
+    .user-title h2 {
+        font-size: 25px;
+    }
+
+    .info-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-row,
+    .profile-links {
+        flex-direction: column;
+    }
+
+    .action-link,
+    .danger-btn,
+    .accent-btn,
+    .muted-link {
+        width: 100%;
+    }
+}
 </style>
 
-<h3 class="fw-bold mb-4">
-    👤 تفاصيل المستخدم
-</h3>
+<div class="user-detail-page">
 
-<div class="profile-card">
-
-    <!-- ================= HEADER ================= -->
-
-    <div class="profile-header">
-
-        <div class="profile-user">
-
-            <div class="profile-avatar">
-                {{ user_obj.first_name|first }}
+    <section class="detail-hero">
+        <div class="user-head">
+            <span class="user-avatar">
+                {% if user_obj.first_name %}{{ user_obj.first_name|first }}{% else %}<i class="bi bi-person"></i>{% endif %}
+            </span>
+            <div class="user-title">
+                <h2>{{ user_obj.full_name|default:user_obj.email }}</h2>
+                <p>{{ user_obj.email }}</p>
             </div>
-
-            <div>
-
-                <div class="profile-name">
-                    {{ user_obj.full_name }}
-                </div>
-
-                <div class="profile-email">
-                    {{ user_obj.email }}
-                </div>
-
-            </div>
-
         </div>
 
-        <div class="d-flex gap-2 flex-wrap">
-
-            <span class="badge-role {{ user_obj.role }}">
+        <div class="hero-badges">
+            <span class="badge-pill role-{{ user_obj.role }}">
+                <i class="bi bi-person-badge"></i>
                 {{ user_obj.get_role_display }}
             </span>
-
-            <span class="badge-status {{ user_obj.status }}">
+            <span class="badge-pill status-{{ user_obj.status }}">
+                <i class="bi bi-circle-fill"></i>
                 {{ user_obj.get_status_display }}
             </span>
-
+            {% if driver %}
+            <span class="badge-pill status-{{ driver.verification_status }}">
+                <i class="bi bi-shield-check"></i>
+                {{ driver.get_verification_status_display }}
+            </span>
+            {% endif %}
         </div>
+    </section>
 
-    </div>
-
-    <!-- ================= INFO ================= -->
-
-    <h5 class="section-title">
-        📌 معلومات المستخدم
-    </h5>
-
-    <div class="info-grid">
-
-        <div class="info-box">
-            <div class="info-label">رقم الجوال</div>
-            <div class="info-value">
-                {{ user_obj.phone }}
-            </div>
-        </div>
-
-        <div class="info-box">
-            <div class="info-label">المدينة</div>
-            <div class="info-value">
-                {{ user_obj.city.name_ar }}
-            </div>
-        </div>
-
-        <div class="info-box">
-            <div class="info-label">الدور</div>
-            <div class="info-value">
-                {{ user_obj.get_role_display }}
-            </div>
-        </div>
-
-        
-
-        <div class="info-box">
-            <div class="info-label">الحالة</div>
-            <div class="info-value">
-                {{ user_obj.get_status_display }}
-            </div>
-        </div>
-
-        
-
-        <!-- ===== Student ===== -->
-
-        {% if user_obj.role == "student" and student %}
-
-        <div class="info-box">
-            <div class="info-label">الجامعة</div>
-            <div class="info-value">
-                {{ student.university_name }}
-            </div>
-        </div>
-
-        <div class="info-box">
-
-            <div class="info-label">
-                الجنس
+    <section class="detail-grid">
+        <div class="detail-card">
+            <div class="section-title">
+                <span class="section-icon"><i class="bi bi-card-list"></i></span>
+                <div>
+                    <h3>معلومات الحساب</h3>
+                    <p>البيانات الأساسية المرتبطة بالمستخدم.</p>
+                </div>
             </div>
 
-            <div class="info-value">
+            <div class="info-grid">
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-telephone"></i></span>
+                    <div>
+                        <p class="info-label">رقم الجوال</p>
+                        <p class="info-value">{{ user_obj.phone|default:"غير محدد" }}</p>
+                    </div>
+                </div>
 
-                {% if student.gender == "male" %}
-                    ذكر
-                {% elif student.gender == "female" %}
-                    أنثى
-                {% else %}
-                    غير محدد
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-geo-alt"></i></span>
+                    <div>
+                        <p class="info-label">المدينة</p>
+                        <p class="info-value">{% if user_obj.city %}{{ user_obj.city.name_ar }}{% else %}غير محددة{% endif %}</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-calendar3"></i></span>
+                    <div>
+                        <p class="info-label">تاريخ الانضمام</p>
+                        <p class="info-value">{{ user_obj.date_joined|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-activity"></i></span>
+                    <div>
+                        <p class="info-label">حالة الحساب</p>
+                        <p class="info-value">{{ user_obj.get_status_display }}</p>
+                    </div>
+                </div>
+
+                {% if user_obj.role == "student" and student %}
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-mortarboard"></i></span>
+                    <div>
+                        <p class="info-label">الجامعة</p>
+                        <p class="info-value">{{ student.university_name|default:"غير محددة" }}</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-signpost"></i></span>
+                    <div>
+                        <p class="info-label">الحي</p>
+                        <p class="info-value">{{ student.neighborhood|default:"غير محدد" }}</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-person-lines-fill"></i></span>
+                    <div>
+                        <p class="info-label">الجنس</p>
+                        <p class="info-value">
+                            {% if student.gender == "male" %}ذكر{% elif student.gender == "female" %}أنثى{% else %}غير محدد{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if student.location_url %}
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-map"></i></span>
+                    <div>
+                        <p class="info-label">الموقع</p>
+                        <p class="info-value">
+                            <a class="action-link" href="{{ student.location_url }}" target="_blank" rel="noopener">
+                                عرض الموقع
+                                <i class="bi bi-box-arrow-up-left"></i>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
                 {% endif %}
 
-            </div>
+                {% if user_obj.role == "driver" and driver %}
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-person-lines-fill"></i></span>
+                    <div>
+                        <p class="info-label">الجنس</p>
+                        <p class="info-value">
+                            {% if driver.gender == "male" %}ذكر{% elif driver.gender == "female" %}أنثى{% else %}غير محدد{% endif %}
+                        </p>
+                    </div>
+                </div>
 
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-car-front"></i></span>
+                    <div>
+                        <p class="info-label">السيارة</p>
+                        <p class="info-value">{{ driver.vehicle_model|default:"غير محددة" }}</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-star"></i></span>
+                    <div>
+                        <p class="info-label">التقييم</p>
+                        <div class="info-value rating-value">
+                            <span class="rating-score">{{ driver.average_rating|floatformat:1 }}</span>
+                            <span class="rating-count">{{ driver.reviews_count }} تقييم</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-clock-history"></i></span>
+                    <div>
+                        <p class="info-label">
+                            {% if driver.verification_status == "approved" %}
+                                تاريخ اعتماد السائق
+                            {% else %}
+                                تاريخ مراجعة الملف
+                            {% endif %}
+                        </p>
+                        <p class="info-value">{{ driver.reviewed_at|date:"d/m/Y H:i"|default:"لم تتم المراجعة" }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user_obj.role == "admin" %}
+                <div class="info-box">
+                    <span class="info-icon"><i class="bi bi-shield-lock"></i></span>
+                    <div>
+                        <p class="info-label">مستوى المشرف</p>
+                        <p class="info-value">{{ user_obj.admin_level }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
         </div>
 
-        <div class="info-box">
-            <div class="info-label">الحي</div>
-            <div class="info-value">
-                {{ student.neighborhood }}
+        <div class="action-card">
+            <div class="section-title">
+                <span class="section-icon"><i class="bi bi-sliders"></i></span>
+                <div>
+                    <h3>الإجراءات والمتابعة</h3>
+                    <p>روابط سريعة وإجراءات الحساب.</p>
+                </div>
             </div>
-        </div>
 
-        {% if student.location_url %}
+            {% if user_obj.role == "student" and student %}
+            <div class="stats-grid mb-3">
+                <div class="stat-box">
+                    <div class="stat-label">كل الطلبات</div>
+                    <div class="stat-value">{{ profile_stats.total_requests }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">قيد الانتظار</div>
+                    <div class="stat-value">{{ profile_stats.pending_requests }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">مقبولة</div>
+                    <div class="stat-value">{{ profile_stats.approved_requests }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">مرفوضة</div>
+                    <div class="stat-value">{{ profile_stats.rejected_requests }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">ملغية</div>
+                    <div class="stat-value">{{ profile_stats.cancelled_requests }}</div>
+                </div>
+            </div>
+            {% elif user_obj.role == "driver" and driver %}
+            <div class="stats-grid mb-3">
+                <div class="stat-box">
+                    <div class="stat-label">الاشتراكات</div>
+                    <div class="stat-value">{{ profile_stats.total_subscriptions }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">النشطة</div>
+                    <div class="stat-value">{{ profile_stats.active_subscriptions }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">طلبات الطلاب</div>
+                    <div class="stat-value">{{ profile_stats.received_requests }}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">معلقة</div>
+                    <div class="stat-value">{{ profile_stats.pending_requests }}</div>
+                </div>
+            </div>
+            {% else %}
+            <div class="note-box mb-3">هذا الحساب لا يحتوي على إحصائيات إضافية مرتبطة بدور طالب أو سائق.</div>
+            {% endif %}
 
-        <div class="info-box">
-            <div class="info-label">الموقع</div>
-
-            <div class="info-value">
-                <a href="{{ student.location_url }}"
-                   target="_blank">
-                    عرض الموقع
+            <div class="profile-links">
+                <a href="{% url 'accounts:public_profile' user_obj.id %}" class="action-link">
+                    <i class="bi bi-person-badge"></i>
+                    الملف العام
+                </a>
+                <a href="{% url 'admin_panel:users' %}" class="muted-link">
+                    <i class="bi bi-arrow-right"></i>
+                    رجوع للمستخدمين
                 </a>
             </div>
+
+            {% if user_obj.role != "admin" %}
+            <div class="action-row">
+                {% if user_obj.status == "active" %}
+                <button type="button" class="danger-btn" data-bs-toggle="modal" data-bs-target="#accountActionModal">
+                    <i class="bi bi-slash-circle"></i>
+                    حظر المستخدم
+                </button>
+                {% else %}
+                <button type="button" class="accent-btn" data-bs-toggle="modal" data-bs-target="#accountActionModal">
+                    <i class="bi bi-check-circle"></i>
+                    تفعيل المستخدم
+                </button>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="note-box mt-3">حسابات المشرفين لا يمكن حظرها أو تفعيلها من هذه الصفحة.</div>
+            {% endif %}
         </div>
-
-        {% endif %}
-
-        {% endif %}
-
-        <!-- ===== Driver ===== -->
-
-        {% if user_obj.role == "driver" and driver %}
-
-        <div class="info-box">
-
-    <div class="info-label">
-        الجنس
-    </div>
-
-    <div class="info-value">
-
-        {% if driver.gender == "male" %}
-            ذكر
-        {% elif driver.gender == "female" %}
-            أنثى
-        {% else %}
-            غير محدد
-        {% endif %}
-
-    </div>
+    </section>
 
 </div>
 
-        
-
-        <div class="info-box">
-            <div class="info-label">السيارة</div>
-            <div class="info-value">
-                {{ driver.vehicle_model }}
+{% if user_obj.role != "admin" %}
+<div class="modal fade" id="accountActionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    {% if user_obj.status == "active" %}تأكيد حظر المستخدم{% else %}تأكيد تفعيل المستخدم{% endif %}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body">
+                {% if user_obj.status == "active" %}
+                    سيتم تقييد حساب {{ user_obj.full_name|default:user_obj.email }} وإرسال إشعار له.
+                {% else %}
+                    سيتم إعادة تفعيل حساب {{ user_obj.full_name|default:user_obj.email }} وإرسال إشعار له.
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="muted-link" data-bs-dismiss="modal">إلغاء</button>
+                {% if user_obj.status == "active" %}
+                <a href="{% url 'admin_panel:ban_user' user_obj.id %}" class="danger-btn">تأكيد الحظر</a>
+                {% else %}
+                <a href="{% url 'admin_panel:activate_user' user_obj.id %}" class="accent-btn">تأكيد التفعيل</a>
+                {% endif %}
             </div>
         </div>
-
-        <div class="info-box">
-            <div class="info-label">حالة التوثيق</div>
-            <div class="info-value">
-                {{ driver.get_verification_status_display }}
-            </div>
-        </div>
-
-        
-
-        {% endif %}
-
-        <!-- ===== Admin ===== -->
-
-        {% if user_obj.role == "admin" %}
-
-        <div class="info-box">
-            <div class="info-label">مستوى الأدمن</div>
-            <div class="info-value">
-                {{ user_obj.admin_level }}
-            </div>
-        </div>
-
-        {% endif %}
-
     </div>
-
-    <!-- ================= ACTIONS ================= -->
-
-    <div class="action-buttons">
-
-        <a href="{% url 'accounts:public_profile' user_obj.id %}"
-           class="action-btn btn-profile">
-
-            <i class="bi bi-person-badge me-2"></i>
-            الملف الشخصي العام
-
-        </a>
-
-        {% if user_obj.status == "active" %}
-
-        <a href="{% url 'admin_panel:ban_user' user_obj.id %}"
-           class="action-btn btn-ban"
-           onclick="return confirm('هل أنت متأكد من حظر المستخدم؟')">
-
-            🚫 حظر المستخدم
-
-        </a>
-
-        {% else %}
-
-        <a href="{% url 'admin_panel:activate_user' user_obj.id %}"
-           class="action-btn btn-activate"
-           onclick="return confirm('هل تريد تفعيل المستخدم؟')">
-
-            ✅ تفعيل المستخدم
-
-        </a>
-
-        {% endif %}
-
-    </div>
-
 </div>
+{% endif %}
 
 {% endblock %}

@@ -3,322 +3,590 @@
 {% block admin_content %}
 
 <style>
+.subscriptions-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+    overflow-x: hidden;
+}
 
-/* ================= CARD ================= */
+.subs-hero,
+.filter-card,
+.subscription-card,
+.stat-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.subs-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 30px;
+    padding: 28px;
+}
+
+.hero-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hero-icon,
+.stat-icon,
+.card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200, 169, 81, 0.15);
+    color: var(--accent-color);
+}
+
+.hero-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    font-size: 24px;
+}
+
+.subs-hero h2 {
+    margin: 0 0 6px;
+    color: var(--dark-color);
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.subs-hero p {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.results-pill {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #f7f2e7;
+    color: #9a7a26;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+    border-radius: 22px;
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 14px;
+    font-size: 19px;
+}
+
+.stat-label {
+    color: #877a6d;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    color: var(--dark-color);
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.filter-card {
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-primary {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.filter-secondary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    padding: 9px 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: rgba(200, 169, 81, 0.55);
+    box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+}
+
+.action-btn,
+.reset-link,
+.details-link {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.action-btn {
+    border: 0;
+    background: var(--accent-color);
+    color: white;
+}
+
+.reset-link {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--dark-color);
+    background: white;
+}
+
+.subscriptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+    min-width: 0;
+}
 
 .subscription-card {
-    background: white;
-    border-radius: 30px;
-    padding: 30px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-    transition: 0.3s ease;
-    height: 100%;
+    border-radius: 28px;
+    padding: 24px;
+    transition: 0.25s ease;
 }
 
 .subscription-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+    border-color: rgba(200, 169, 81, 0.42);
 }
 
-.info-row {
+.card-head {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
 }
 
-.info-row span:first-child {
-    color: #777;
+.card-title {
+    margin: 0 0 8px;
+    color: var(--dark-color);
+    font-size: 21px;
+    font-weight: 800;
 }
 
-/* ================= SEARCH ================= */
-
-.search-container {
-    background: white;
-    padding: 35px;
-    border-radius: 35px;
-    box-shadow: 0 25px 70px rgba(0,0,0,0.05);
-    margin-bottom: 40px;
+.driver-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7d7064;
+    font-size: 14px;
 }
 
-.search-input {
-    border-radius: 30px;
-    padding: 14px 20px;
-    border: 1px solid rgba(0,0,0,0.08);
+.status-pill {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
 }
 
-.advanced-box {
-    background: #f9f9f9;
-    padding: 35px;
-    border-radius: 30px;
-    border: 1px solid rgba(0,0,0,0.05);
+.status-active {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
 }
 
-/* ================= FOOTER ================= */
+.status-full,
+.status-expired {
+    background: #fff3d7;
+    color: #9a6a00;
+}
 
-.search-footer {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0,0,0,0.05);
+.status-inactive {
+    background: #eeeeee;
+    color: #666;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.info-box {
+    padding: 14px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.info-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #887a6d;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.info-value {
+    color: var(--dark-color);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.seat-box {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    margin-bottom: 16px;
+}
+
+.seat-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.seat-track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #f0ede7;
+}
+
+.seat-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent-color);
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
-.results-count {
-    font-size: 15px;
-    color: #777;
+.date-line {
+    color: #887a6d;
+    font-size: 13px;
+    line-height: 1.8;
 }
 
-.results-count strong {
-    color: black;
+.details-link {
+    min-height: 40px;
+    color: var(--accent-color);
+    background: rgba(200, 169, 81, 0.12);
 }
 
-/* ================= BUTTONS ================= */
-
-.btn-wassel-primary {
-    background-color: #c8a951;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 10px 22px;
-    transition: 0.3s;
+.empty-state {
+    padding: 42px 24px;
+    border-radius: 26px;
+    background: white;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    text-align: center;
+    color: #887a6d;
 }
 
-.btn-wassel-primary:hover {
-    background-color: #b8953f;
-    color: white;
+@media (max-width: 991px) {
+    .filter-primary,
+    .filter-secondary {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
-.btn-wassel-outline {
-    border: 1px solid #c8a951;
-    color: #c8a951;
-    background: transparent;
-    border-radius: 30px;
-    padding: 10px 22px;
-    transition: 0.3s;
-}
+@media (max-width: 768px) {
+    .subs-hero {
+        flex-direction: column;
+        border-radius: 22px;
+        padding: 20px;
+    }
 
-.btn-wassel-outline:hover {
-    background-color: #c8a951;
-    color: white;
-}
+    .subs-hero h2 {
+        font-size: 25px;
+    }
 
+    .stats-grid,
+    .subscriptions-grid,
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-primary,
+    .filter-secondary {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        flex-direction: column;
+    }
+
+    .card-head,
+    .card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .action-btn,
+    .reset-link,
+    .details-link {
+        width: 100%;
+    }
+}
 </style>
 
-<h4 class="fw-bold mb-4">📦 إدارة الاشتراكات</h4>
+<div class="subscriptions-page">
 
-<form method="get">
-
-<div class="search-container">
-
-    <!-- ===== Quick Search ===== -->
-    <div class="d-flex flex-column flex-md-row gap-3 align-items-stretch">
-
-        <input type="text"
-               name="search"
-               class="form-control search-input"
-               placeholder="ابحث عن حي أو اسم سائق..."
-               value="{{ search_query|default:'' }}">
-
-        <div class="d-flex gap-2">
-
-            <button type="submit" class="btn btn-wassel-primary flex-fill">
-                بحث
-            </button>
-
-            <button class="btn btn-wassel-outline flex-fill"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#advancedSearch">
-                بحث متقدم
-            </button>
-
+    <section class="subs-hero">
+        <div class="hero-title">
+            <span class="hero-icon"><i class="bi bi-ticket-perforated"></i></span>
+            <div>
+                <h2>إدارة الاشتراكات</h2>
+                <p>استعرض اشتراكات السائقين، راقب المقاعد والحالات، وافتح تفاصيل أي اشتراك بسرعة.</p>
+            </div>
         </div>
+        <span class="results-pill">{{ results_count }} نتيجة</span>
+    </section>
 
-    </div>
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-collection"></i></span>
+            <div>
+                <div class="stat-label">الإجمالي</div>
+                <div class="stat-value">{{ total_subscriptions }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-check-circle"></i></span>
+            <div>
+                <div class="stat-label">نشطة</div>
+                <div class="stat-value">{{ active_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-people"></i></span>
+            <div>
+                <div class="stat-label">ممتلئة</div>
+                <div class="stat-value">{{ full_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-calendar-x"></i></span>
+            <div>
+                <div class="stat-label">منتهية</div>
+                <div class="stat-value">{{ expired_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-pause-circle"></i></span>
+            <div>
+                <div class="stat-label">موقوفة</div>
+                <div class="stat-value">{{ inactive_count }}</div>
+            </div>
+        </div>
+    </section>
 
-    <!-- ===== Advanced Search ===== -->
-    <div class="collapse mt-4" id="advancedSearch">
+    <section class="filter-card">
+        <form method="get" class="filter-form">
+            <div class="filter-primary">
+                <div class="filter-field">
+                    <label for="subscriptionSearch">البحث</label>
+                    <input id="subscriptionSearch" type="text" name="search" placeholder="ابحث باسم الحي أو السائق" value="{{ search_query|default:'' }}">
+                </div>
 
-        <div class="advanced-box">
+                <div class="filter-actions">
+                    <button type="submit" class="action-btn">
+                        <i class="bi bi-search"></i>
+                        تطبيق
+                    </button>
 
-            <div class="row g-4">
+                    <a href="{% url 'admin_panel:subscriptions' %}" class="reset-link">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        إعادة
+                    </a>
+                </div>
+            </div>
 
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">المدة</label>
-                    <select name="duration" class="form-select">
-                        <option value="">الكل</option>
+            <div class="filter-secondary">
+                <div class="filter-field">
+                    <label for="durationFilter">المدة</label>
+                    <select id="durationFilter" name="duration">
+                        <option value="">كل المدد</option>
                         <option value="monthly" {% if duration == "monthly" %}selected{% endif %}>شهري</option>
                         <option value="semester" {% if duration == "semester" %}selected{% endif %}>فصلي</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">
-                        حالة الاشتراك
-                    </label>
 
-                    <select name="status" class="form-select">
-
-                        <option value="">الكل</option>
-
-                        <option value="active"
-                            {% if status_filter == "active" %}selected{% endif %}>
-                            نشط
-                        </option>
-
-                        <option value="expired"
-                            {% if status_filter == "expired" %}selected{% endif %}>
-                            منتهي
-                        </option>
-
-                        <option value="full"
-                            {% if status_filter == "full" %}selected{% endif %}>
-                            ممتلئ
-                        </option>
-
-                        <option value="inactive"
-                            {% if status_filter == "inactive" %}selected{% endif %}>
-                            موقوف
-                        </option>
-
+                <div class="filter-field">
+                    <label for="statusFilter">الحالة</label>
+                    <select id="statusFilter" name="status">
+                        <option value="">كل الحالات</option>
+                        <option value="active" {% if status_filter == "active" %}selected{% endif %}>نشط</option>
+                        <option value="expired" {% if status_filter == "expired" %}selected{% endif %}>منتهي</option>
+                        <option value="full" {% if status_filter == "full" %}selected{% endif %}>ممتلئ</option>
+                        <option value="inactive" {% if status_filter == "inactive" %}selected{% endif %}>موقوف</option>
                     </select>
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">السعر من</label>
-                    <input type="number" name="min_price" value="{{ min_price }}" class="form-control">
+                <div class="filter-field">
+                    <label for="minPrice">السعر من</label>
+                    <input id="minPrice" type="number" name="min_price" value="{{ min_price }}" min="0">
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">السعر إلى</label>
-                    <input type="number" name="max_price" value="{{ max_price }}" class="form-control">
+                <div class="filter-field">
+                    <label for="maxPrice">السعر إلى</label>
+                    <input id="maxPrice" type="number" name="max_price" value="{{ max_price }}" min="0">
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label small text-muted">ترتيب حسب</label>
-                    <select name="sort" class="form-select">
+                <div class="filter-field">
+                    <label for="sortFilter">الترتيب</label>
+                    <select id="sortFilter" name="sort">
                         <option value="">الأحدث</option>
                         <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>السعر الأقل</option>
                         <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>السعر الأعلى</option>
-                        <option value="seats" {% if sort == "seats" %}selected{% endif %}>المقاعد</option>
+                        <option value="seats" {% if sort == "seats" %}selected{% endif %}>المقاعد المتاحة</option>
                     </select>
                 </div>
+            </div>
+        </form>
+    </section>
 
+    <section class="subscriptions-grid">
+        {% for sub in subscriptions %}
+        <article class="subscription-card">
+            <div class="card-head">
+                <div>
+                    <h3 class="card-title">{{ sub.driver.user.city.name_ar|default:"مدينة غير محددة" }} - {{ sub.neighborhood }}</h3>
+                    <div class="driver-line">
+                        <i class="bi bi-person"></i>
+                        {{ sub.driver.user.full_name }}
+                    </div>
+                </div>
+
+                {% if sub.current_status == "active" %}
+                <span class="status-pill status-active"><i class="bi bi-check-circle"></i> نشط</span>
+                {% elif sub.current_status == "expired" %}
+                <span class="status-pill status-expired"><i class="bi bi-calendar-x"></i> منتهي</span>
+                {% elif sub.current_status == "full" %}
+                <span class="status-pill status-full"><i class="bi bi-people"></i> ممتلئ</span>
+                {% else %}
+                <span class="status-pill status-inactive"><i class="bi bi-pause-circle"></i> موقوف</span>
+                {% endif %}
             </div>
 
-            <div class="text-end mt-4">
-                <button type="submit" class="btn btn-wassel-primary px-4">
-                    تطبيق الفلترة
-                </button>
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                    <div class="info-value">{{ sub.price }} ر.س</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="bi bi-calendar2-week"></i> المدة</div>
+                    <div class="info-value">{{ sub.get_duration_display }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="bi bi-clipboard-check"></i> الطلبات</div>
+                    <div class="info-value">{{ sub.requests.count }}</div>
+                </div>
             </div>
 
+            <div class="seat-box">
+                <div class="seat-row">
+                    <span>المقاعد المتاحة</span>
+                    <span>{{ sub.available_seats }} من {{ sub.seats }}</span>
+                </div>
+                <div class="seat-track">
+                    <div class="seat-fill" style="width: {% widthratio sub.available_seats sub.seats 100 %}%"></div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="date-line">
+                    <div>البداية: {{ sub.start_date|date:"d/m/Y" }}</div>
+                    <div>النهاية: {{ sub.end_date|date:"d/m/Y" }}</div>
+                </div>
+                <a href="{% url 'admin_panel:subscription_detail' sub.id %}" class="details-link">
+                    عرض التفاصيل
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+        </article>
+        {% empty %}
+        <div class="empty-state">
+            <h5 class="fw-bold text-dark">لا توجد اشتراكات</h5>
+            <p class="mb-0">جرّب تعديل الفلاتر أو البحث باسم سائق أو حي مختلف.</p>
         </div>
-
-    </div>
-
-    <!-- ===== Footer ===== -->
-    <div class="search-footer">
-
-        <div class="results-count">
-            تم العثور على <strong>{{ results_count }}</strong> اشتراك
-        </div>
-
-        {% if search_query or duration or status_filter or min_price or max_price or sort %}
-        <a href="{% url 'admin_panel:subscriptions' %}"
-           class="btn btn-wassel-outline btn-sm">
-            إعادة تعيين
-        </a>
-        {% endif %}
-
-    </div>
-
-</div>
-
-</form>
-
-<!-- ================= RESULTS ================= -->
-
-<div class="row g-4">
-
-{% for sub in subscriptions %}
-<div class="col-md-6 col-lg-4">
-
-    <div class="subscription-card">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-
-            <h6 class="fw-bold mb-0">{{ sub.neighborhood }}</h6>
-
-            {% if sub.current_status == "active" %}
-
-                <span class="badge bg-success">
-                    نشط
-                </span>
-
-            {% elif sub.current_status == "expired" %}
-
-                <span class="badge bg-danger">
-                    منتهي
-                </span>
-
-            {% elif sub.current_status == "full" %}
-
-                <span class="badge bg-warning text-dark">
-                    ممتلئ
-                </span>
-
-            {% else %}
-
-                <span class="badge bg-secondary">
-                    موقوف
-                </span>
-
-            {% endif %}
-
-        </div>
-
-        <div class="info-row">
-            <span>السائق</span>
-            <span>{{ sub.driver.user.full_name }}</span>
-        </div>
-
-        <div class="info-row">
-            <span>المدينة</span>
-            <span>{{ sub.driver.user.city.name_ar }}</span>
-        </div>
-
-        <div class="info-row">
-            <span>السعر</span>
-            <span class="fw-semibold">{{ sub.price }} ر.س</span>
-        </div>
-
-        <div class="info-row">
-            <span>المدة</span>
-            <span>{{ sub.get_duration_display }}</span>
-        </div>
-
-        <div class="info-row">
-            <span>المقاعد</span>
-            <span>{{ sub.available_seats }} / {{ sub.seats }}</span>
-        </div>
-
-        <div class="mt-3 text-end">
-            <a href="{% url 'admin_panel:subscription_detail' sub.id %}"
-               class="btn btn-wassel-outline btn-sm">
-                عرض التفاصيل
-            </a>
-        </div>
-
-    </div>
-
-</div>
-
-{% empty %}
-<div class="text-center text-muted mt-5">
-    لا توجد اشتراكات
-</div>
-{% endfor %}
+        {% endfor %}
+    </section>
 
 </div>
 

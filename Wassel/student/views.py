@@ -109,6 +109,7 @@ def my_subscriptions(request):
     expired = []
     cancelled = []
     pending = []
+    rejected = []
 
     for sub in subscriptions:
 
@@ -117,6 +118,9 @@ def my_subscriptions(request):
 
         elif sub.status == "cancelled":
             cancelled.append(sub)
+
+        elif sub.status == "rejected":
+            rejected.append(sub)
 
         elif sub.status == "approved":
             if sub.subscription.end_date >= today:
@@ -136,6 +140,7 @@ def my_subscriptions(request):
         "expired": expired,
         "cancelled": cancelled,
         "pending": pending,
+        "rejected": rejected,
     }
 
     return render(request, "student/my_subscriptions.html", context)

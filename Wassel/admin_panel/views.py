@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
+from django.utils import timezone
 from accounts.models import User
 from driver.models import DriverProfile
 from student.models import StudentProfile
-from subscriptions.models import SubscriptionRequest
+from subscriptions.models import Subscription, SubscriptionRequest
 from payment.models import Transaction
 from .decorators import admin_required
 from django.contrib import messages
@@ -40,16 +41,51 @@ from support.models import (
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
-    # Stats
+    today = timezone.now().date()
+
     users_count = User.objects.count()
     drivers_count = DriverProfile.objects.count()
     students_count = StudentProfile.objects.count()
 
-    pending_requests = SubscriptionRequest.objects.filter(
-        status="pending"
+    pending_requests_qs = SubscriptionRequest.objects.select_related(
+        "student__user",
+        "subscription__driver__user",
+        "subscription__driver__user__city",
+    ).filter(status="pending")
+
+    pending_requests = pending_requests_qs.count()
+    completed_requests = SubscriptionRequest.objects.filter(
+        status="approved"
     ).count()
 
-    # مجموع الأرباح (مو count!)
+    pending_drivers_qs = DriverProfile.objects.select_related(
+        "user",
+        "user__city",
+    ).filter(verification_status="pending")
+
+    open_tickets_qs = SupportTicket.objects.select_related(
+        "user",
+        "handled_by",
+    ).filter(status__in=["in_progress", "waiting_user"])
+
+    active_subscriptions = Subscription.objects.filter(
+        status="active",
+        end_date__gte=today,
+    ).count()
+
+    full_subscriptions = Subscription.objects.filter(
+        status="full",
+        end_date__gte=today,
+    ).count()
+
+    inactive_subscriptions = Subscription.objects.filter(
+        status__in=["inactive_by_admin", "inactive_by_driver"]
+    ).count()
+
+    expired_subscriptions = Subscription.objects.filter(
+        end_date__lt=today
+    ).count()
+
     if request.user.admin_level == 1:
         total_earnings = Transaction.objects.filter(
             type="commission",
@@ -58,25 +94,31 @@ def dashboard(request):
     else:
         total_earnings = None
 
-    # Latest Requests
     latest_requests = SubscriptionRequest.objects.select_related(
         "student__user",
-        "subscription__driver__user"
-    ).order_by("-request_date")[:5]
-    
-    completed_requests = SubscriptionRequest.objects.filter(
-        status="approved"
-    ).count()
+        "subscription__driver__user",
+        "subscription__driver__user__city",
+    ).order_by("-request_date")[:6]
 
-    # Context
     context = {
         "users_count": users_count,
         "drivers_count": drivers_count,
         "students_count": students_count,
         "pending_requests": pending_requests,
+        "completed_requests": completed_requests,
+        "pending_drivers_count": pending_drivers_qs.count(),
+        "pending_drivers": pending_drivers_qs.order_by("-submitted_at")[:4],
+        "open_tickets_count": open_tickets_qs.count(),
+        "waiting_user_tickets_count": SupportTicket.objects.filter(status="waiting_user").count(),
+        "unassigned_tickets_count": open_tickets_qs.filter(handled_by__isnull=True).count(),
+        "open_tickets": open_tickets_qs.order_by("-updated_at")[:4],
+        "active_subscriptions": active_subscriptions,
+        "full_subscriptions": full_subscriptions,
+        "inactive_subscriptions": inactive_subscriptions,
+        "expired_subscriptions": expired_subscriptions,
         "total_earnings": total_earnings,
         "latest_requests": latest_requests,
-        "completed_requests": completed_requests,
+        "pending_request_items": pending_requests_qs.order_by("-request_date")[:4],
     }
 
     return render(request, "admin_panel/dashboard.html", context)
@@ -88,43 +130,95 @@ def dashboard(request):
 @admin_required(levels=[1, 2])
 def requests_list(request):
 
-    requests = SubscriptionRequest.objects.select_related(
-        "student__user",
-        "subscription__driver__user"
-    ).order_by("-request_date")
-
-    return render(request, "admin_panel/requests.html", {
-        "requests": requests
-    })
-    
-    
-
-@admin_required(levels=[1, 2])
-def requests_list(request):
-
 
     # Filters
-    request_status = request.GET.get("status")
-    driver_status = request.GET.get("driver_status")
+    active_tab = request.GET.get("tab", "subscriptions")
+    if active_tab not in ["subscriptions", "drivers"]:
+        active_tab = "subscriptions"
 
-    requests = SubscriptionRequest.objects.select_related(
+    request_search = request.GET.get("request_search", "").strip()
+    driver_search = request.GET.get("driver_search", "").strip()
+    request_status = request.GET.get("request_status", request.GET.get("status", ""))
+    driver_status = request.GET.get("driver_status", "")
+    request_date_from = request.GET.get("request_date_from", "")
+    request_date_to = request.GET.get("request_date_to", "")
+    driver_date_from = request.GET.get("driver_date_from", "")
+    driver_date_to = request.GET.get("driver_date_to", "")
+
+    base_requests = SubscriptionRequest.objects.select_related(
         "student__user",
-        "subscription__driver__user"
+        "subscription__driver__user",
+        "subscription__driver__user__city",
     ).order_by("-request_date")
 
-    drivers = DriverProfile.objects.select_related(
-        "user"
+    base_drivers = DriverProfile.objects.select_related(
+        "user",
+        "user__city",
     ).order_by("-submitted_at")
+
+    requests = base_requests
+    drivers = base_drivers
+
+    if request_search:
+        requests = requests.filter(
+            Q(request_code__icontains=request_search) |
+            Q(student__user__first_name__icontains=request_search) |
+            Q(student__user__last_name__icontains=request_search) |
+            Q(student__user__email__icontains=request_search) |
+            Q(subscription__driver__user__first_name__icontains=request_search) |
+            Q(subscription__driver__user__last_name__icontains=request_search) |
+            Q(subscription__neighborhood__icontains=request_search)
+        )
 
     if request_status:
         requests = requests.filter(status=request_status)
 
+    if request_date_from:
+        requests = requests.filter(request_date__date__gte=request_date_from)
+
+    if request_date_to:
+        requests = requests.filter(request_date__date__lte=request_date_to)
+
+    if driver_search:
+        drivers = drivers.filter(
+            Q(user__first_name__icontains=driver_search) |
+            Q(user__last_name__icontains=driver_search) |
+            Q(user__email__icontains=driver_search) |
+            Q(user__phone__icontains=driver_search) |
+            Q(vehicle_model__icontains=driver_search)
+        )
+
     if driver_status:
         drivers = drivers.filter(verification_status=driver_status)
+
+    if driver_date_from:
+        drivers = drivers.filter(submitted_at__date__gte=driver_date_from)
+
+    if driver_date_to:
+        drivers = drivers.filter(submitted_at__date__lte=driver_date_to)
 
     context = {
         "requests": requests,
         "drivers": drivers,
+        "active_tab": active_tab,
+        "request_search": request_search,
+        "driver_search": driver_search,
+        "request_status": request_status,
+        "driver_status": driver_status,
+        "request_date_from": request_date_from,
+        "request_date_to": request_date_to,
+        "driver_date_from": driver_date_from,
+        "driver_date_to": driver_date_to,
+        "requests_count": requests.count(),
+        "drivers_count": drivers.count(),
+        "pending_requests_count": base_requests.filter(status="pending").count(),
+        "approved_requests_count": base_requests.filter(status="approved").count(),
+        "rejected_requests_count": base_requests.filter(status="rejected").count(),
+        "cancelled_requests_count": base_requests.filter(status="cancelled").count(),
+        "pending_drivers_count": base_drivers.filter(verification_status="pending").count(),
+        "approved_drivers_count": base_drivers.filter(verification_status="approved").count(),
+        "rejected_drivers_count": base_drivers.filter(verification_status="rejected").count(),
+        "incomplete_drivers_count": base_drivers.filter(verification_status="incomplete").count(),
     }
 
     return render(request, "admin_panel/requests.html", context)
@@ -253,7 +347,8 @@ def driver_detail(request, pk):
 @admin_required(levels=[1, 2])
 def users_list(request):
 
-    users = User.objects.all().order_by("-date_joined")
+    base_users = User.objects.all()
+    users = base_users.order_by("-date_joined")
 
     # ======================
     # Search
@@ -288,6 +383,12 @@ def users_list(request):
         "search": search,
         "role": role,
         "status": status,
+        "results_count": users.count(),
+        "total_users": base_users.count(),
+        "students_count": base_users.filter(role="student").count(),
+        "drivers_count": base_users.filter(role="driver").count(),
+        "admins_count": base_users.filter(role="admin").count(),
+        "banned_users_count": base_users.filter(status="banned").count(),
     }
 
     return render(request, "admin_panel/users.html", context)
@@ -300,20 +401,45 @@ def user_detail(request, pk):
 
     student = None
     driver = None
+    profile_stats = {}
 
     # ======================
     # Detect Role
     # ======================
     if user.role == "student":
         student = getattr(user, "student_profile", None)
+        if student:
+            profile_stats = {
+                "total_requests": student.subscription_requests.count(),
+                "pending_requests": student.subscription_requests.filter(status="pending").count(),
+                "approved_requests": student.subscription_requests.filter(status="approved").count(),
+                "rejected_requests": student.subscription_requests.filter(status="rejected").count(),
+                "cancelled_requests": student.subscription_requests.filter(status="cancelled").count(),
+            }
 
     elif user.role == "driver":
         driver = getattr(user, "driver_profile", None)
+        if driver:
+            driver_subscriptions = list(driver.subscriptions.all())
+            profile_stats = {
+                "total_subscriptions": len(driver_subscriptions),
+                "active_subscriptions": sum(
+                    1 for sub in driver_subscriptions
+                    if sub.current_status == "active"
+                ),
+                "admin_stopped_subscriptions": driver.subscriptions.filter(status="inactive_by_admin").count(),
+                "received_requests": SubscriptionRequest.objects.filter(subscription__driver=driver).count(),
+                "pending_requests": SubscriptionRequest.objects.filter(
+                    subscription__driver=driver,
+                    status="pending"
+                ).count(),
+            }
 
     context = {
         "user_obj": user,
         "student": student,
         "driver": driver,
+        "profile_stats": profile_stats,
     }
 
     return render(request, "admin_panel/user_detail.html", context)
@@ -701,12 +827,6 @@ def notifications_list(request):
 
     return render(request, "admin_panel/notifications.html", context)
 
-
-from django.db.models import Q
-from subscriptions.models import Subscription
-
-
-
 @admin_required(levels=[1, 2])
 def subscriptions_list(request):
 
@@ -719,9 +839,11 @@ def subscriptions_list(request):
     status_filter = request.GET.get("status", "")
 
     # ================= BASE QUERY =================
-    subscriptions = Subscription.objects.select_related(
-        "driver__user"
+    base_subscriptions = Subscription.objects.select_related(
+        "driver__user",
+        "driver__user__city",
     )
+    subscriptions = base_subscriptions
 
     # 🔥 هنا الفرق عن الطالب:
     # ❌ ما نحط:
@@ -744,15 +866,21 @@ def subscriptions_list(request):
     # ================= STATUS FILTER =================
     if status_filter:
 
-        filtered_subscriptions = []
+        filtered_subscription_ids = []
 
         for sub in subscriptions:
 
-            if sub.current_status == status_filter:
-                filtered_subscriptions.append(sub)
+            if status_filter == "inactive":
+                if sub.current_status in ["inactive_by_admin", "inactive_by_driver"]:
+                    filtered_subscription_ids.append(sub.id)
+            elif sub.current_status == status_filter:
+                filtered_subscription_ids.append(sub.id)
 
         subscriptions = Subscription.objects.filter(
-            id__in=[sub.id for sub in filtered_subscriptions]
+            id__in=filtered_subscription_ids
+        ).select_related(
+            "driver__user",
+            "driver__user__city",
         )
 
     # ================= PRICE FILTER =================
@@ -780,6 +908,14 @@ def subscriptions_list(request):
 
     # ================= RESULTS COUNT =================
     results_count = subscriptions.count()
+    base_subscriptions_list = list(base_subscriptions)
+    active_count = sum(1 for sub in base_subscriptions_list if sub.current_status == "active")
+    expired_count = sum(1 for sub in base_subscriptions_list if sub.current_status == "expired")
+    full_count = sum(1 for sub in base_subscriptions_list if sub.current_status == "full")
+    inactive_count = sum(
+        1 for sub in base_subscriptions_list
+        if sub.current_status in ["inactive_by_admin", "inactive_by_driver"]
+    )
 
     # ================= CONTEXT =================
     context = {
@@ -791,14 +927,14 @@ def subscriptions_list(request):
         "sort": sort,
         "results_count": results_count,
         "status_filter": status_filter,
+        "total_subscriptions": len(base_subscriptions_list),
+        "active_count": active_count,
+        "expired_count": expired_count,
+        "full_count": full_count,
+        "inactive_count": inactive_count,
     }
 
     return render(request, "admin_panel/subscriptions.html", context)
-
-
-
-from subscriptions.models import Subscription
-
 @admin_required(levels=[1, 2])
 def subscription_detail(request, pk):
 
@@ -812,10 +948,20 @@ def subscription_detail(request, pk):
         status="approved"
     ).select_related("student__user")
 
+    rejected_requests_count = subscription.requests.filter(
+        status="rejected"
+    ).count()
+
+    cancelled_requests_count = subscription.requests.filter(
+        status="cancelled"
+    ).count()
+
     context = {
         "subscription": subscription,
         "pending_requests": pending_requests,
         "approved_requests": approved_requests,
+        "rejected_requests_count": rejected_requests_count,
+        "cancelled_requests_count": cancelled_requests_count,
     }
 
     return render(request, "admin_panel/subscription_detail.html", context)

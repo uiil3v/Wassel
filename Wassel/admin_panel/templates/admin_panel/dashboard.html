@@ -3,191 +3,547 @@
 {% block admin_content %}
 
 <style>
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
 
-/* ===== Stats Layout ===== */
-.stats-grid {
+.dashboard-hero {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(200, 169, 81, 0.22);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-hero h2 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--dark-color);
+}
+
+.dashboard-hero p {
+    margin: 0;
+    color: #7a6f63;
+    font-size: 16px;
+    line-height: 1.9;
+}
+
+.metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
 }
 
-/* ===== Card ===== */
-.stat-card {
-    background: white;
-    border-radius: 25px;
-    padding: 25px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-    transition: 0.3s;
+.metric-card,
+.panel-card,
+.mini-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.045);
 }
 
-.stat-card:hover {
-    transform: translateY(-4px);
+.metric-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 128px;
+    padding: 22px;
+    border-radius: 24px;
+    color: inherit;
+    text-decoration: none;
+    transition: 0.25s ease;
 }
 
-.stat-title {
+.metric-card:hover {
+    color: inherit;
+    transform: translateY(-3px);
+    border-color: rgba(200, 169, 81, 0.42);
+}
+
+.metric-label {
+    color: #877a6d;
     font-size: 14px;
-    color: #777;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-.stat-number {
-    font-size: 32px;
-    font-weight: 700;
+.metric-value {
+    color: var(--dark-color);
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
 }
 
-/* ===== Table Card ===== */
-.table-card {
-    background: white;
-    border-radius: 25px;
-    padding: 30px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-}
-
-/* ===== Table ===== */
-.table th {
-    font-weight: 600;
-    font-size: 14px;
-    color: #555;
-}
-
-.table td {
-    font-size: 15px;
-    font-weight: 500;
-}
-
-/* ===== Status ===== */
-.badge-status {
-    padding: 8px 16px;
-    border-radius: 25px;
+.metric-note {
+    color: #9b8f81;
     font-size: 13px;
+    margin-top: 12px;
+}
+
+.metric-icon,
+.panel-icon,
+.item-icon {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200, 169, 81, 0.15);
+    color: var(--accent-color);
+    font-size: 21px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.panel-card {
+    border-radius: 28px;
+    padding: 24px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel-title h3 {
+    margin: 0 0 4px;
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--dark-color);
+}
+
+.panel-title p {
+    margin: 0;
+    color: #837568;
+    font-size: 14px;
+}
+
+.panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-color);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.panel-link:hover {
+    color: var(--accent-color);
+}
+
+.attention-stack,
+.activity-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.attention-item,
+.activity-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border-radius: 20px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.item-title {
+    margin: 0 0 4px;
+    font-weight: 800;
+    color: var(--dark-color);
+}
+
+.item-meta {
+    margin: 0;
+    color: #887a6d;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.chip-accent {
+    background: rgba(200, 169, 81, 0.16);
+    color: #9f7c20;
+}
+
+.chip-muted {
+    background: #f1eee8;
+    color: #756a5f;
+}
+
+.chip-pending {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.chip-approved {
+    background: #eaf6ef;
+    color: #23704a;
+}
+
+.chip-rejected {
+    background: #fde8e8;
+    color: #9b2c2c;
+}
+
+.chip-cancelled {
+    background: #eeeeee;
+    color: #666;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+.admin-table th {
+    background: #f5f1e9;
+    color: #7d6f62;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 15px;
+    text-align: right;
+}
+
+.admin-table td {
+    padding: 16px 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    color: var(--dark-color);
     font-weight: 600;
-    display: inline-block;
+    vertical-align: middle;
 }
 
-.pending {
-    background: #fff3cd;
-    color: #856404;
+.admin-table tr:last-child td {
+    border-bottom: 0;
 }
 
-.approved {
-    background: #d4edda;
-    color: #155724;
+.empty-state {
+    padding: 26px;
+    border-radius: 20px;
+    text-align: center;
+    color: #8a7d70;
+    background: #fbfaf7;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
 }
 
-.rejected {
-    background: #f8d7da;
-    color: #721c24;
+@media (max-width: 1200px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
-.cancelled {
-    background: #e2e3e5;
-    color: #383d41;
+@media (max-width: 991px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
+@media (max-width: 768px) {
+    .dashboard-hero,
+    .panel-card {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .dashboard-hero h2 {
+        font-size: 25px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+        min-height: auto;
+    }
+
+    .panel-header,
+    .attention-item,
+    .activity-item {
+        grid-template-columns: 1fr;
+    }
+
+    .attention-item,
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .panel-link {
+        width: fit-content;
+    }
+}
 </style>
 
-<h3 class="mb-4 fw-bold">الرئيسية</h3>
+<div class="admin-dashboard">
 
-<!-- ================= Stats ================= -->
+    <section class="dashboard-hero">
+        <h2>لوحة المشرف</h2>
+        <p>تابع حالة المنصة، الطلبات التي تحتاج مراجعة، والسائقين والدعم من مكان واحد.</p>
+    </section>
 
-<div class="stats-grid mb-5">
+    <section class="metrics-grid">
+        <a class="metric-card" href="{% url 'admin_panel:users' %}">
+            <div>
+                <div class="metric-label">إجمالي المستخدمين</div>
+                <div class="metric-value">{{ users_count }}</div>
+                <div class="metric-note">{{ students_count }} طالب، {{ drivers_count }} سائق</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-people"></i></span>
+        </a>
 
+        <a class="metric-card" href="{% url 'admin_panel:requests' %}?status=pending">
+            <div>
+                <div class="metric-label">طلبات اشتراك معلقة</div>
+                <div class="metric-value">{{ pending_requests }}</div>
+                <div class="metric-note">{{ completed_requests }} طلب مقبول إجمالاً</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-clipboard-check"></i></span>
+        </a>
 
-<div class="stat-card">
-    <div class="stat-title">المستخدمين</div>
-    <div class="stat-number">{{ users_count }}</div>
-</div>
+        <a class="metric-card" href="{% url 'admin_panel:requests' %}?driver_status=pending">
+            <div>
+                <div class="metric-label">سائقين بانتظار الاعتماد</div>
+                <div class="metric-value">{{ pending_drivers_count }}</div>
+                <div class="metric-note">تحتاج مراجعة المستندات</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-person-badge"></i></span>
+        </a>
 
-<div class="stat-card">
-    <div class="stat-title">السائقين</div>
-    <div class="stat-number">{{ drivers_count }}</div>
-</div>
+        <a class="metric-card" href="{% url 'admin_panel:support_tickets' %}">
+            <div>
+                <div class="metric-label">تذاكر دعم مفتوحة</div>
+                <div class="metric-value">{{ open_tickets_count }}</div>
+                <div class="metric-note">{{ unassigned_tickets_count }} غير مسندة</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-life-preserver"></i></span>
+        </a>
 
-<div class="stat-card">
-    <div class="stat-title">الطلاب</div>
-    <div class="stat-number">{{ students_count }}</div>
-</div>
+        <a class="metric-card" href="{% url 'admin_panel:subscriptions' %}">
+            <div>
+                <div class="metric-label">اشتراكات نشطة</div>
+                <div class="metric-value">{{ active_subscriptions }}</div>
+                <div class="metric-note">{{ full_subscriptions }} ممتلئة</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-ticket-perforated"></i></span>
+        </a>
 
-<div class="stat-card">
-    <div class="stat-title">طلبات قيد الانتظار</div>
-    <div class="stat-number text-warning">{{ pending_requests }}</div>
-</div>
+        <a class="metric-card" href="{% url 'admin_panel:subscriptions' %}">
+            <div>
+                <div class="metric-label">اشتراكات موقوفة</div>
+                <div class="metric-value">{{ inactive_subscriptions }}</div>
+                <div class="metric-note">{{ expired_subscriptions }} منتهية</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-pause-circle"></i></span>
+        </a>
 
-<div class="stat-card">
-    <div class="stat-title">طلبات مكتملة</div>
-    <div class="stat-number text-success">{{ completed_requests }}</div>
-</div>
+        {% if total_earnings is not None %}
+        <a class="metric-card" href="{% url 'admin_panel:payments' %}?type=commission">
+            <div>
+                <div class="metric-label">أرباح المنصة</div>
+                <div class="metric-value">{{ total_earnings|floatformat:2 }}</div>
+                <div class="metric-note">ريال من العمولات المكتملة</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-cash-stack"></i></span>
+        </a>
+        {% endif %}
 
-{% if total_earnings is not None %}
-<div class="stat-card">
-    <div class="stat-title">الأرباح</div>
-    <div class="stat-number text-success">{{ total_earnings }} ريال</div>
-</div>
-{% endif %}
+        <a class="metric-card" href="{% url 'admin_panel:support_tickets' %}?status=waiting_user">
+            <div>
+                <div class="metric-label">بانتظار رد العميل</div>
+                <div class="metric-value">{{ waiting_user_tickets_count }}</div>
+                <div class="metric-note">ضمن تذاكر الدعم</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-chat-left-dots"></i></span>
+        </a>
+    </section>
 
+    <section class="dashboard-grid">
+        <div class="panel-card">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="panel-icon"><i class="bi bi-lightning-charge"></i></span>
+                    <div>
+                        <h3>يحتاج إجراء</h3>
+                        <p>أهم العناصر التي غالباً يحتاج المشرف يتابعها أولاً.</p>
+                    </div>
+                </div>
+                <a class="panel-link" href="{% url 'admin_panel:requests' %}">
+                    عرض الطلبات
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
 
-</div>
+            <div class="attention-stack">
+                {% for driver in pending_drivers %}
+                <div class="attention-item">
+                    <span class="item-icon"><i class="bi bi-person-vcard"></i></span>
+                    <div>
+                        <p class="item-title">{{ driver.user.full_name }}</p>
+                        <p class="item-meta">
+                            {% if driver.user.city %}{{ driver.user.city.name_ar }}{% else %}لم تحدد المدينة{% endif %}
+                            · تم الإرسال {{ driver.submitted_at|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                    <a class="chip chip-accent" href="{% url 'admin_panel:driver_detail' driver.id %}">مراجعة</a>
+                </div>
+                {% endfor %}
 
-<!-- ================= Latest Requests ================= -->
+                {% for req in pending_request_items %}
+                <div class="attention-item">
+                    <span class="item-icon"><i class="bi bi-ticket-detailed"></i></span>
+                    <div>
+                        <p class="item-title">{{ req.student.user.full_name }}</p>
+                        <p class="item-meta">
+                            طلب اشتراك مع {{ req.subscription.driver.user.full_name }}
+                            · {{ req.request_date|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+                    <a class="chip chip-accent" href="{% url 'admin_panel:request_detail' req.id %}">التفاصيل</a>
+                </div>
+                {% endfor %}
 
-<div class="table-card">
+                {% if not pending_drivers and not pending_request_items %}
+                <div class="empty-state">لا توجد عناصر عاجلة حالياً.</div>
+                {% endif %}
+            </div>
+        </div>
 
+        <div class="panel-card">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="panel-icon"><i class="bi bi-ticket"></i></span>
+                    <div>
+                        <h3>الدعم</h3>
+                        <p>آخر تذاكر الدعم المفتوحة والمتابعة.</p>
+                    </div>
+                </div>
+                <a class="panel-link" href="{% url 'admin_panel:support_tickets' %}">
+                    الكل
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
 
-<h5 class="fw-bold mb-4">📦 أحدث الطلبات</h5>
+            <div class="activity-stack">
+                {% for ticket in open_tickets %}
+                <div class="activity-item">
+                    <span class="item-icon"><i class="bi bi-headset"></i></span>
+                    <div>
+                        <p class="item-title">{{ ticket.subject }}</p>
+                        <p class="item-meta">
+                            {{ ticket.name }} · {{ ticket.updated_at|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+                    <a class="chip chip-muted" href="{% url 'admin_panel:support_ticket_detail' ticket.id %}">
+                        {% if ticket.handled_by %}متابعة{% else %}إسناد{% endif %}
+                    </a>
+                </div>
+                {% empty %}
+                <div class="empty-state">لا توجد تذاكر مفتوحة حالياً.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
 
-<div class="table-responsive">
-    <table class="table align-middle text-center">
+    <section>
+        <div class="panel-card">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="panel-icon"><i class="bi bi-clock-history"></i></span>
+                    <div>
+                        <h3>آخر طلبات الاشتراك</h3>
+                        <p>نظرة سريعة على أحدث حركة بين الطلاب والسائقين.</p>
+                    </div>
+                </div>
+                <a class="panel-link" href="{% url 'admin_panel:requests' %}">
+                    عرض الكل
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
 
-        <thead>
-            <tr>
-                <th>الطالب</th>
-                <th>السائق</th>
-                <th>الاشتراك</th>
-                <th>الحالة</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            {% for req in latest_requests %}
-            <tr>
-                <td>{{ req.student.user.full_name }}</td>
-                <td>{{ req.subscription.driver.user.full_name }}</td>
-                <td>
-                    {{ req.subscription.driver.user.city.name_ar }}
-                    -
-                    {{ req.subscription.neighborhood }}
-                </td>
-
-                <td>
-                    {% if req.status == "pending" %}
-                        <span class="badge-status pending">قيد الانتظار</span>
-
-                    {% elif req.status == "approved" %}
-                        <span class="badge-status approved">مقبول</span>
-
-                    {% elif req.status == "rejected" %}
-                        <span class="badge-status rejected">مرفوض</span>
-
-                    {% elif req.status == "cancelled" %}
-                        <span class="badge-status cancelled">ملغي</span>
-                    {% endif %}
-                </td>
-            </tr>
-
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-muted">
-                    لا توجد طلبات حالياً
-                </td>
-            </tr>
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-</div>
-
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>السائق</th>
+                            <th>الاشتراك</th>
+                            <th>التاريخ</th>
+                            <th>الحالة</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in latest_requests %}
+                        <tr>
+                            <td>{{ req.student.user.full_name }}</td>
+                            <td>{{ req.subscription.driver.user.full_name }}</td>
+                            <td>
+                                {% if req.subscription.driver.user.city %}{{ req.subscription.driver.user.city.name_ar }}{% endif %}
+                                {% if req.subscription.neighborhood %} - {{ req.subscription.neighborhood }}{% endif %}
+                            </td>
+                            <td>{{ req.request_date|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <span class="chip
+                                    {% if req.status == 'pending' %}chip-pending
+                                    {% elif req.status == 'approved' %}chip-approved
+                                    {% elif req.status == 'rejected' %}chip-rejected
+                                    {% else %}chip-cancelled{% endif %}">
+                                    {{ req.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a class="panel-link" href="{% url 'admin_panel:request_detail' req.id %}">فتح</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">لا توجد طلبات حالياً.</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
 </div>
 
