@@ -3,494 +3,703 @@
 {% block admin_content %}
 
 <style>
-
-.detail-card{
-    background:white;
-    border-radius:30px;
-    padding:30px;
-    box-shadow:0 20px 50px rgba(0,0,0,.05);
-    margin-bottom:25px;
+.ticket-detail-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    max-width: 1040px;
+    margin: 0 auto;
+    min-width: 0;
 }
 
-.detail-card h5{
-    font-weight:700;
-    margin-bottom:25px;
+.detail-hero,
+.detail-card,
+.info-tile,
+.message-bubble,
+.action-panel {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
 }
 
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
+.detail-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 30px;
+    padding: 28px;
 }
 
-.info-item{
-    background:#fafafa;
-    border-radius:20px;
-    padding:15px;
+.hero-main,
+.section-title,
+.info-tile,
+.owner-line,
+.message-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
 }
 
-.info-label{
-    font-size:13px;
-    color:#888;
-    margin-bottom:5px;
+.hero-icon,
+.section-icon,
+.tile-icon,
+.owner-icon,
+.message-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
 }
 
-.info-value{
-    font-weight:600;
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    font-size: 25px;
 }
 
-.status-badge{
-    padding:8px 16px;
-    border-radius:25px;
-    font-size:13px;
-    font-weight:600;
+.section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 20px;
 }
 
-.status-progress{
-    background:#fff3cd;
-    color:#856404;
+.tile-icon,
+.owner-icon,
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    font-size: 17px;
 }
 
-.status-waiting{
-    background:#cff4fc;
-    color:#055160;
+.message-avatar {
+    border-radius: 50%;
 }
 
-.status-resolved{
-    background:#d1e7dd;
-    color:#0f5132;
+.detail-hero h2,
+.section-title h3 {
+    margin: 0 0 5px;
+    color: var(--dark-color);
+    font-weight: 800;
 }
 
-.status-closed{
-    background:#f8d7da;
-    color:#842029;
+.detail-hero h2 {
+    font-size: 29px;
 }
 
-.ticket-owner{
-    background:#fdf8ef;
-    border:1px solid rgba(200,169,81,.2);
-    border-radius:20px;
-    padding:15px;
+.section-title h3 {
+    font-size: 22px;
 }
 
-.btn-wassel{
-    background:#c8a951;
-    border:none;
-    color:white;
-    border-radius:30px;
-    padding:10px 25px;
+.detail-hero p,
+.section-title p,
+.ticket-sub,
+.tile-label,
+.tile-note,
+.message-time,
+.ticket-body,
+.action-note {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
 }
 
-.btn-wassel:hover{
-    background:#b8953f;
-    color:white;
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
 }
 
-.btn-outline-wassel{
-    border:1px solid #c8a951;
-    color:#c8a951;
-    border-radius:30px;
-    padding:10px 25px;
+.back-link,
+.primary-btn,
+.danger-btn,
+.muted-btn,
+.status-badge,
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-.btn-outline-wassel:hover{
-    background:#c8a951;
-    color:white;
+.back-link,
+.muted-btn {
+    min-height: 44px;
+    padding: 8px 15px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    color: var(--dark-color);
 }
 
-.page-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:15px;
-    margin-bottom:25px;
+.primary-btn,
+.danger-btn {
+    min-height: 48px;
+    border: 0;
+    padding: 10px 18px;
+    color: white;
 }
 
-.chat-box{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
+.primary-btn {
+    background: var(--accent-color);
 }
 
-.chat-message{
-    max-width:80%;
-    padding:15px 20px;
-    border-radius:22px;
-    position:relative;
+.danger-btn {
+    background: #ad2f2f;
 }
 
-.chat-user{
-    background:#f5f5f5;
-    align-self:flex-start;
+.status-badge,
+.category-badge {
+    min-height: 34px;
+    padding: 6px 12px;
+    font-size: 12px;
 }
 
-.chat-admin{
-    background:#fdf8ef;
-    border:1px solid rgba(200,169,81,.25);
-    align-self:flex-end;
+.status-progress,
+.status-waiting,
+.category-badge {
+    background: #fff3d7;
+    color: #9a6a00;
 }
 
-.chat-header{
-    font-size:12px;
-    color:#777;
-    margin-bottom:8px;
-    font-weight:600;
+.status-resolved {
+    background: #edf6ef;
+    color: #2f6b42;
 }
 
-.chat-time{
-    font-size:11px;
-    color:#999;
-    margin-top:10px;
+.status-closed {
+    background: #f7ecec;
+    color: #a43131;
 }
 
-.reply-box{
-    background:#fafafa;
-    border-radius:25px;
-    padding:20px;
+.summary-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
 }
 
+.detail-card,
+.action-panel {
+    border-radius: 28px;
+    padding: 24px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.info-tile {
+    min-height: 78px;
+    align-items: flex-start;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: none;
+}
+
+.tile-label {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.tile-value {
+    color: var(--dark-color);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.tile-note {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.ticket-body {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    border-radius: 20px;
+    background: #fbfaf7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.attachment-link {
+    margin-top: 18px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(200, 169, 81, 0.2);
+    border-radius: 18px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.owner-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.owner-line {
+    align-items: flex-start;
+    padding: 14px;
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    border-radius: 18px;
+    background: #fbfaf7;
+}
+
+.conversation-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.message-bubble {
+    max-width: 78%;
+    border-radius: 22px;
+    padding: 16px;
+    box-shadow: none;
+}
+
+.message-bubble.admin {
+    justify-self: start;
+    background: #fbfaf7;
+}
+
+.message-bubble.user {
+    justify-self: end;
+}
+
+.message-name {
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.message-text {
+    margin-top: 10px;
+    color: var(--dark-color);
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.message-text p {
+    margin-bottom: 0;
+}
+
+.message-time {
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.empty-state {
+    padding: 28px;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    border-radius: 20px;
+    background: #fbfaf7;
+    color: #837568;
+    text-align: center;
+}
+
+.action-panel {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.action-panel .section-title {
+    justify-content: flex-start;
+}
+
+.current-owner {
+    margin: 18px 0;
+    padding: 15px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    font-weight: 800;
+    text-align: right;
+}
+
+.reply-box {
+    margin-top: 18px;
+    text-align: right;
+}
+
+.reply-box label {
+    display: block;
+    margin-bottom: 10px;
+    color: #7f7165;
+    font-weight: 800;
+}
+
+.reply-box textarea,
+.reply-box .form-control {
+    width: 100%;
+    min-height: 150px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 18px;
+    padding: 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    line-height: 1.9;
+    resize: vertical;
+    outline: none;
+}
+
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.action-alert {
+    margin: 18px 0 0;
+    padding: 14px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    color: #837568;
+    line-height: 1.8;
+    text-align: right;
+}
+
+@media (min-width: 900px) {
+    .info-tile,
+    .owner-line {
+        padding: 16px 18px;
+    }
+
+    .ticket-body {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ticket-detail-page {
+        gap: 18px;
+    }
+
+    .detail-hero,
+    .detail-card,
+    .action-panel {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .detail-hero {
+        flex-direction: column;
+    }
+
+    .hero-main,
+    .section-title {
+        align-items: flex-start;
+    }
+
+    .detail-hero h2 {
+        font-size: 24px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .message-bubble {
+        max-width: 100%;
+    }
+
+    .hero-actions,
+    .back-link,
+    .primary-btn,
+    .danger-btn,
+    .muted-btn {
+        width: 100%;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}
 </style>
 
-<div class="page-header">
-
-    <div>
-
-        <h3 class="fw-bold mb-1">
-            🎫 {{ ticket.ticket_number }}
-        </h3>
-
-        <div class="text-muted">
-            تفاصيل تذكرة الدعم
-        </div>
-
-    </div>
-
-    <a href="{% url 'admin_panel:support_tickets' %}"
-       class="btn btn-outline-wassel">
-
-        رجوع
-
-    </a>
-
-</div>
-
-
-<div class="detail-card">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h5 class="mb-0">
-            معلومات التذكرة
-        </h5>
-
-        {% if ticket.status == "in_progress" %}
-            <span class="status-badge status-progress">
-                قيد المعالجة
-            </span>
-
-        {% elif ticket.status == "waiting_user" %}
-            <span class="status-badge status-waiting">
-                بانتظار رد العميل
-            </span>
-
-        {% elif ticket.status == "resolved" %}
-            <span class="status-badge status-resolved">
-                تم الحل
-            </span>
-
-        {% else %}
-            <span class="status-badge status-closed">
-                مغلقة
-            </span>
-        {% endif %}
-
-    </div>
-
-    <div class="info-grid">
-
-        <div class="info-item">
-            <div class="info-label">رقم التذكرة</div>
-            <div class="info-value">
-                {{ ticket.ticket_number }}
-            </div>
-        </div>
-
-        <div class="info-item">
-            <div class="info-label">نوع التذكرة</div>
-            <div class="info-value">
-                {{ ticket.get_category_display }}
-            </div>
-        </div>
-
-        <div class="info-item">
-            <div class="info-label">تاريخ الإنشاء</div>
-            <div class="info-value">
-                {{ ticket.created_at|date:"d/m/Y H:i" }}
-            </div>
-        </div>
-
-        <div class="info-item">
-            <div class="info-label">آخر تحديث</div>
-            <div class="info-value">
-                {{ ticket.updated_at|date:"d/m/Y H:i" }}
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<div class="detail-card">
-
-    <h5>
-        👤 معلومات العميل
-    </h5>
-
-    <div class="info-grid">
-
-        <div class="info-item">
-            <div class="info-label">الاسم</div>
-            <div class="info-value">
-                {{ ticket.name }}
-            </div>
-        </div>
-
-        <div class="info-item">
-            <div class="info-label">البريد الإلكتروني</div>
-            <div class="info-value">
-                {{ ticket.email }}
-            </div>
-        </div>
-
-        <div class="info-item">
-            <div class="info-label">رقم الجوال</div>
-            <div class="info-value">
-                {{ ticket.phone }}
-            </div>
-        </div>
-
-        <div class="info-item">
-            <div class="info-label">نوع الحساب</div>
-            <div class="info-value">
-
-                {% if ticket.user %}
-                    {{ ticket.user.get_role_display }}
-                {% else %}
-                    زائر
-                {% endif %}
-
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-
-
-{% if ticket.attachment %}
-
-<div class="detail-card">
-
-    <h5>
-        📎 المرفق
-    </h5>
-
-    <a href="{{ ticket.attachment.url }}"
-       target="_blank"
-       class="btn btn-outline-wassel">
-
-        عرض المرفق
-
-    </a>
-
-</div>
-
-{% endif %}
-
-
-
-<div class="detail-card">
-
-    <h5>
-        💬 المحادثة
-    </h5>
-
-    <div class="chat-box">
-
-        {% for msg in messages_list %}
-
-            <div class="chat-message {% if msg.sender_type == 'admin' %}chat-admin{% else %}chat-user{% endif %}">
-
-                <div class="chat-header">
-
-                    {% if msg.sender_type == "admin" %}
-                        🛠 {{ msg.sender.full_name|default:"مشرف" }}
-                    {% elif msg.sender_type == "user" %}
-                        👤 {{ ticket.name }}
+<div class="ticket-detail-page">
+    <section class="detail-hero">
+        <div class="hero-main">
+            <span class="hero-icon"><i class="bi bi-ticket-detailed"></i></span>
+            <div>
+                <h2>{{ ticket.subject }}</h2>
+                <p class="ticket-sub">{{ ticket.ticket_number }} · {{ ticket.created_at|date:"d/m/Y H:i" }}</p>
+                <div class="summary-pills">
+                    {% if ticket.status == "in_progress" %}
+                        <span class="status-badge status-progress">قيد المعالجة</span>
+                    {% elif ticket.status == "waiting_user" %}
+                        <span class="status-badge status-waiting">بانتظار رد العميل</span>
+                    {% elif ticket.status == "resolved" %}
+                        <span class="status-badge status-resolved">تم الحل</span>
                     {% else %}
-                        🌐 زائر
+                        <span class="status-badge status-closed">مغلقة</span>
                     {% endif %}
-
+                    <span class="category-badge">{{ ticket.get_category_display }}</span>
+                    {% if ticket.attachment %}
+                        <span class="category-badge"><i class="bi bi-paperclip"></i> يوجد مرفق</span>
+                    {% endif %}
                 </div>
-
-                <div>
-                    {{ msg.message|linebreaks }}
-                </div>
-
-                <div class="chat-time">
-                    {{ msg.created_at|date:"d/m/Y H:i" }}
-                </div>
-
             </div>
-
-        {% empty %}
-
-            <div class="alert alert-light">
-                لا توجد رسائل.
-            </div>
-
-        {% endfor %}
-
-    </div>
-
-</div>
-
-
-<div class="detail-card">
-
-    <h5>
-        🛠 إدارة التذكرة
-    </h5>
-
-    <div class="ticket-owner mb-4">
-
-        <strong>المسؤول الحالي:</strong>
-
-        {% if ticket.handled_by %}
-            {{ ticket.handled_by.full_name }}
-        {% else %}
-            غير مسندة
-        {% endif %}
-
-    </div>
-
-    {% if not ticket.handled_by %}
-
-        <form method="post" class="mb-4">
-
-            {% csrf_token %}
-
-            <input
-                type="hidden"
-                name="action"
-                value="claim"
-            >
-
-            <button
-                type="submit"
-                class="btn btn-wassel">
-
-                🙋 استلام التذكرة
-
-            </button>
-
-        </form>
-
-        <div class="alert alert-info">
-
-            يجب استلام التذكرة أولاً قبل الرد على العميل أو إغلاقها.
-
         </div>
 
-    {% elif ticket.handled_by == request.user %}
+        <div class="hero-actions">
+            <a href="{% url 'admin_panel:support_tickets' %}" class="back-link">
+                رجوع للتذاكر
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </div>
+    </section>
 
-        {% if ticket.status != "closed" and ticket.status != "resolved" %}
-
-            <form method="post">
-
-                {% csrf_token %}
-
-                <input
-                    type="hidden"
-                    name="action"
-                    value="reply"
-                >
-
-                <div class="reply-box">
-
-                    <label class="form-label fw-bold mb-3">
-                        الرد على العميل
-                    </label>
-
-                    {{ message_form.message }}
-
-                    <div class="mt-3 d-flex gap-2 flex-wrap">
-
-                        <button
-                            type="submit"
-                            class="btn btn-wassel">
-
-                            ✉️ إرسال الرد
-
-                        </button>
-
+    <section class="detail-card">
+                <div class="section-title">
+                    <span class="section-icon"><i class="bi bi-info-circle"></i></span>
+                    <div>
+                        <h3>معلومات التذكرة</h3>
+                        <p>البيانات الأساسية وحالة المتابعة.</p>
                     </div>
-
                 </div>
 
-            </form>
+                <div class="info-grid">
+                    <div class="info-tile">
+                        <span class="tile-icon"><i class="bi bi-hash"></i></span>
+                        <div>
+                            <div class="tile-label">رقم التذكرة</div>
+                            <div class="tile-value">{{ ticket.ticket_number }}</div>
+                        </div>
+                    </div>
+                    <div class="info-tile">
+                        <span class="tile-icon"><i class="bi bi-tag"></i></span>
+                        <div>
+                            <div class="tile-label">نوع التذكرة</div>
+                            <div class="tile-value">{{ ticket.get_category_display }}</div>
+                        </div>
+                    </div>
+                    <div class="info-tile">
+                        <span class="tile-icon"><i class="bi bi-calendar3"></i></span>
+                        <div>
+                            <div class="tile-label">تاريخ الإنشاء</div>
+                            <div class="tile-value">{{ ticket.created_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                    </div>
+                    <div class="info-tile">
+                        <span class="tile-icon"><i class="bi bi-arrow-repeat"></i></span>
+                        <div>
+                            <div class="tile-label">آخر تحديث</div>
+                            <div class="tile-value">{{ ticket.updated_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+                    </div>
+                </div>
+    </section>
 
-            <form method="post" class="mt-3">
+    <section class="detail-card">
+                <div class="section-title">
+                    <span class="section-icon"><i class="bi bi-chat-left-text"></i></span>
+                    <div>
+                        <h3>تفاصيل الطلب</h3>
+                        <p>النص الأصلي المرسل من صاحب التذكرة.</p>
+                    </div>
+                </div>
+                <div class="ticket-body">{{ ticket.message }}</div>
 
-                {% csrf_token %}
+                {% if ticket.attachment %}
+                <a href="{{ ticket.attachment.url }}" target="_blank" class="attachment-link">
+                    <span><i class="bi bi-paperclip"></i> عرض المرفق</span>
+                    <i class="bi bi-box-arrow-up-left"></i>
+                </a>
+                {% endif %}
+    </section>
 
-                <input
-                    type="hidden"
-                    name="action"
-                    value="close"
-                >
+    <section class="detail-card">
+                <div class="section-title">
+                    <span class="section-icon"><i class="bi bi-chat-dots"></i></span>
+                    <div>
+                        <h3>المحادثة</h3>
+                        <p>سجل الردود بين العميل وفريق الدعم.</p>
+                    </div>
+                </div>
 
-                <button
-                    type="submit"
-                    class="btn btn-outline-danger">
+                <div class="conversation-list">
+                    {% for msg in messages_list %}
+                    <div class="message-bubble {% if msg.sender_type == 'admin' %}admin{% else %}user{% endif %}">
+                        <div class="message-head">
+                            <span class="message-avatar">
+                                {% if msg.sender_type == "admin" %}
+                                    <i class="bi bi-person-gear"></i>
+                                {% else %}
+                                    <i class="bi bi-person"></i>
+                                {% endif %}
+                            </span>
+                            <div>
+                                <div class="message-name">
+                                    {% if msg.sender_type == "admin" %}
+                                        {{ msg.sender.full_name|default:"مشرف" }}
+                                    {% elif msg.sender_type == "user" %}
+                                        {{ ticket.name }}
+                                    {% else %}
+                                        زائر
+                                    {% endif %}
+                                </div>
+                                <div class="message-time">{{ msg.created_at|date:"d/m/Y H:i" }}</div>
+                            </div>
+                        </div>
+                        <div class="message-text">{{ msg.message|linebreaks }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state">لا توجد رسائل في هذه التذكرة حتى الآن.</div>
+                    {% endfor %}
+                </div>
+    </section>
 
-                    🔒 إغلاق التذكرة
+    <section class="detail-card">
+                <div class="section-title">
+                    <span class="section-icon"><i class="bi bi-person"></i></span>
+                    <div>
+                        <h3>معلومات العميل</h3>
+                        <p>بيانات التواصل وصاحب التذكرة.</p>
+                    </div>
+                </div>
 
-                </button>
+                <div class="owner-card">
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-person"></i></span>
+                        <div>
+                            <div class="tile-label">الاسم</div>
+                            <div class="tile-value">{{ ticket.name }}</div>
+                        </div>
+                    </div>
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-envelope"></i></span>
+                        <div>
+                            <div class="tile-label">البريد الإلكتروني</div>
+                            <div class="tile-value">{{ ticket.email }}</div>
+                        </div>
+                    </div>
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-phone"></i></span>
+                        <div>
+                            <div class="tile-label">رقم الجوال</div>
+                            <div class="tile-value">{{ ticket.phone }}</div>
+                        </div>
+                    </div>
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-person-badge"></i></span>
+                        <div>
+                            <div class="tile-label">نوع الحساب</div>
+                            <div class="tile-value">
+                                {% if ticket.user %}
+                                    {{ ticket.user.get_role_display }}
+                                {% else %}
+                                    زائر
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </section>
 
-            </form>
-
-        {% else %}
-
-            <div class="alert alert-success mb-0">
-
-                تم إغلاق هذه التذكرة ولا يمكن إضافة ردود جديدة.
-
+    <section class="action-panel">
+        <div class="section-title">
+            <span class="section-icon"><i class="bi bi-sliders"></i></span>
+            <div>
+                <h3>إدارة التذكرة</h3>
+                <p>راجع التفاصيل والمحادثة ثم اتخذ الإجراء المناسب.</p>
             </div>
-
-        {% endif %}
-
-    {% else %}
-
-        <div class="alert alert-warning mb-0">
-
-            هذه التذكرة مسندة إلى
-
-            <strong>
-                {{ ticket.handled_by.full_name }}
-            </strong>
-
-            ولا يمكنك تعديلها.
-
         </div>
 
-    {% endif %}
+        <div class="current-owner">
+            المسؤول الحالي:
+            {% if ticket.handled_by %}
+                {{ ticket.handled_by.full_name }}
+            {% else %}
+                غير مسندة
+            {% endif %}
+        </div>
 
+        {% if not ticket.handled_by %}
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="claim">
+                <button type="submit" class="primary-btn">
+                    <i class="bi bi-person-check"></i>
+                    استلام التذكرة
+                </button>
+            </form>
+            <div class="action-alert">يجب استلام التذكرة قبل الرد على العميل أو إغلاقها.</div>
+
+        {% elif ticket.handled_by == request.user %}
+            {% if ticket.status != "closed" and ticket.status != "resolved" %}
+                <form method="post" class="reply-box">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reply">
+                    <label>الرد على العميل</label>
+                    {{ message_form.message }}
+                    <div class="action-buttons">
+                        <button type="submit" class="primary-btn">
+                            <i class="bi bi-send"></i>
+                            إرسال الرد
+                        </button>
+                    </div>
+                </form>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="close">
+                    <div class="action-buttons">
+                        <button type="submit" class="danger-btn">
+                            <i class="bi bi-lock"></i>
+                            إغلاق التذكرة
+                        </button>
+                        <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
+                            رجوع للتذاكر
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                    </div>
+                </form>
+            {% else %}
+                <div class="action-alert">تم إغلاق هذه التذكرة ولا يمكن إضافة ردود جديدة.</div>
+                <div class="action-buttons">
+                    <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
+                        رجوع للتذاكر
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="action-alert">
+                هذه التذكرة مسندة إلى <strong>{{ ticket.handled_by.full_name }}</strong> ولا يمكنك تعديلها.
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
+                    رجوع للتذاكر
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+        {% endif %}
+    </section>
 </div>
-
 
 {% endblock %}

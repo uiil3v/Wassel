@@ -5,7 +5,7 @@ from accounts.models import User
 from driver.models import DriverProfile
 from student.models import StudentProfile
 from subscriptions.models import Subscription, SubscriptionRequest
-from payment.models import Transaction
+from payment.models import Transaction, Wallet
 from .decorators import admin_required
 from django.contrib import messages
 from django.db.models import Q
@@ -248,7 +248,7 @@ def approve_driver(request, pk):
     )
 
     messages.success(request, "تم اعتماد السائق 🚗")
-    return redirect("admin_panel:requests")
+    return redirect("admin_panel:driver_detail", pk=pk)
 
 
 
@@ -338,9 +338,57 @@ def request_detail(request, pk):
 def driver_detail(request, pk):
 
     driver = get_object_or_404(DriverProfile, id=pk)
+    document_items = [
+        {
+            "label": "صورة الهوية",
+            "hint": "تحقق من وضوح الاسم ورقم الهوية.",
+            "image": driver.id_document_image,
+            "icon": "bi-person-vcard",
+        },
+        {
+            "label": "رخصة القيادة",
+            "hint": "تأكد من صلاحية الرخصة وتطابق البيانات.",
+            "image": driver.driving_license_image,
+            "icon": "bi-card-checklist",
+        },
+        {
+            "label": "استمارة المركبة",
+            "hint": "راجع بيانات المركبة والملكية.",
+            "image": driver.vehicle_registration_image,
+            "icon": "bi-file-earmark-text",
+        },
+        {
+            "label": "تأمين المركبة",
+            "hint": "تأكد من وجود تأمين واضح وساري.",
+            "image": driver.vehicle_insurance_image,
+            "icon": "bi-shield-check",
+        },
+        {
+            "label": "صورة أمام المركبة",
+            "hint": "تحقق من وضوح اللوحة وحالة المركبة.",
+            "image": driver.vehicle_front_image,
+            "icon": "bi-car-front",
+        },
+        {
+            "label": "صورة خلف المركبة",
+            "hint": "تحقق من وضوح الصورة وحالة الخلفية.",
+            "image": driver.vehicle_back_image,
+            "icon": "bi-car-front-fill",
+        },
+        {
+            "label": "صورة جانب المركبة",
+            "hint": "راجع حالة الهيكل والوضوح العام.",
+            "image": driver.vehicle_side_image,
+            "icon": "bi-car-front",
+        },
+    ]
+    uploaded_documents_count = sum(1 for item in document_items if item["image"])
 
     return render(request, "admin_panel/driver_detail.html", {
-        "driver": driver
+        "driver": driver,
+        "document_items": document_items,
+        "uploaded_documents_count": uploaded_documents_count,
+        "total_documents_count": len(document_items),
     })
     
     
@@ -503,24 +551,37 @@ def activate_user(request, pk):
 @admin_required(levels=[1])
 def payments_view(request):
 
-    transactions = Transaction.objects.select_related("wallet__user").order_by("-created_at")
+    base_transactions = Transaction.objects.select_related(
+        "wallet__user",
+        "subscription_request__student__user",
+        "subscription_request__subscription__driver__user",
+        "subscription_request__subscription__driver__user__city",
+    ).order_by("-created_at")
+    transactions = base_transactions
 
     # ======================
     # Filters
     # ======================
 
-    search = request.GET.get("search")
-    type_filter = request.GET.get("type")
-    status_filter = request.GET.get("status")
-    date_from = request.GET.get("date_from")
-    date_to = request.GET.get("date_to")
+    search = request.GET.get("search", "").strip()
+    type_filter = request.GET.get("type", "all")
+    status_filter = request.GET.get("status", "all")
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+    amount_from = request.GET.get("amount_from", "")
+    amount_to = request.GET.get("amount_to", "")
 
     # 🔍 Search
     if search:
         transactions = transactions.filter(
             Q(wallet__user__first_name__icontains=search) |
             Q(wallet__user__last_name__icontains=search) |
-            Q(wallet__user__email__icontains=search)
+            Q(wallet__user__email__icontains=search) |
+            Q(wallet__user__phone__icontains=search) |
+            Q(subscription_request__request_code__icontains=search) |
+            Q(subscription_request__subscription__neighborhood__icontains=search) |
+            Q(subscription_request__subscription__driver__user__first_name__icontains=search) |
+            Q(subscription_request__subscription__driver__user__last_name__icontains=search)
         )
 
     # 🎛️ Type
@@ -539,27 +600,67 @@ def payments_view(request):
     if date_to:
         transactions = transactions.filter(created_at__date__lte=date_to)
 
+    if amount_from:
+        transactions = transactions.filter(amount__gte=amount_from)
+
+    if amount_to:
+        transactions = transactions.filter(amount__lte=amount_to)
+
     # ======================
-    # Stats (نفسها)
+    # Stats
     # ======================
 
     total_transactions = transactions.count()
+    completed_transactions = transactions.filter(status="completed")
+    completed_transactions_count = completed_transactions.count()
 
-    total_earnings = transactions.filter(
+    total_amount = completed_transactions.aggregate(total=Sum("amount"))["total"] or 0
+
+    total_earnings = completed_transactions.filter(
         type="commission",
-        status="completed"
     ).aggregate(total=Sum("amount"))["total"] or 0
 
-    paid_subscriptions_count = Transaction.objects.filter(
+    deposits_total = completed_transactions.filter(
+        type="deposit"
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    frozen_total = completed_transactions.filter(
+        type="freeze"
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    refunds_total = completed_transactions.filter(
+        type="refund"
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    withdrawals_total = completed_transactions.filter(
+        type="withdraw"
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    pending_transactions_count = transactions.filter(status="pending").count()
+    cancelled_transactions_count = transactions.filter(status="cancelled").count()
+
+    paid_subscriptions_count = completed_transactions.filter(
         type="commission",
-        status="completed"
     ).count()
+
+    wallets_balance_total = Wallet.objects.aggregate(total=Sum("balance"))["total"] or 0
+    wallets_frozen_total = Wallet.objects.aggregate(total=Sum("frozen_balance"))["total"] or 0
 
     context = {
         "transactions": transactions,
         "total_transactions": total_transactions,
+        "completed_transactions_count": completed_transactions_count,
+        "total_amount": total_amount,
         "total_earnings": total_earnings,
+        "deposits_total": deposits_total,
+        "frozen_total": frozen_total,
+        "refunds_total": refunds_total,
+        "withdrawals_total": withdrawals_total,
+        "pending_transactions_count": pending_transactions_count,
+        "cancelled_transactions_count": cancelled_transactions_count,
         "paid_subscriptions_count": paid_subscriptions_count,
+        "wallets_balance_total": wallets_balance_total,
+        "wallets_frozen_total": wallets_frozen_total,
 
         # مهم عشان نحافظ على القيم في الفورم
         "search": search,
@@ -567,6 +668,8 @@ def payments_view(request):
         "status": status_filter,
         "date_from": date_from,
         "date_to": date_to,
+        "amount_from": amount_from,
+        "amount_to": amount_to,
     }
 
     return render(request, "admin_panel/payments.html", context)
@@ -577,25 +680,34 @@ def payments_view(request):
 def export_payments_csv(request):
 
     transactions = Transaction.objects.select_related(
-        "wallet__user"
+        "wallet__user",
+        "subscription_request__student__user",
+        "subscription_request__subscription__driver__user",
     ).order_by("-created_at")
 
     # ======================
     # نفس الفلاتر الحالية
     # ======================
 
-    search = request.GET.get("search")
-    type_filter = request.GET.get("type")
-    status_filter = request.GET.get("status")
-    date_from = request.GET.get("date_from")
-    date_to = request.GET.get("date_to")
+    search = request.GET.get("search", "").strip()
+    type_filter = request.GET.get("type", "all")
+    status_filter = request.GET.get("status", "all")
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+    amount_from = request.GET.get("amount_from", "")
+    amount_to = request.GET.get("amount_to", "")
 
     # 🔍 Search
     if search:
         transactions = transactions.filter(
             Q(wallet__user__first_name__icontains=search) |
             Q(wallet__user__last_name__icontains=search) |
-            Q(wallet__user__email__icontains=search)
+            Q(wallet__user__email__icontains=search) |
+            Q(wallet__user__phone__icontains=search) |
+            Q(subscription_request__request_code__icontains=search) |
+            Q(subscription_request__subscription__neighborhood__icontains=search) |
+            Q(subscription_request__subscription__driver__user__first_name__icontains=search) |
+            Q(subscription_request__subscription__driver__user__last_name__icontains=search)
         )
 
     # 🎛️ Type
@@ -618,6 +730,12 @@ def export_payments_csv(request):
             created_at__date__lte=date_to
         )
 
+    if amount_from:
+        transactions = transactions.filter(amount__gte=amount_from)
+
+    if amount_to:
+        transactions = transactions.filter(amount__lte=amount_to)
+
     # ======================
     # CSV Response
     # ======================
@@ -638,20 +756,34 @@ def export_payments_csv(request):
     writer.writerow([
         "User",
         "Email",
+        "Role",
+        "Request Code",
+        "Related User",
         "Type",
         "Amount",
+        "Commission Amount",
         "Status",
         "Date",
     ])
 
     # Rows
     for tx in transactions:
+        related_user = ""
+        if tx.subscription_request:
+            if tx.wallet.user == tx.subscription_request.student.user:
+                related_user = tx.subscription_request.subscription.driver.user.full_name
+            else:
+                related_user = tx.subscription_request.student.user.full_name
 
         writer.writerow([
             tx.wallet.user.full_name,
             tx.wallet.user.email,
+            tx.wallet.user.get_role_display(),
+            tx.subscription_request.request_code if tx.subscription_request else "",
+            related_user,
             tx.get_type_display(),
             f"{tx.amount:.2f}",
+            f"{tx.commission_amount:.2f}",
             tx.get_status_display(),
             tx.created_at.strftime("%d/%m/%Y %H:%M"),
         ])
@@ -664,7 +796,13 @@ def export_payments_csv(request):
 @admin_required(levels=[1, 2])
 def send_notification_view(request):
 
-    users = User.objects.all()
+    users = User.objects.only(
+        "id",
+        "first_name",
+        "last_name",
+        "email",
+        "role",
+    ).order_by("first_name", "last_name", "email")
 
     if request.method == "POST":
         title = request.POST.get("title")
@@ -776,12 +914,16 @@ def send_notification_view(request):
 @admin_required(levels=[1, 2])
 def notifications_list(request):
 
-    notifications = Notification.objects.select_related("user", "sent_by").order_by("-created_at")
+    base_notifications = Notification.objects.select_related(
+        "user",
+        "sent_by",
+    ).order_by("-created_at")
+    notifications = base_notifications
 
     # ======================
     # Search
     # ======================
-    search = request.GET.get("search", "")
+    search = request.GET.get("search", "").strip()
     if search:
         notifications = notifications.filter(
             Q(title__icontains=search) |
@@ -815,6 +957,21 @@ def notifications_list(request):
     if n_type != "all":
         notifications = notifications.filter(notification_type=n_type)
 
+    read_status = request.GET.get("read_status", "all")
+    if read_status == "read":
+        notifications = notifications.filter(is_read=True)
+    elif read_status == "unread":
+        notifications = notifications.filter(is_read=False)
+
+    date_from = request.GET.get("date_from", "")
+    date_to = request.GET.get("date_to", "")
+
+    if date_from:
+        notifications = notifications.filter(created_at__date__gte=date_from)
+
+    if date_to:
+        notifications = notifications.filter(created_at__date__lte=date_to)
+
     # ======================
     # Context
     # ======================
@@ -823,6 +980,15 @@ def notifications_list(request):
         "search": search,
         "target": target,
         "type": n_type,
+        "read_status": read_status,
+        "date_from": date_from,
+        "date_to": date_to,
+        "results_count": notifications.count(),
+        "total_notifications": base_notifications.count(),
+        "unread_count": base_notifications.filter(is_read=False).count(),
+        "read_count": base_notifications.filter(is_read=True).count(),
+        "admin_notifications_count": base_notifications.filter(notification_type="admin").count(),
+        "system_notifications_count": base_notifications.filter(notification_type="system").count(),
     }
 
     return render(request, "admin_panel/notifications.html", context)
@@ -1247,6 +1413,10 @@ def support_tickets(request):
         status="waiting_user"
     ).count()
 
+    open_tickets_count = SupportTicket.objects.filter(
+        status__in=["in_progress", "waiting_user"]
+    ).count()
+
     resolved_count = SupportTicket.objects.filter(
         status="resolved"
     ).count()
@@ -1259,10 +1429,18 @@ def support_tickets(request):
         handled_by__isnull=True
     ).count()
 
+    assigned_count = SupportTicket.objects.filter(
+        handled_by__isnull=False
+    ).count()
+
     attachment_count = SupportTicket.objects.exclude(
         attachment=""
     ).exclude(
         attachment__isnull=True
+    ).count()
+
+    no_attachment_count = SupportTicket.objects.filter(
+        Q(attachment="") | Q(attachment__isnull=True)
     ).count()
 
     admins = User.objects.filter(
@@ -1284,12 +1462,15 @@ def support_tickets(request):
         "sort": sort,
 
         "total_tickets": total_tickets,
+        "open_tickets_count": open_tickets_count,
         "in_progress_count": in_progress_count,
         "waiting_user_count": waiting_user_count,
         "resolved_count": resolved_count,
         "closed_count": closed_count,
         "unassigned_count": unassigned_count,
+        "assigned_count": assigned_count,
         "attachment_count": attachment_count,
+        "no_attachment_count": no_attachment_count,
     }
 
     return render(

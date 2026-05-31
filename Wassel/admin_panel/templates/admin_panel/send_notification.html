@@ -3,163 +3,553 @@
 {% block admin_content %}
 
 <style>
-.section-card {
-    background: white;
+.send-notification-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+}
+
+.send-hero,
+.composer-card,
+.preview-card,
+.recipient-box {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.send-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
     border-radius: 30px;
-    padding: 30px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+    padding: 28px;
 }
 
-/* Title */
-.page-title {
-    font-weight: bold;
+.hero-main,
+.section-title,
+.preview-title,
+.recipient-summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
 }
 
-/* Inputs */
-.form-control, .form-select {
-    border-radius: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
+.hero-icon,
+.section-icon,
+.preview-icon,
+.recipient-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
 }
 
-/* Labels */
-.form-label {
-    font-weight: 600;
-    margin-bottom: 5px;
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    font-size: 25px;
 }
 
-/* Button */
-.send-btn {
-    background: black;
+.section-icon,
+.preview-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 20px;
+}
+
+.send-hero h2,
+.section-title h3,
+.preview-title h3 {
+    margin: 0 0 5px;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.send-hero h2 {
+    font-size: 29px;
+}
+
+.section-title h3,
+.preview-title h3 {
+    font-size: 22px;
+}
+
+.send-hero p,
+.section-title p,
+.preview-title p,
+.helper-text,
+.preview-message,
+.preview-meta,
+.recipient-sub {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.back-link,
+.submit-btn {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.back-link {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    color: var(--dark-color);
+}
+
+.submit-btn {
+    border: 0;
+    background: var(--accent-color);
     color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 10px 25px;
-    font-weight: 600;
-    transition: 0.3s;
 }
 
-.send-btn:hover {
-    opacity: 0.85;
+.send-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+    gap: 18px;
+    align-items: start;
 }
 
-/* Box highlight */
-.highlight-box {
-    background: #f9f9f9;
-    padding: 15px;
+.composer-card,
+.preview-card {
+    border-radius: 28px;
+    padding: 24px;
+}
+
+.composer-form {
+    display: grid;
+    gap: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.form-field.full {
+    grid-column: 1 / -1;
+}
+
+.form-field label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.form-field input,
+.form-field select {
+    min-height: 48px;
+    padding: 10px 14px;
+}
+
+.form-field textarea {
+    min-height: 150px;
+    padding: 14px;
+    resize: vertical;
+    line-height: 1.9;
+}
+
+.field-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+    color: #9a8c7b;
+    font-size: 12px;
+}
+
+.recipient-box {
+    display: none;
+    border-radius: 22px;
+    padding: 16px;
+}
+
+.recipient-box.is-visible {
+    display: block;
+}
+
+.recipient-filter {
+    margin-bottom: 12px;
+}
+
+.email-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid rgba(200, 169, 81, 0.18);
     border-radius: 20px;
+    background: #fbfaf7;
+}
+
+.email-option input {
+    width: 18px;
+    height: 18px;
+    margin-top: 5px;
+    accent-color: var(--accent-color);
+}
+
+.email-option label {
+    margin: 0;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.preview-card {
+    position: sticky;
+    top: 118px;
+}
+
+.preview-box {
+    margin-top: 18px;
+    border: 1px solid rgba(200, 169, 81, 0.18);
+    border-radius: 22px;
+    padding: 18px;
+    background: #fbfaf7;
+}
+
+.preview-box h4 {
+    margin: 0 0 8px;
+    color: var(--dark-color);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.preview-message {
+    min-height: 76px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.recipient-summary {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.recipient-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    font-size: 17px;
+}
+
+.recipient-label {
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.preview-meta {
+    margin-top: 14px;
+    font-size: 12px;
+}
+
+@media (max-width: 992px) {
+    .send-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-card {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .send-hero,
+    .composer-card,
+    .preview-card {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .send-hero {
+        flex-direction: column;
+    }
+
+    .hero-main,
+    .section-title,
+    .preview-title {
+        align-items: flex-start;
+    }
+
+    .send-hero h2 {
+        font-size: 24px;
+    }
+
+    .section-title h3,
+    .preview-title h3 {
+        font-size: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions,
+    .submit-btn,
+    .back-link {
+        width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
 }
 </style>
 
-<h3 class="mb-4 page-title">🔔 إرسال إشعار</h3>
+<div class="send-notification-page">
+    <section class="send-hero">
+        <div class="hero-main">
+            <span class="hero-icon"><i class="bi bi-send"></i></span>
+            <div>
+                <h2>إرسال إشعار</h2>
+                <p>اكتب رسالة واضحة وحدد المستلمين، ويمكنك إرسال نسخة بريدية عند الحاجة.</p>
+            </div>
+        </div>
+        <a href="{% url 'admin_panel:notifications' %}" class="back-link">
+            رجوع للإشعارات
+            <i class="bi bi-arrow-left"></i>
+        </a>
+    </section>
 
-<div class="section-card">
+    <div class="send-layout">
+        <section class="composer-card">
+            <div class="section-title">
+                <span class="section-icon"><i class="bi bi-pencil-square"></i></span>
+                <div>
+                    <h3>بيانات الإشعار</h3>
+                    <p>سيظهر العنوان والنص للمستخدم داخل سجل الإشعارات.</p>
+                </div>
+            </div>
 
-<form method="POST">
-{% csrf_token %}
+            <form method="POST" class="composer-form" id="notificationForm">
+                {% csrf_token %}
 
-<div class="row g-4">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="titleInput"><i class="bi bi-type"></i> عنوان الإشعار</label>
+                        <input id="titleInput" type="text" name="title" placeholder="مثال: تنبيه مهم" maxlength="120" required>
+                        <div class="field-footer">
+                            <span>اجعله مختصرا وواضحا.</span>
+                            <span><span id="titleCount">0</span>/120</span>
+                        </div>
+                    </div>
 
+                    <div class="form-field">
+                        <label for="targetSelect"><i class="bi bi-people"></i> إرسال إلى</label>
+                        <select name="target" id="targetSelect">
+                            {% if request.user.admin_level == 1 %}
+                                <option value="all">جميع المستخدمين</option>
+                                <option value="student">الطلاب</option>
+                                <option value="driver">السائقين</option>
+                                <option value="admin">المشرفين</option>
+                            {% endif %}
+                            <option value="user" {% if request.user.admin_level == 2 %}selected{% endif %}>مستخدم محدد</option>
+                        </select>
+                        <div class="field-footer">
+                            <span id="targetHelp">حدد نطاق الإرسال قبل المتابعة.</span>
+                        </div>
+                    </div>
 
-<!-- Title -->
-<div class="col-md-6">
-    <label class="form-label">عنوان الإشعار</label>
-    <input type="text" name="title" class="form-control" placeholder="مثال: تنبيه مهم" required>
-</div>
+                    <div class="form-field full">
+                        <div class="recipient-box" id="userSelectBox">
+                            <div class="recipient-filter form-field">
+                                <label for="userSearch"><i class="bi bi-search"></i> بحث داخل المستخدمين</label>
+                                <input id="userSearch" type="text" placeholder="ابحث بالاسم أو البريد">
+                            </div>
+                            <label for="userSelect"><i class="bi bi-person"></i> اختر المستخدم</label>
+                            <select name="user" id="userSelect">
+                                {% for u in users %}
+                                    <option value="{{ u.id }}" data-search="{{ u.full_name }} {{ u.email }}" data-name="{{ u.full_name }}" data-email="{{ u.email }}">
+                                        {{ u.full_name }} - {{ u.email }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <div class="field-footer">
+                                <span>يظهر هذا الحقل عند اختيار مستخدم محدد.</span>
+                            </div>
+                        </div>
+                    </div>
 
-<!-- Target -->
-<div class="col-md-6">
-    <label class="form-label">إرسال إلى</label>
-    <select name="target" class="form-select" id="targetSelect">
-        {% if request.user.admin_level == 1 %}
-            <option value="all">🌍 جميع المستخدمين</option>
-            <option value="student">🎓 الطلاب</option>
-            <option value="driver">🚗 السائقين</option>
-            <option value="admin">🛠 الأدمن</option>
-        {% endif %}
-        <option value="user" {% if request.user.admin_level == 2 %}selected{% endif %}>
-            👤 مستخدم محدد
-        </option>
-    </select>
-</div>
+                    <div class="form-field full">
+                        <label for="messageInput"><i class="bi bi-chat-left-text"></i> نص الرسالة</label>
+                        <textarea id="messageInput" name="message" rows="5" placeholder="اكتب محتوى الإشعار هنا..." maxlength="600" required></textarea>
+                        <div class="field-footer">
+                            <span>يفضل أن تكون الرسالة مباشرة وتوضح المطلوب من المستخدم.</span>
+                            <span><span id="messageCount">0</span>/600</span>
+                        </div>
+                    </div>
+                </div>
 
-<!-- User Select -->
-<div class="col-12" id="userSelectBox" style="display:none;">
-    <div class="highlight-box">
-        <label class="form-label">اختر المستخدم</label>
-        <select name="user" class="form-select">
-            {% for u in users %}
-                <option value="{{ u.id }}">
-                    {{ u.full_name }} - {{ u.email }}
-                </option>
-            {% endfor %}
-        </select>
+                <div class="email-option">
+                    <input type="checkbox" name="send_email" id="send_email">
+                    <div>
+                        <label for="send_email">إرسال نسخة إلى البريد الإلكتروني أيضا</label>
+                        <p class="helper-text">استخدمها للرسائل المهمة فقط، خصوصا التنبيهات التي تحتاج انتباه المستخدم خارج الموقع.</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <i class="bi bi-send"></i>
+                        إرسال الإشعار
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <aside class="preview-card">
+            <div class="preview-title">
+                <span class="preview-icon"><i class="bi bi-eye"></i></span>
+                <div>
+                    <h3>معاينة سريعة</h3>
+                    <p>شكل مختصر لما سيراه المستخدم.</p>
+                </div>
+            </div>
+
+            <div class="preview-box">
+                <h4 id="previewTitle">عنوان الإشعار</h4>
+                <p class="preview-message" id="previewMessage">نص الرسالة سيظهر هنا أثناء الكتابة.</p>
+
+                <div class="recipient-summary">
+                    <span class="recipient-icon"><i class="bi bi-person"></i></span>
+                    <div>
+                        <div class="recipient-label" id="previewTarget">جميع المستخدمين</div>
+                        <div class="recipient-sub" id="previewTargetSub">إشعار من المشرف</div>
+                    </div>
+                </div>
+
+                <p class="preview-meta" id="previewEmail">لن يتم إرسال نسخة بريدية.</p>
+            </div>
+        </aside>
     </div>
-</div>
-
-<!-- Message -->
-<div class="col-12">
-    <label class="form-label">نص الرسالة</label>
-    <textarea name="message" class="form-control" rows="4"
-              placeholder="اكتب محتوى الإشعار هنا..." required></textarea>
-</div>
-
-
-
-<!-- Send Email -->
-<div class="col-12">
-
-    <div class="form-check">
-
-        <input
-            class="form-check-input"
-            type="checkbox"
-            name="send_email"
-            id="send_email"
-        >
-
-        <label
-            class="form-check-label fw-semibold"
-            for="send_email"
-        >
-            📧 إرسال نسخة إلى البريد الإلكتروني أيضاً
-        </label>
-
-    </div>
-
-</div>
-
-<!-- Button -->
-<div class="col-12 text-end">
-    <button type="submit" class="send-btn">
-        إرسال الإشعار 🔔
-    </button>
-</div>
-
-
-</div>
-
-</form>
-
 </div>
 
 <script>
+const titleInput = document.getElementById("titleInput");
+const messageInput = document.getElementById("messageInput");
+const titleCount = document.getElementById("titleCount");
+const messageCount = document.getElementById("messageCount");
+const previewTitle = document.getElementById("previewTitle");
+const previewMessage = document.getElementById("previewMessage");
+const previewTarget = document.getElementById("previewTarget");
+const previewTargetSub = document.getElementById("previewTargetSub");
+const previewEmail = document.getElementById("previewEmail");
 const targetSelect = document.getElementById("targetSelect");
 const userBox = document.getElementById("userSelectBox");
+const userSelect = document.getElementById("userSelect");
+const userSearch = document.getElementById("userSearch");
+const sendEmail = document.getElementById("send_email");
 
-targetSelect.addEventListener("change", function() {
-    if (this.value === "user") {
-        userBox.style.display = "block";
-    } else {
-        userBox.style.display = "none";
+const targetLabels = {
+    all: "جميع المستخدمين",
+    student: "الطلاب",
+    driver: "السائقين",
+    admin: "المشرفين",
+    user: "مستخدم محدد"
+};
+
+function updateCountsAndPreview() {
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+
+    titleCount.textContent = titleInput.value.length;
+    messageCount.textContent = messageInput.value.length;
+    previewTitle.textContent = title || "عنوان الإشعار";
+    previewMessage.textContent = message || "نص الرسالة سيظهر هنا أثناء الكتابة.";
+    previewEmail.textContent = sendEmail.checked ? "سيتم إرسال نسخة بريدية أيضا." : "لن يتم إرسال نسخة بريدية.";
+
+    updateTargetPreview();
+}
+
+function updateTargetPreview() {
+    const target = targetSelect.value;
+    userBox.classList.toggle("is-visible", target === "user");
+
+    if (target === "user" && userSelect && userSelect.selectedOptions.length) {
+        const selected = userSelect.selectedOptions[0];
+        previewTarget.textContent = selected.dataset.name || selected.textContent.trim();
+        previewTargetSub.textContent = selected.dataset.email || "مستخدم محدد";
+        return;
     }
-});
+
+    previewTarget.textContent = targetLabels[target] || "المستلمين";
+    previewTargetSub.textContent = "إشعار من المشرف";
+}
+
+function filterUsers() {
+    if (!userSearch || !userSelect) return;
+
+    const term = userSearch.value.trim().toLowerCase();
+    let firstVisible = null;
+
+    Array.from(userSelect.options).forEach((option) => {
+        const matches = option.dataset.search.toLowerCase().includes(term);
+        option.hidden = !matches;
+        if (matches && !firstVisible) firstVisible = option;
+    });
+
+    if (firstVisible && userSelect.selectedOptions[0]?.hidden) {
+        userSelect.value = firstVisible.value;
+    }
+
+    updateTargetPreview();
+}
+
+titleInput.addEventListener("input", updateCountsAndPreview);
+messageInput.addEventListener("input", updateCountsAndPreview);
+targetSelect.addEventListener("change", updateCountsAndPreview);
+sendEmail.addEventListener("change", updateCountsAndPreview);
+
+if (userSelect) {
+    userSelect.addEventListener("change", updateCountsAndPreview);
+}
+
+if (userSearch) {
+    userSearch.addEventListener("input", filterUsers);
+}
+
+updateCountsAndPreview();
 </script>
-{% if request.user.admin_level == 2 %}
-<script>
-    document.getElementById("userSelectBox").style.display = "block";
-</script>
-{% endif %}
 
 {% endblock %}

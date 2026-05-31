@@ -3,122 +3,672 @@
 {% block admin_content %}
 
 <style>
-.notification-card {
-    background: white;
-    border-radius: 25px;
-    padding: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-    margin-bottom: 15px;
-    transition: 0.3s;
+.notifications-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
 }
 
-.notification-card:hover {
-    transform: translateY(-3px);
+.notifications-hero,
+.stat-card,
+.filter-card,
+.notifications-panel,
+.notification-item {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.notifications-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 30px;
+    padding: 28px;
+}
+
+.hero-main,
+.panel-title,
+.notification-head,
+.recipient-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.hero-icon,
+.stat-icon,
+.panel-icon,
+.notification-icon,
+.recipient-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    font-size: 25px;
+}
+
+.notifications-hero h2 {
+    margin: 0 0 6px;
+    color: var(--dark-color);
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.notifications-hero p,
+.panel-title p,
+.notification-message,
+.notification-meta,
+.recipient-sub {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.send-link,
+.filter-btn,
+.reset-link {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.send-link,
+.filter-btn {
+    border: 0;
+    background: var(--accent-color);
+    color: white;
+}
+
+.reset-link {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    color: var(--dark-color);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px;
+    border-radius: 22px;
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    font-size: 18px;
+}
+
+.stat-label {
+    margin-bottom: 4px;
+    color: #877a6d;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.stat-value {
+    color: var(--dark-color);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.filter-card,
+.notifications-panel {
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-primary {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.filter-secondary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    padding: 9px 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.panel-icon,
+.notification-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 20px;
+}
+
+.panel-title h3 {
+    margin: 0 0 4px;
+    color: var(--dark-color);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.results-pill,
+.badge-soft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 999px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.results-pill {
+    min-height: 38px;
+    padding: 7px 14px;
+    background: #f7f2e7;
+    color: #9a7a26;
+}
+
+.notifications-list {
+    display: grid;
+    gap: 12px;
+}
+
+.notification-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(210px, 0.8fr) minmax(180px, 0.7fr);
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border-radius: 22px;
+    box-shadow: none;
+}
+
+.notification-item.unread {
+    border-right-width: 5px;
+    border-right-color: var(--accent-color);
 }
 
 .notification-title {
-    font-weight: bold;
+    margin: 0 0 6px;
+    color: var(--dark-color);
     font-size: 16px;
+    font-weight: 800;
 }
 
 .notification-message {
-    color: #666;
-    margin-top: 5px;
+    font-size: 14px;
 }
 
+.recipient-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 17px;
+}
+
+.recipient-name {
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.recipient-sub,
 .notification-meta {
     font-size: 12px;
-    color: #aaa;
-    margin-top: 10px;
 }
 
-.unread {
-    border-right: 5px solid var(--accent-color);
-    background: #fdf8ef;
+.item-meta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
 }
 
-/* Filters */
-.filter-box {
-    background: white;
-    padding: 20px;
-    border-radius: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+.badge-soft {
+    min-height: 30px;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.badge-admin,
+.badge-unread {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.badge-system,
+.badge-read {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.empty-state {
+    padding: 32px;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    border-radius: 20px;
+    background: #fbfaf7;
+    color: #887a6d;
+    text-align: center;
+}
+
+@media (max-width: 992px) {
+    .notification-item {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .notifications-page {
+        gap: 18px;
+    }
+
+    .notifications-hero,
+    .filter-card,
+    .notifications-panel {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .notifications-hero,
+    .panel-head {
+        flex-direction: column;
+    }
+
+    .filter-primary {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions,
+    .filter-btn,
+    .reset-link,
+    .send-link {
+        width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .stat-value {
+        font-size: 19px;
+    }
+
+    .panel-head {
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .panel-title {
+        align-items: flex-start;
+    }
+
+    .panel-title h3 {
+        font-size: 20px;
+    }
+
+    .panel-title p {
+        font-size: 13px;
+    }
+
+    .results-pill {
+        align-self: flex-start;
+        min-height: 34px;
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .notifications-list {
+        gap: 14px;
+    }
+
+    .notification-item {
+        gap: 0;
+        align-items: stretch;
+        padding: 15px;
+        border-radius: 20px;
+    }
+
+    .notification-item.unread {
+        border-right-width: 1px;
+        border-top: 4px solid var(--accent-color);
+    }
+
+    .notification-head,
+    .recipient-cell {
+        align-items: flex-start;
+        gap: 11px;
+        width: 100%;
+    }
+
+    .notification-head {
+        padding-bottom: 13px;
+    }
+
+    .recipient-cell,
+    .item-meta-stack {
+        padding-top: 13px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .notification-icon,
+    .recipient-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        font-size: 16px;
+    }
+
+    .recipient-avatar {
+        border-radius: 50%;
+    }
+
+    .notification-title {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .notification-message {
+        font-size: 13px;
+        line-height: 1.9;
+    }
+
+    .recipient-name {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .recipient-sub {
+        font-size: 11.5px;
+        overflow-wrap: anywhere;
+    }
+
+    .item-meta-stack {
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .item-meta-stack > div:first-child {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .badge-soft {
+        min-height: 28px;
+        padding: 4px 10px;
+        font-size: 11.5px;
+    }
+
+    .notification-meta {
+        font-size: 11.5px;
+        line-height: 1.8;
+    }
+}
+
+@media (max-width: 420px) {
+    .notifications-hero,
+    .filter-card,
+    .notifications-panel {
+        padding: 18px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold">🔔 الإشعارات</h3>
+<div class="notifications-page">
+    <section class="notifications-hero">
+        <div class="hero-main">
+            <span class="hero-icon"><i class="bi bi-bell"></i></span>
+            <div>
+                <h2>إدارة الإشعارات</h2>
+                <p>راجع الإشعارات المرسلة للمستخدمين، مصدرها، وحالة قراءتها.</p>
+            </div>
+        </div>
+        <a href="{% url 'admin_panel:send_notification' %}" class="send-link">
+            <i class="bi bi-send"></i>
+            إرسال إشعار
+        </a>
+    </section>
 
-    <a href="{% url 'admin_panel:send_notification' %}" class="btn btn-accent">
-        + إرسال إشعار
-    </a>
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-bell"></i></span>
+            <div>
+                <div class="stat-label">كل الإشعارات</div>
+                <div class="stat-value">{{ total_notifications }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-eye-slash"></i></span>
+            <div>
+                <div class="stat-label">غير مقروءة</div>
+                <div class="stat-value">{{ unread_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-eye"></i></span>
+            <div>
+                <div class="stat-label">مقروءة</div>
+                <div class="stat-value">{{ read_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-person-gear"></i></span>
+            <div>
+                <div class="stat-label">من المشرف</div>
+                <div class="stat-value">{{ admin_notifications_count }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon"><i class="bi bi-gear"></i></span>
+            <div>
+                <div class="stat-label">من النظام</div>
+                <div class="stat-value">{{ system_notifications_count }}</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="filter-card">
+        <form method="get" class="filter-form">
+            <div class="filter-primary">
+                <div class="filter-field">
+                    <label for="notificationSearch">البحث</label>
+                    <input id="notificationSearch" type="text" name="search" placeholder="عنوان، محتوى، اسم أو بريد المستخدم" value="{{ search|default:'' }}">
+                </div>
+                <div class="filter-actions">
+                    <button class="filter-btn" type="submit">
+                        <i class="bi bi-search"></i>
+                        تطبيق
+                    </button>
+                    <a href="{% url 'admin_panel:notifications' %}" class="reset-link">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        إعادة
+                    </a>
+                </div>
+            </div>
+
+            <div class="filter-secondary">
+                <div class="filter-field">
+                    <label for="targetFilter">المستلم</label>
+                    <select id="targetFilter" name="target">
+                        <option value="all">كل المستلمين</option>
+                        <option value="student" {% if target == "student" %}selected{% endif %}>طلاب</option>
+                        <option value="driver" {% if target == "driver" %}selected{% endif %}>سائقين</option>
+                        <option value="admin" {% if target == "admin" %}selected{% endif %}>مشرفين</option>
+                        <option value="user" {% if target == "user" %}selected{% endif %}>مستخدم محدد</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label for="typeFilter">النوع</label>
+                    <select id="typeFilter" name="type">
+                        <option value="all">كل الأنواع</option>
+                        <option value="system" {% if type == "system" %}selected{% endif %}>النظام</option>
+                        <option value="admin" {% if type == "admin" %}selected{% endif %}>المشرف</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label for="readFilter">حالة القراءة</label>
+                    <select id="readFilter" name="read_status">
+                        <option value="all">الكل</option>
+                        <option value="unread" {% if read_status == "unread" %}selected{% endif %}>غير مقروء</option>
+                        <option value="read" {% if read_status == "read" %}selected{% endif %}>مقروء</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label for="dateFrom">من تاريخ</label>
+                    <input id="dateFrom" type="date" name="date_from" value="{{ date_from }}">
+                </div>
+                <div class="filter-field">
+                    <label for="dateTo">إلى تاريخ</label>
+                    <input id="dateTo" type="date" name="date_to" value="{{ date_to }}">
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="notifications-panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <span class="panel-icon"><i class="bi bi-inbox"></i></span>
+                <div>
+                    <h3>سجل الإشعارات</h3>
+                    <p>آخر الإشعارات حسب الفلاتر الحالية.</p>
+                </div>
+            </div>
+            <span class="results-pill">{{ results_count }} نتيجة</span>
+        </div>
+
+        <div class="notifications-list">
+            {% for n in notifications %}
+            <article class="notification-item {% if not n.is_read %}unread{% endif %}">
+                <div class="notification-head">
+                    <span class="notification-icon">
+                        {% if n.notification_type == "admin" %}
+                        <i class="bi bi-person-gear"></i>
+                        {% else %}
+                        <i class="bi bi-gear"></i>
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h4 class="notification-title">{{ n.title }}</h4>
+                        <p class="notification-message">{{ n.message }}</p>
+                    </div>
+                </div>
+
+                <div class="recipient-cell">
+                    <span class="recipient-avatar"><i class="bi bi-person"></i></span>
+                    <div>
+                        <div class="recipient-name">
+                            {% if n.user %}{{ n.user.full_name }}{% else %}مستخدم غير محدد{% endif %}
+                        </div>
+                        <div class="recipient-sub">
+                            {% if n.user %}{{ n.user.email }}{% else %}لا يوجد بريد{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-meta-stack">
+                    <div>
+                        <span class="badge-soft {% if n.notification_type == 'admin' %}badge-admin{% else %}badge-system{% endif %}">
+                            {{ n.get_notification_type_display }}
+                        </span>
+                        <span class="badge-soft {% if n.is_read %}badge-read{% else %}badge-unread{% endif %}">
+                            {% if n.is_read %}مقروء{% else %}غير مقروء{% endif %}
+                        </span>
+                    </div>
+                    <div class="notification-meta">
+                        إلى: {{ n.get_target_display }} ·
+                        {% if n.notification_type == "admin" %}
+                            بواسطة: {{ n.sent_by.full_name|default:"مشرف" }}
+                        {% else %}
+                            بواسطة: النظام
+                        {% endif %}
+                    </div>
+                    <div class="notification-meta">{{ n.created_at|date:"d/m/Y - H:i" }}</div>
+                </div>
+            </article>
+            {% empty %}
+            <div class="empty-state">لا توجد إشعارات مطابقة للفلاتر الحالية.</div>
+            {% endfor %}
+        </div>
+    </section>
 </div>
-
-<!-- Filters -->
-<form method="get" class="filter-box row g-3">
-
-    <div class="col-md-4">
-        <input type="text" name="search" class="form-control" placeholder="بحث..." value="{{ search }}">
-    </div>
-
-    <div class="col-md-3">
-        <select name="target" class="form-select">
-            <option value="all">كل المستلمين</option>
-            <option value="student" {% if target == "student" %}selected{% endif %}>طلاب</option>
-            <option value="driver" {% if target == "driver" %}selected{% endif %}>سائقين</option>
-            <option value="admin" {% if target == "admin" %}selected{% endif %}>أدمن</option>
-            <option value="user" {% if target == "user" %}selected{% endif %}>مستخدم معين</option>
-        </select>
-    </div>
-
-    <div class="col-md-3">
-        <select name="type" class="form-select">
-            <option value="all">كل الأنواع</option>
-            <option value="system" {% if type == "system" %}selected{% endif %}>النظام</option>
-            <option value="admin" {% if type == "admin" %}selected{% endif %}>المشرف</option>
-        </select>
-    </div>
-
-    <div class="col-md-2">
-        <button class="btn btn-accent w-100">فلترة</button>
-    </div>
-
-</form>
-
-<!-- Notifications -->
-{% for n in notifications %}
-
-<div class="notification-card {% if not n.is_read %}unread{% endif %}">
-
-    <div class="notification-title">
-        {{ n.title }}
-    </div>
-
-    <div class="notification-message">
-        {{ n.message }}
-    </div>
-
-    <div class="notification-meta">
-👤 إلى: {{ n.user.email }} |
-{% if n.notification_type == "admin" %}
-    🛠️ بواسطة: {{ n.sent_by.full_name|default:"مشرف" }} |
-{% else %}
-    ⚙️ بواسطة: النظام |
-{% endif %}
-🎯 {{ n.get_target_display }} |
-🏷️ {{ n.get_notification_type_display }} |
-{{ n.created_at|date:"Y-m-d H:i" }}
-    </div>
-
-</div>
-
-{% empty %}
-
-<div class="text-center text-muted mt-5">
-    لا توجد إشعارات 🔕
-</div>
-
-{% endfor %}
 
 {% endblock %}

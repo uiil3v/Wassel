@@ -3,255 +3,739 @@
 {% block admin_content %}
 
 <style>
-.detail-card {
-    background: white;
-    border-radius: 25px;
-    padding: 25px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-    margin-bottom: 25px;
+.verification-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+}
+
+.verification-hero,
+.review-card,
+.decision-card,
+.doc-card,
+.info-cell {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.verification-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 30px;
+    padding: 28px;
+}
+
+.hero-main,
+.section-title,
+.driver-strip,
+.doc-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.hero-icon,
+.section-icon,
+.driver-avatar,
+.info-icon,
+.doc-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    font-size: 25px;
+}
+
+.verification-hero h2,
+.section-title h3,
+.decision-card h3 {
+    margin: 0;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.verification-hero h2 {
+    margin-bottom: 6px;
+    font-size: 29px;
+}
+
+.verification-hero p,
+.section-title p,
+.decision-card p,
+.doc-hint {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.status-pill {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.doc-status {
+    min-height: 26px;
+    padding: 4px 9px;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.status-pending {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.status-approved {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.status-rejected {
+    background: #fde8e8;
+    color: #9b2c2c;
+}
+
+.status-incomplete {
+    background: #eeeeee;
+    color: #666;
+}
+
+.verification-layout {
+    display: block;
+    min-width: 0;
+}
+
+.review-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.review-card,
+.decision-card {
+    border-radius: 28px;
+    padding: 24px;
 }
 
 .section-title {
-    font-weight: bold;
-    margin-bottom: 15px;
+    justify-content: space-between;
+    margin-bottom: 18px;
 }
 
-.action-btn {
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: none;
-    font-weight: 600;
+.section-title-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.btn-approve {
-    background: #28a745;
-    color: white;
+.section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 20px;
 }
 
-.btn-reject {
-    background: #dc3545;
-    color: white;
-}
-
-/* 🔥 NEW UI */
-.doc-grid {
+.driver-strip {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 22px;
+    background: #fbfaf7;
+}
+
+.driver-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    font-size: 25px;
+}
+
+.driver-name {
+    margin: 0 0 4px;
+    color: var(--dark-color);
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.driver-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 0;
+}
+
+.driver-meta-pill {
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    color: #837568;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.driver-meta-pill i {
+    color: var(--accent-color);
+}
+
+.progress-card {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 20px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.progress-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.progress-track {
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #efeae1;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent-color);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 20px;
+    box-shadow: none;
+}
+
+.info-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    font-size: 18px;
+}
+
+.info-label {
+    margin-bottom: 4px;
+    color: #8b7b6e;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.info-value {
+    color: var(--dark-color);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
 }
 
 .doc-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    text-align: center;
+    overflow: hidden;
+    border-radius: 22px;
+    box-shadow: none;
 }
 
-.doc-card img {
+.doc-preview {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: #f7f2e7;
+}
+
+.doc-preview img {
     width: 100%;
-    height: 150px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 15px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.25s ease;
 }
 
-.doc-card img:hover {
-    transform: scale(1.05);
+.doc-preview img:hover {
+    transform: scale(1.03);
+}
+
+.doc-missing {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9b2c2c;
+    background: #fde8e8;
+    font-weight: 800;
+}
+
+.doc-body {
+    padding: 14px;
+}
+
+.doc-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    font-size: 17px;
+}
+
+.doc-name {
+    margin: 0 0 3px;
+    color: var(--dark-color);
+    font-weight: 800;
 }
 
 .doc-title {
-    margin-top: 8px;
+    align-items: center;
+}
+
+.doc-hint {
+    margin-top: 10px;
     font-size: 13px;
-    color: #666;
+}
+
+.doc-open {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--accent-color);
+}
+
+.decision-card {
+    width: 100%;
+    margin: 24px 0 0;
+}
+
+.decision-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.decision-btn,
+.back-link {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.approve-btn {
+    border: 0;
+    background: var(--accent-color);
+    color: white;
+}
+
+.reject-btn {
+    border: 0;
+    background: #a92f2f;
+    color: white;
+}
+
+.back-link {
+    background: #f1eee8;
+    color: var(--dark-color);
+}
+
+.decision-note {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    color: #837568;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.image-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.78);
+}
+
+.image-modal.active {
+    display: flex;
+}
+
+.image-modal img {
+    max-width: min(100%, 1000px);
+    max-height: 86vh;
+    object-fit: contain;
+    border-radius: 22px;
+    background: white;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    .verification-hero,
+    .review-card,
+    .decision-card {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .verification-hero,
+    .section-title,
+    .driver-strip {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .driver-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .verification-hero h2 {
+        font-size: 25px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .decision-actions {
+        display: grid;
+    }
 }
 </style>
 
-<h3 class="mb-4 fw-bold">🚗 تفاصيل طلب توثيق السائق</h3>
+<div class="verification-page">
+    <section class="verification-hero">
+        <div class="hero-main">
+            <span class="hero-icon"><i class="bi bi-person-vcard"></i></span>
+            <div>
+                <h2>طلب توثيق السائق</h2>
+                <p>راجع بيانات السائق والمركبة والمستندات قبل اتخاذ القرار.</p>
+            </div>
+        </div>
+        <span class="status-pill
+            {% if driver.verification_status == 'pending' %}status-pending
+            {% elif driver.verification_status == 'approved' %}status-approved
+            {% elif driver.verification_status == 'rejected' %}status-rejected
+            {% else %}status-incomplete{% endif %}">
+            <i class="bi bi-shield-check"></i>
+            {{ driver.get_verification_status_display }}
+        </span>
+    </section>
 
-<!-- ================= Actions ================= -->
+    <div class="verification-layout">
+        <div class="review-stack">
+            <section class="review-card">
+                <div class="section-title">
+                    <div class="section-title-main">
+                        <span class="section-icon"><i class="bi bi-person-lines-fill"></i></span>
+                        <div>
+                            <h3>ملخص السائق</h3>
+                            <p>نظرة سريعة على مقدم طلب التوثيق.</p>
+                        </div>
+                    </div>
+                </div>
 
-<div class="detail-card text-center">
+                <div class="driver-strip">
+                    <span class="driver-avatar"><i class="bi bi-person-fill"></i></span>
+                    <div>
+                        <p class="driver-name">{{ driver.user.full_name }}</p>
+                        <div class="driver-meta">
+                            <span class="driver-meta-pill">
+                                <i class="bi bi-geo-alt"></i>
+                                {{ driver.user.city.name_ar|default:"مدينة غير محددة" }}
+                            </span>
+                            <span class="driver-meta-pill">
+                                <i class="bi bi-arrow-repeat"></i>
+                                آخر تحديث للطلب {{ driver.updated_at|date:"d/m/Y H:i" }}
+                            </span>
+                            {% if driver.reviewed_at %}
+                            <span class="driver-meta-pill">
+                                <i class="bi bi-check2-circle"></i>
+                                آخر مراجعة من المشرف {{ driver.reviewed_at|date:"d/m/Y H:i" }}
+                            </span>
+                            {% else %}
+                            <span class="driver-meta-pill">
+                                <i class="bi bi-hourglass-split"></i>
+                                لم تتم مراجعته من مشرف بعد
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
-{% if driver.verification_status == "pending" %}
+                <div class="progress-card">
+                    <div class="progress-head">
+                        <span>اكتمال المستندات</span>
+                        <span>{{ uploaded_documents_count }} من {{ total_documents_count }}</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: {% widthratio uploaded_documents_count total_documents_count 100 %}%;"></div>
+                    </div>
+                </div>
+            </section>
 
+            <section class="review-card">
+                <div class="section-title">
+                    <div class="section-title-main">
+                        <span class="section-icon"><i class="bi bi-info-circle"></i></span>
+                        <div>
+                            <h3>بيانات السائق</h3>
+                            <p>المعلومات الأساسية المسجلة في الحساب.</p>
+                        </div>
+                    </div>
+                </div>
 
-<a href="{% url 'admin_panel:approve_driver' driver.id %}" 
-   class="action-btn btn-approve"
-   onclick="return confirm('هل أنت متأكد من اعتماد السائق؟')">
-    ✔️ اعتماد السائق
-</a>
+                <div class="info-grid">
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-person"></i></span>
+                        <div>
+                            <div class="info-label">الاسم</div>
+                            <div class="info-value">{{ driver.user.full_name }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-gender-ambiguous"></i></span>
+                        <div>
+                            <div class="info-label">الجنس</div>
+                            <div class="info-value">
+                                {% if driver.gender == "male" %}ذكر{% elif driver.gender == "female" %}أنثى{% else %}غير محدد{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-envelope"></i></span>
+                        <div>
+                            <div class="info-label">البريد</div>
+                            <div class="info-value">{{ driver.user.email }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-phone"></i></span>
+                        <div>
+                            <div class="info-label">الجوال</div>
+                            <div class="info-value">{{ driver.user.phone }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-geo-alt"></i></span>
+                        <div>
+                            <div class="info-label">المدينة</div>
+                            <div class="info-value">{{ driver.user.city.name_ar|default:"غير محددة" }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-car-front"></i></span>
+                        <div>
+                            <div class="info-label">موديل المركبة</div>
+                            <div class="info-value">{{ driver.vehicle_model|default:"غير محدد" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-<button class="action-btn btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
-    ❌ رفض السائق
-</button>
+            <section class="review-card">
+                <div class="section-title">
+                    <div class="section-title-main">
+                        <span class="section-icon"><i class="bi bi-folder-check"></i></span>
+                        <div>
+                            <h3>مستندات التوثيق</h3>
+                            <p>اضغط على أي صورة لعرضها بحجم أكبر.</p>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="docs-grid">
+                    {% for doc in document_items %}
+                    <article class="doc-card">
+                        <div class="doc-preview">
+                            {% if doc.image %}
+                            <img src="{{ doc.image.url }}" alt="{{ doc.label }}" data-full-image="{{ doc.image.url }}">
+                            <button type="button" class="doc-open" data-full-image="{{ doc.image.url }}" aria-label="عرض {{ doc.label }}">
+                                <i class="bi bi-arrows-fullscreen"></i>
+                            </button>
+                            {% else %}
+                            <div class="doc-missing">غير مرفق</div>
+                            {% endif %}
+                        </div>
+                        <div class="doc-body">
+                            <div class="doc-title">
+                                <span class="doc-icon"><i class="bi {{ doc.icon }}"></i></span>
+                                <div>
+                                    <p class="doc-name">{{ doc.label }}</p>
+                                    <span class="status-pill doc-status {% if doc.image %}status-approved{% else %}status-rejected{% endif %}">
+                                        {% if doc.image %}مرفق{% else %}ناقص{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="doc-hint">{{ doc.hint }}</p>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
 
-{% else %} <span class="badge bg-secondary">تم اتخاذ إجراء</span>
-{% endif %}
+        <section class="decision-card">
+            <div class="section-title-main">
+                <span class="section-icon"><i class="bi bi-sliders"></i></span>
+                <div>
+                    <h3>قرار المراجعة</h3>
+                    <p>اعتمد الطلب إذا كانت البيانات والمستندات واضحة.</p>
+                </div>
+            </div>
 
+            <div class="decision-note">
+                {% if driver.verification_status == "pending" %}
+                الطلب قيد المراجعة. تأكد من تطابق الهوية والرخصة ووضوح صور المركبة قبل الاعتماد.
+                {% elif driver.verification_status == "approved" %}
+                تم اعتماد هذا السائق ويمكنه استقبال الطلبات.
+                {% elif driver.verification_status == "rejected" %}
+                تم رفض هذا الطلب{% if driver.rejection_reason %} بسبب: {{ driver.rejection_reason }}{% endif %}.
+                {% else %}
+                ملف التوثيق غير مكتمل بعد.
+                {% endif %}
+            </div>
+
+            <div class="decision-actions">
+                {% if driver.verification_status == "pending" %}
+                <button type="button" class="decision-btn approve-btn" data-bs-toggle="modal" data-bs-target="#approveModal">
+                    <i class="bi bi-check2-circle"></i>
+                    اعتماد السائق
+                </button>
+                <button type="button" class="decision-btn reject-btn" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                    <i class="bi bi-x-circle"></i>
+                    رفض السائق
+                </button>
+                {% endif %}
+                <a href="{% url 'admin_panel:requests' %}?tab=drivers" class="back-link">
+                    <i class="bi bi-arrow-right"></i>
+                    رجوع لطلبات التوثيق
+                </a>
+            </div>
+        </section>
+    </div>
 </div>
 
-<!-- ================= Driver Info ================= -->
-
-<div class="detail-card">
-    <div class="section-title">👤 بيانات السائق</div>
-
-
-<p><strong>الاسم:</strong> {{ driver.user.full_name }}</p>
-<p>
-    <strong>الجنس:</strong>
-
-    {% if driver.gender == "male" %}
-        ذكر
-    {% elif driver.gender == "female" %}
-        أنثى
-    {% else %}
-        غير محدد
-    {% endif %}
-</p>
-<p><strong>البريد:</strong> {{ driver.user.email }}</p>
-<p><strong>الجوال:</strong> {{ driver.user.phone }}</p>
-
-
+<div class="modal fade" id="approveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">اعتماد السائق</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد من اعتماد {{ driver.user.full_name }} كسائق؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                <a href="{% url 'admin_panel:approve_driver' driver.id %}" class="btn btn-warning text-white fw-bold">تأكيد الاعتماد</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- ================= Vehicle ================= -->
-
-<div class="detail-card">
-    <div class="section-title">🚗 بيانات المركبة</div>
-
-
-<p><strong>الموديل:</strong> {{ driver.vehicle_model }}</p>
-
-
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="{% url 'admin_panel:reject_driver' driver.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">رفض طلب التوثيق</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label fw-bold" for="rejectReason">سبب الرفض</label>
+                    <textarea id="rejectReason" name="reason" class="form-control" rows="4" placeholder="اكتب سبب الرفض بشكل واضح..." required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-danger fw-bold">تأكيد الرفض</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<!-- ================= Documents ================= -->
-
-<div class="detail-card">
-    <div class="section-title">📂 مستندات السائق</div>
-
-
-<div class="doc-grid">
-
-    {% if driver.id_document_image %}
-    <div class="doc-card">
-        <img src="{{ driver.id_document_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">الهوية</div>
-    </div>
-    {% endif %}
-
-    {% if driver.driving_license_image %}
-    <div class="doc-card">
-        <img src="{{ driver.driving_license_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">الرخصة</div>
-    </div>
-    {% endif %}
-
-    {% if driver.vehicle_registration_image %}
-    <div class="doc-card">
-        <img src="{{ driver.vehicle_registration_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">استمارة السيارة</div>
-    </div>
-    {% endif %}
-
-    {% if driver.vehicle_insurance_image %}
-    <div class="doc-card">
-        <img src="{{ driver.vehicle_insurance_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">التأمين</div>
-    </div>
-    {% endif %}
-
-    {% if driver.vehicle_front_image %}
-    <div class="doc-card">
-        <img src="{{ driver.vehicle_front_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">أمام السيارة</div>
-    </div>
-    {% endif %}
-
-    {% if driver.vehicle_back_image %}
-    <div class="doc-card">
-        <img src="{{ driver.vehicle_back_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">خلف السيارة</div>
-    </div>
-    {% endif %}
-
-    {% if driver.vehicle_side_image %}
-    <div class="doc-card">
-        <img src="{{ driver.vehicle_side_image.url }}" onclick="openImage(this.src)">
-        <div class="doc-title">جانب السيارة</div>
-    </div>
-    {% endif %}
-
-</div>
-
-
-</div>
-
-<!-- ================= Reject Modal ================= -->
-
-<div class="modal fade" id="rejectModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-
-  <form method="post" action="{% url 'admin_panel:reject_driver' driver.id %}">
-    {% csrf_token %}
-
-    <div class="modal-header">
-      <h5 class="modal-title">سبب الرفض</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-    </div>
-
-    <div class="modal-body">
-      <textarea name="reason" class="form-control" rows="4" placeholder="اكتب سبب الرفض..." required></textarea>
-    </div>
-
-    <div class="modal-footer">
-      <button type="submit" class="btn btn-danger">تأكيد الرفض</button>
-    </div>
-
-  </form>
-
-</div>
-
-
-  </div>
-</div>
-
-<!-- ================= Image Modal ================= -->
-
-<div id="imageModal" style="
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.8);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-">
-    <img id="modalImg" style="
-    max-width: 80%;
-    max-height: 80%;
-    object-fit: contain;
-    border-radius: 20px;
-    background: white;
-    padding: 10px;
-">
+<div id="imageModal" class="image-modal" aria-hidden="true">
+    <img id="modalImg" alt="عرض المستند">
 </div>
 
 <script>
-function openImage(src) {
-    document.getElementById("imageModal").style.display = "flex";
-    document.getElementById("modalImg").src = src;
-}
+document.querySelectorAll("[data-full-image]").forEach((item) => {
+    item.addEventListener("click", () => {
+        document.getElementById("modalImg").src = item.dataset.fullImage;
+        document.getElementById("imageModal").classList.add("active");
+    });
+});
 
-document.getElementById("imageModal").onclick = function() {
-    this.style.display = "none";
-}
+document.getElementById("imageModal").addEventListener("click", function () {
+    this.classList.remove("active");
+    document.getElementById("modalImg").src = "";
+});
 </script>
 
 {% endblock %}

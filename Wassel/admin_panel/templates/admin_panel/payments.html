@@ -3,282 +3,780 @@
 {% block admin_content %}
 
 <style>
-.section-card {
-    background: white;
+.driver-layout,
+.driver-content {
+    min-width: 0;
+}
+
+.driver-content {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.payments-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.payments-hero,
+.metric-card,
+.filter-card,
+.transactions-panel {
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.payments-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
     border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+    padding: 28px;
 }
 
-/* Stats */
-.stat-card {
-    border-radius: 25px;
-    padding: 20px;
+.hero-main,
+.panel-title,
+.metric-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hero-icon,
+.metric-icon,
+.panel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
+}
+
+.hero-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    font-size: 25px;
+}
+
+.payments-hero h2 {
+    margin: 0 0 6px;
+    color: var(--dark-color);
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.payments-hero p,
+.panel-title p {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.hero-pill {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 999px;
+    background: #f7f2e7;
+    color: #9a7a26;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.metrics-toolbar {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.metrics-toggle {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    min-width: 0;
+}
+
+.metrics-grid.is-collapsed {
+    display: none;
+}
+
+.metric-card {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-items: center;
+    min-height: 96px;
+    padding: 16px;
+    border-radius: 22px;
+    min-width: 0;
+    gap: 14px;
+}
+
+.metric-card > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.metric-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 15px;
+    font-size: 18px;
+}
+
+.metric-label {
+    margin-bottom: 7px;
+    color: #877a6d;
+    font-size: 12.5px;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.metric-value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    max-width: 100%;
+    color: var(--dark-color);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.metric-currency {
+    color: #8b7b6e;
+    direction: rtl;
+    font-size: 11.5px;
+    font-weight: 800;
+}
+
+.metric-count {
+    font-size: 21px;
+}
+
+.filter-card,
+.transactions-panel {
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.quick-search {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.advanced-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    padding: 9px 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: rgba(200, 169, 81, 0.58);
+    box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+}
+
+.filter-actions,
+.panel-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-btn,
+.reset-btn,
+.export-btn {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.action-btn {
+    border: 0;
+    background: var(--accent-color);
+    color: white;
+}
+
+.reset-btn,
+.export-btn {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    color: var(--dark-color);
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.panel-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 20px;
+}
+
+.panel-title h3 {
+    margin: 0 0 4px;
+    color: var(--dark-color);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.transactions-list {
+    display: grid;
+    gap: 12px;
+}
+
+.transactions-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    border-radius: 20px;
+}
+
+.transactions-table {
+    min-width: 1120px;
+    width: 100%;
+    margin: 0;
+}
+
+.transactions-table thead th {
+    padding: 16px;
+    background: #f7f3ec;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.transactions-table tbody td {
+    padding: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.055);
+    color: var(--dark-color);
+    vertical-align: middle;
+}
+
+.transactions-table tbody tr:hover td {
+    background: #fbfaf7;
+}
+
+.transaction-item {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.5fr) minmax(120px, 0.7fr) minmax(135px, 0.8fr) minmax(120px, 0.7fr) minmax(210px, 1.1fr) minmax(140px, 0.75fr);
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    border-radius: 20px;
+    background: #fff;
+}
+
+.transaction-col {
+    min-width: 0;
+}
+
+.transaction-label {
+    margin-bottom: 5px;
+    color: #8b7b6e;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: rgba(200, 169, 81, 0.14);
+    color: var(--accent-color);
+}
+
+.user-name,
+.amount-value {
+    font-weight: 800;
+}
+
+.amount-value,
+.commission-value,
+.date-value {
+    direction: ltr;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.money-currency {
+    direction: rtl;
+    color: #8b7b6e;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.user-sub,
+.request-sub {
+    color: #887a6d;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.badge-soft {
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.type-deposit,
+.type-release {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.type-commission {
+    background: #f7f2e7;
+    color: #8a6c1f;
+}
+
+.type-freeze {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.type-refund,
+.type-withdraw {
+    background: #f1eee8;
+    color: #675b50;
+}
+
+.status-completed {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.status-pending {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.status-cancelled {
+    background: #fde8e8;
+    color: #9b2c2c;
+}
+
+.empty-state {
+    padding: 28px;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    border-radius: 20px;
+    background: #fbfaf7;
+    color: #887a6d;
     text-align: center;
-    background: #f9f9f9;
 }
 
-.stat-title {
-    color: #888;
-    font-size: 14px;
+@media (max-width: 768px) {
+    .payments-hero,
+    .filter-card,
+    .transactions-panel {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .payments-hero,
+    .panel-head {
+        flex-direction: column;
+    }
+
+    .quick-search {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions,
+    .action-btn,
+    .reset-btn,
+    .export-btn {
+        width: 100%;
+    }
+
+    .metrics-toolbar {
+        justify-content: stretch;
+    }
+
+    .metrics-toggle {
+        width: 100%;
+    }
+
+    .transaction-item {
+        grid-template-columns: 1fr;
+    }
 }
 
-.stat-value {
-    font-size: 24px;
-    font-weight: bold;
+@media (max-width: 1300px) {
+    .transaction-item {
+        grid-template-columns: minmax(240px, 1.5fr) minmax(120px, 0.7fr) minmax(135px, 0.8fr);
+    }
 }
 
-/* Table */
-.table th {
-    font-weight: 600;
-    color: #555;
+@media (max-width: 576px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
 }
-
-/* Badges */
-.badge-type {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-
-
-
-
-
-.completed { background: #d4edda; color: #155724; }
-.pending { background: #fff3cd; color: #856404; }
-.cancelled { background: #f8d7da; color: #721c24; }
-
-/* Hover */
-.table tbody tr:hover {
-    background: #f9f9f9;
-}
-
-
-/* ================= Transaction Types ================= */
-
-.badge-type {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    background: #f5f5f5;
-    color: #444;
-    border: 1px solid #e9e9e9;
-}
-
-/* كلها نفس الستايل مع اختلاف بسيط جدًا */
-
-.deposit,
-.withdraw,
-.freeze,
-.release,
-.commission,
-.refund {
-    background: #f5f5f5;
-    color: #444;
-    border: 1px solid #e9e9e9;
-}
-
-/* ================= Status ================= */
-
-.completed {
-    background: #eefaf0;
-    color: #1b5e20;
-}
-
-.pending {
-    background: #fff8e1;
-    color: #8d6e63;
-}
-
-.cancelled {
-    background: #fdecec;
-    color: #b71c1c;
-}
-
-
 </style>
 
-<h3 class="mb-4 fw-bold">💳 المدفوعات</h3>
-
-<!-- ================= Stats ================= -->
-
-<div class="row g-4 mb-4">
-
-
-<div class="col-md-4">
-    <div class="stat-card">
-        <div class="stat-title">إجمالي الأرباح</div>
-        <div class="stat-value text-success">
-            {{ total_earnings|floatformat:2 }} ريال
+<div class="payments-page">
+    <section class="payments-hero">
+        <div class="hero-main">
+            <span class="hero-icon"><i class="bi bi-cash-stack"></i></span>
+            <div>
+                <h2>إدارة المدفوعات</h2>
+                <p>راقب حركة المحافظ، العمولات، التجميد، الاسترجاع والسحب من مكان واحد.</p>
+            </div>
         </div>
-    </div>
-</div>
+        <span class="hero-pill"><i class="bi bi-list-check"></i>{{ total_transactions }} عملية حسب الفلتر</span>
+    </section>
 
-<div class="col-md-4">
-    <div class="stat-card">
-        <div class="stat-title">عدد العمليات</div>
-        <div class="stat-value">
-            {{ total_transactions }}
+    <div class="metrics-toolbar">
+        <button type="button" class="metrics-toggle" id="metricsToggle" aria-expanded="true">
+            <i class="bi bi-chevron-up"></i>
+            إخفاء المؤشرات المالية
+        </button>
+    </div>
+
+    <section class="metrics-grid" id="paymentsMetrics">
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-graph-up-arrow"></i></span>
+            <div>
+                <div class="metric-label">إجمالي العمليات المكتملة</div>
+                <div class="metric-value">{{ total_amount|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
         </div>
-    </div>
-</div>
-
-<div class="col-md-4">
-    <div class="stat-card">
-        <div class="stat-title">طلبات الاشتراك المدفوعة</div>
-        <div class="stat-value text-primary">
-            {{ paid_subscriptions_count }}
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-percent"></i></span>
+            <div>
+                <div class="metric-label">أرباح المنصة</div>
+                <div class="metric-value">{{ total_earnings|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
         </div>
-    </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-arrow-down-circle"></i></span>
+            <div>
+                <div class="metric-label">إيداعات مكتملة</div>
+                <div class="metric-value">{{ deposits_total|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-arrow-up-circle"></i></span>
+            <div>
+                <div class="metric-label">سحوبات مكتملة</div>
+                <div class="metric-value">{{ withdrawals_total|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-snow"></i></span>
+            <div>
+                <div class="metric-label">مبالغ مجمدة</div>
+                <div class="metric-value">{{ frozen_total|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-lock"></i></span>
+            <div>
+                <div class="metric-label">الرصيد المجمد حاليا</div>
+                <div class="metric-value">{{ wallets_frozen_total|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-arrow-counterclockwise"></i></span>
+            <div>
+                <div class="metric-label">استرجاعات</div>
+                <div class="metric-value">{{ refunds_total|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-wallet2"></i></span>
+            <div>
+                <div class="metric-label">أرصدة المحافظ</div>
+                <div class="metric-value">{{ wallets_balance_total|floatformat:2 }} <span class="metric-currency">ريال</span></div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-check2-circle"></i></span>
+            <div>
+                <div class="metric-label">عمليات مكتملة</div>
+                <div class="metric-value metric-count">{{ completed_transactions_count }}</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-ticket-perforated"></i></span>
+            <div>
+                <div class="metric-label">طلبات اشتراك مدفوعة</div>
+                <div class="metric-value metric-count">{{ paid_subscriptions_count }}</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-hourglass-split"></i></span>
+            <div>
+                <div class="metric-label">عمليات قيد المعالجة</div>
+                <div class="metric-value metric-count">{{ pending_transactions_count }}</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon"><i class="bi bi-x-circle"></i></span>
+            <div>
+                <div class="metric-label">عمليات ملغية</div>
+                <div class="metric-value metric-count">{{ cancelled_transactions_count }}</div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="filter-card">
+        <form method="get" class="filter-form">
+            <div class="quick-search">
+                <div class="filter-field">
+                    <label for="paymentSearch">البحث</label>
+                    <input id="paymentSearch" type="text" name="search" placeholder="اسم، بريد، جوال، رقم طلب أو حي" value="{{ search|default:'' }}">
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="action-btn">
+                        <i class="bi bi-search"></i>
+                        تطبيق
+                    </button>
+                    <a href="{% url 'admin_panel:payments' %}" class="reset-btn">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        إعادة
+                    </a>
+                </div>
+            </div>
+
+            <div class="advanced-filters">
+                <div class="filter-field">
+                    <label for="paymentType">نوع العملية</label>
+                    <select id="paymentType" name="type">
+                        <option value="all">كل الأنواع</option>
+                        <option value="deposit" {% if type == "deposit" %}selected{% endif %}>إيداع</option>
+                        <option value="freeze" {% if type == "freeze" %}selected{% endif %}>تجميد</option>
+                        <option value="release" {% if type == "release" %}selected{% endif %}>فك التجميد</option>
+                        <option value="commission" {% if type == "commission" %}selected{% endif %}>عمولة</option>
+                        <option value="refund" {% if type == "refund" %}selected{% endif %}>استرجاع</option>
+                        <option value="withdraw" {% if type == "withdraw" %}selected{% endif %}>سحب</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label for="paymentStatus">الحالة</label>
+                    <select id="paymentStatus" name="status">
+                        <option value="all">كل الحالات</option>
+                        <option value="completed" {% if status == "completed" %}selected{% endif %}>مكتمل</option>
+                        <option value="pending" {% if status == "pending" %}selected{% endif %}>قيد المعالجة</option>
+                        <option value="cancelled" {% if status == "cancelled" %}selected{% endif %}>ملغي</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label for="amountFrom">المبلغ من</label>
+                    <input id="amountFrom" type="number" step="0.01" name="amount_from" value="{{ amount_from }}">
+                </div>
+                <div class="filter-field">
+                    <label for="amountTo">المبلغ إلى</label>
+                    <input id="amountTo" type="number" step="0.01" name="amount_to" value="{{ amount_to }}">
+                </div>
+                <div class="filter-field">
+                    <label for="dateFrom">من تاريخ</label>
+                    <input id="dateFrom" type="date" name="date_from" value="{{ date_from }}">
+                </div>
+                <div class="filter-field">
+                    <label for="dateTo">إلى تاريخ</label>
+                    <input id="dateTo" type="date" name="date_to" value="{{ date_to }}">
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="transactions-panel">
+        <div class="panel-head">
+            <div class="panel-title">
+                <span class="panel-icon"><i class="bi bi-receipt"></i></span>
+                <div>
+                    <h3>سجل العمليات</h3>
+                    <p>تفاصيل كل عملية مالية مع المستخدم والطلب المرتبط عند توفره.</p>
+                </div>
+            </div>
+            <div class="panel-actions">
+                <a href="{% url 'admin_panel:export_payments_csv' %}?search={{ search|default:'' }}&type={{ type|default:'all' }}&status={{ status|default:'all' }}&amount_from={{ amount_from|default:'' }}&amount_to={{ amount_to|default:'' }}&date_from={{ date_from|default:'' }}&date_to={{ date_to|default:'' }}" class="export-btn">
+                    <i class="bi bi-download"></i>
+                    تصدير CSV
+                </a>
+            </div>
+        </div>
+
+        <div class="transactions-table-wrap">
+            <table class="table transactions-table align-middle">
+                <thead>
+                    <tr>
+                        <th>المستخدم</th>
+                        <th>العملية</th>
+                        <th>المبلغ</th>
+                        <th>العمولة</th>
+                        <th>الحالة</th>
+                        <th>طلب الاشتراك</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <span class="user-avatar"><i class="bi bi-person"></i></span>
+                                <div>
+                                    <div class="user-name">{{ t.wallet.user.full_name }}</div>
+                                    <div class="user-sub">{{ t.wallet.user.get_role_display }} · {{ t.wallet.user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge-soft type-{{ t.type }}">{{ t.get_type_display }}</span>
+                        </td>
+                        <td>
+                            <span class="amount-value">{{ t.amount|floatformat:2 }} <span class="money-currency">ريال</span></span>
+                        </td>
+                        <td>
+                            {% if t.commission_amount %}
+                                <span class="commission-value">{{ t.commission_amount|floatformat:2 }} <span class="money-currency">ريال</span></span>
+                            {% else %}
+                                <span class="user-sub">لا توجد</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge-soft status-{{ t.status }}">{{ t.get_status_display }}</span>
+                        </td>
+                        <td>
+                            {% if t.subscription_request %}
+                                <div class="user-name">{{ t.subscription_request.request_code }}</div>
+                                <div class="request-sub">
+                                    {{ t.subscription_request.subscription.driver.user.full_name }} ·
+                                    {{ t.subscription_request.subscription.neighborhood }}
+                                </div>
+                            {% else %}
+                                <span class="user-sub">عملية محفظة مباشرة</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="date-value">{{ t.created_at|date:"d/m/Y" }} · {{ t.created_at|date:"H:i" }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-state">لا توجد عمليات مطابقة للفلاتر الحالية.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
+<script>
+const metricsToggle = document.getElementById("metricsToggle");
+const paymentsMetrics = document.getElementById("paymentsMetrics");
 
-</div>
-
-<!-- ================= Filters ================= -->
-
-<div class="section-card">
-
-<form method="get">
-
-<div class="row g-3">
-
-
-<!-- Search -->
-<div class="col-md-3">
-    <label class="form-label">🔍 بحث</label>
-    <input type="text" name="search" class="form-control"
-           placeholder="اسم أو إيميل"
-           value="{{ search|default:'' }}">
-</div>
-
-<!-- Type -->
-<div class="col-md-2">
-    <label class="form-label">نوع العملية</label>
-    <select name="type" class="form-select">
-        <option value="all">الكل</option>
-        <option value="deposit" {% if type == "deposit" %}selected{% endif %}>إيداع</option>
-        <option value="withdraw" {% if type == "withdraw" %}selected{% endif %}>سحب</option>
-        <option value="commission" {% if type == "commission" %}selected{% endif %}>عمولة</option>
-        <option value="refund" {% if type == "refund" %}selected{% endif %}>استرجاع</option>
-    </select>
-</div>
-
-<!-- Status -->
-<div class="col-md-2">
-    <label class="form-label">الحالة</label>
-    <select name="status" class="form-select">
-        <option value="all">الكل</option>
-        <option value="completed" {% if status == "completed" %}selected{% endif %}>مكتملة</option>
-        <option value="pending" {% if status == "pending" %}selected{% endif %}>معلقة</option>
-        <option value="cancelled" {% if status == "cancelled" %}selected{% endif %}>ملغية</option>
-    </select>
-</div>
-
-<!-- Date From -->
-<div class="col-md-2">
-    <label class="form-label">من تاريخ</label>
-    <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
-</div>
-
-<!-- Date To -->
-<div class="col-md-2">
-    <label class="form-label">إلى تاريخ</label>
-    <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
-</div>
-
-<!-- Button -->
-<div class="col-md-1 d-flex align-items-end">
-    <button type="submit" class="btn btn-dark w-100">
-        بحث
-    </button>
-</div>
-
-
-</div>
-
-</form>
-
-</div>
-
-<!-- ================= Transactions ================= -->
-
-<div class="section-card">
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-
-    <h5 class="fw-bold mb-0">
-        📊 سجل العمليات
-    </h5>
-
-    <a href="{% url 'admin_panel:export_payments_csv' %}?search={{ search|default:'' }}&type={{ type|default:'all' }}&status={{ status|default:'all' }}&date_from={{ date_from|default:'' }}&date_to={{ date_to|default:'' }}"
-       class="btn btn-outline-dark">
-
-        <i class="bi bi-download me-2"></i>
-        تصدير CSV
-
-    </a>
-
-</div>
-
-<table class="table text-center align-middle">
-
-<thead>
-    <tr>
-        <th>المستخدم</th>
-        <th>النوع</th>
-        <th>المبلغ</th>
-        <th>الحالة</th>
-        <th>التاريخ</th>
-    </tr>
-</thead>
-
-<tbody>
-
-{% for t in transactions %}
-
-<tr>
-
-
-<td>{{ t.wallet.user.full_name }}</td>
-
-<td>
-    <span class="badge-type {{ t.type }}">
-        {{ t.get_type_display }}
-    </span>
-</td>
-
-<td>{{ t.amount|floatformat:2 }} ريال</td>
-
-<td>
-    <span class="badge-type {{ t.status }}">
-        {{ t.get_status_display }}
-    </span>
-</td>
-
-<td><span>
-        {{ t.created_at|date:"d/m/Y - h:i" }}
-    </span></td>
-
-
-</tr>
-{% empty %}
-<tr>
-    <td colspan="5" class="text-muted">
-        لا توجد عمليات
-    </td>
-</tr>
-{% endfor %}
-
-</tbody>
-
-</table>
-
-</div>
+metricsToggle.addEventListener("click", () => {
+    const isCollapsed = paymentsMetrics.classList.toggle("is-collapsed");
+    metricsToggle.setAttribute("aria-expanded", String(!isCollapsed));
+    metricsToggle.innerHTML = isCollapsed
+        ? '<i class="bi bi-chevron-down"></i> عرض المؤشرات المالية'
+        : '<i class="bi bi-chevron-up"></i> إخفاء المؤشرات المالية';
+});
+</script>
 
 {% endblock %}

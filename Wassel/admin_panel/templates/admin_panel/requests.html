@@ -646,7 +646,7 @@
         <div id="subscriptionRequests" class="panel-section {% if active_tab != 'drivers' %}active{% endif %}">
             <div class="panel-head">
                 <div class="panel-title">
-                    <span class="panel-icon"><i class="bi bi-ticket-perforated"></i></span>
+                    <span class="panel-icon"><i class="bi bi-journal-check"></i></span>
                     <div>
                         <h3>طلبات الاشتراك</h3>
                         <p>كل الطلبات المرسلة من الطلاب إلى السائقين حسب الفلاتر الحالية.</p>
@@ -659,7 +659,7 @@
                 {% for req in requests %}
                 <article class="request-item request-subscription">
                     <div class="item-main">
-                        <span class="item-icon"><i class="bi bi-ticket-detailed"></i></span>
+                        <span class="item-icon"><i class="bi bi-file-earmark-text"></i></span>
                         <div class="request-summary">
                             <p class="item-title">{{ req.student.user.full_name }}</p>
                             <div class="request-meta-lines">
@@ -670,7 +670,7 @@
                                         <span class="request-meta-value">{{ req.subscription.driver.user.full_name }}</span>
                                     </span>
                                     <span class="request-meta-bit">
-                                        <i class="bi bi-ticket-perforated"></i>
+                                        <i class="bi bi-layers"></i>
                                         <span class="request-meta-label">الاشتراك:</span>
                                         <span class="request-meta-value">{{ req.subscription.driver.user.city.name_ar|default:"مدينة غير محددة" }} - {{ req.subscription.neighborhood }}</span>
                                     </span>
