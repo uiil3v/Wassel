@@ -121,7 +121,7 @@ class Subscription(models.Model):
     @property
     def current_status(self):
 
-        today = timezone.now().date()
+        today = timezone.localdate()
 
         # منتهي
         if self.end_date < today:
@@ -147,7 +147,7 @@ class Subscription(models.Model):
     # -------------------------
     def can_accept_requests(self):
 
-        today = timezone.now().date()
+        today = timezone.localdate()
 
         # إذا منتهي
         if self.end_date <= today:
@@ -256,7 +256,7 @@ class SubscriptionRequest(models.Model):
             raise ValidationError("No seats available.")
 
         # Prevent multiple active subscriptions for student
-        today = timezone.now().date()
+        today = timezone.localdate()
         active_subscription_exists = SubscriptionRequest.objects.filter(
             student=self.student,
             status="approved",

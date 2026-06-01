@@ -41,7 +41,7 @@ from support.models import (
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
-    today = timezone.now().date()
+    today = timezone.localdate()
 
     users_count = User.objects.count()
     drivers_count = DriverProfile.objects.count()
@@ -67,6 +67,32 @@ def dashboard(request):
         "user",
         "handled_by",
     ).filter(status__in=["in_progress", "waiting_user"])
+
+    unassigned_tickets_qs = open_tickets_qs.filter(
+        handled_by__isnull=True
+    )
+
+    action_items = []
+
+    for driver in pending_drivers_qs.order_by("-submitted_at")[:5]:
+        action_items.append({
+            "type": "driver_verification",
+            "created_at": driver.submitted_at,
+            "driver": driver,
+        })
+
+    for ticket in unassigned_tickets_qs.order_by("-updated_at")[:5]:
+        action_items.append({
+            "type": "unassigned_ticket",
+            "created_at": ticket.updated_at,
+            "ticket": ticket,
+        })
+
+    action_items = sorted(
+        action_items,
+        key=lambda item: item["created_at"],
+        reverse=True
+    )[:5]
 
     active_subscriptions = Subscription.objects.filter(
         status="active",
@@ -100,6 +126,11 @@ def dashboard(request):
         "subscription__driver__user__city",
     ).order_by("-request_date")[:6]
 
+    latest_tickets = SupportTicket.objects.select_related(
+        "user",
+        "handled_by",
+    ).order_by("-created_at")[:6]
+
     context = {
         "users_count": users_count,
         "drivers_count": drivers_count,
@@ -107,18 +138,18 @@ def dashboard(request):
         "pending_requests": pending_requests,
         "completed_requests": completed_requests,
         "pending_drivers_count": pending_drivers_qs.count(),
-        "pending_drivers": pending_drivers_qs.order_by("-submitted_at")[:4],
         "open_tickets_count": open_tickets_qs.count(),
         "waiting_user_tickets_count": SupportTicket.objects.filter(status="waiting_user").count(),
-        "unassigned_tickets_count": open_tickets_qs.filter(handled_by__isnull=True).count(),
+        "unassigned_tickets_count": unassigned_tickets_qs.count(),
         "open_tickets": open_tickets_qs.order_by("-updated_at")[:4],
+        "action_items": action_items,
         "active_subscriptions": active_subscriptions,
         "full_subscriptions": full_subscriptions,
         "inactive_subscriptions": inactive_subscriptions,
         "expired_subscriptions": expired_subscriptions,
         "total_earnings": total_earnings,
         "latest_requests": latest_requests,
-        "pending_request_items": pending_requests_qs.order_by("-request_date")[:4],
+        "latest_tickets": latest_tickets,
     }
 
     return render(request, "admin_panel/dashboard.html", context)
@@ -785,7 +816,7 @@ def export_payments_csv(request):
             f"{tx.amount:.2f}",
             f"{tx.commission_amount:.2f}",
             tx.get_status_display(),
-            tx.created_at.strftime("%d/%m/%Y %H:%M"),
+            timezone.localtime(tx.created_at).strftime("%d/%m/%Y %H:%M"),
         ])
 
     return response

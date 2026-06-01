@@ -95,6 +95,33 @@ class TicketTrackingForm(forms.Form):
             "placeholder": "example@email.com"
         })
     )
+
+
+class SupportTicketCodeForm(forms.Form):
+
+    code = forms.CharField(
+        label="رمز التحقق",
+        min_length=6,
+        max_length=6,
+        widget=forms.TextInput(attrs={
+            "class": "form-control verification-code-input",
+            "placeholder": "000000",
+            "inputmode": "numeric",
+            "autocomplete": "one-time-code",
+        })
+    )
+
+    def clean_code(self):
+
+        code = self.cleaned_data["code"].strip()
+
+        if not code.isdigit():
+
+            raise forms.ValidationError(
+                "رمز التحقق يجب أن يتكون من 6 أرقام."
+            )
+
+        return code
     
     
 class SupportMessageForm(forms.ModelForm):

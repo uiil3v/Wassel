@@ -416,7 +416,7 @@ def create_subscription(request):
 
         try:
             start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
-            today = timezone.now().date()
+            today = timezone.localdate()
 
             # 🔥 منع الماضي
             if start_date_obj < today:
@@ -1041,7 +1041,7 @@ def driver_schedule(request):
     approved_requests = SubscriptionRequest.objects.filter(
         subscription__driver=profile,
         status="approved",
-        subscription__end_date__gte=timezone.now().date()
+        subscription__end_date__gte=timezone.localdate()
     ).prefetch_related(
         "schedule",
         "student__user",

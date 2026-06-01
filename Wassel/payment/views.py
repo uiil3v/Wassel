@@ -6,6 +6,7 @@ from .services import deposit_wallet, withdraw_wallet
 
 from payment.services import calculate_driver_withdrawable
 from django.db.models import Sum
+from django.utils import timezone
 from decimal import Decimal
 
 import csv
@@ -205,7 +206,7 @@ def export_wallet_csv(request):
             tx.get_type_display(),
             f"{tx.amount:.2f}",
             tx.get_status_display(),
-            tx.created_at.strftime("%d/%m/%Y %H:%M"),
+            timezone.localtime(tx.created_at).strftime("%d/%m/%Y %H:%M"),
         ])
 
     return response

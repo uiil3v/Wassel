@@ -152,7 +152,7 @@ def refund_after_approval(subscription_request):
     commission = total_amount * commission_rate
     driver_received = total_amount - commission  # 95%
 
-    today = timezone.now().date()
+    today = timezone.localdate()
     
     if not subscription_request.joined_at:
         raise ValidationError("لا يوجد تاريخ بداية للطالب.")
@@ -246,7 +246,7 @@ def refund_after_approval(subscription_request):
     
 def calculate_driver_withdrawable(driver_user):
 
-    today = timezone.now().date()
+    today = timezone.localdate()
 
     requests = SubscriptionRequest.objects.filter(
         subscription__driver__user=driver_user,

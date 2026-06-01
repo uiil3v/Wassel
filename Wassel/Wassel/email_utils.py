@@ -233,4 +233,17 @@ def send_admin_notification_email(
             "message": message,
         }
     )
+
+
+def send_support_ticket_verification_email(ticket, code):
+
+    send_platform_email(
+        subject="رمز التحقق من تذكرة الدعم - وصل",
+        recipient=ticket.email,
+        template_name="emails/support_ticket_verification_email.html",
+        context={
+            "ticket": ticket,
+            "code": code,
+        }
+    )
     

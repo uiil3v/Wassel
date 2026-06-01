@@ -16,7 +16,7 @@
 .detail-card,
 .info-tile,
 .message-bubble,
-.action-panel {
+.conversation-composer {
     background: rgba(255, 255, 255, 0.94);
     border: 1px solid rgba(200, 169, 81, 0.16);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
@@ -190,7 +190,7 @@
 }
 
 .detail-card,
-.action-panel {
+.conversation-composer {
     border-radius: 28px;
     padding: 24px;
 }
@@ -319,17 +319,8 @@
     text-align: center;
 }
 
-.action-panel {
-    text-align: right;
-    margin-bottom: 10px;
-}
-
-.action-panel .section-title {
-    justify-content: flex-start;
-}
-
 .current-owner {
-    margin: 18px 0;
+    margin: 18px 0 0;
     padding: 15px;
     border-radius: 18px;
     background: #fbfaf7;
@@ -338,22 +329,61 @@
     text-align: right;
 }
 
-.reply-box {
+.conversation-composer {
     margin-top: 18px;
-    text-align: right;
+    background: linear-gradient(135deg, #ffffff, #fbfaf7);
+    box-shadow: none;
 }
 
-.reply-box label {
-    display: block;
-    margin-bottom: 10px;
-    color: #7f7165;
+.composer-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.composer-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+}
+
+.composer-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: linear-gradient(135deg, var(--accent-color), #d4af37);
+}
+
+.composer-title h4 {
+    margin: 0 0 4px;
+    color: var(--dark-color);
+    font-size: 18px;
     font-weight: 800;
+}
+
+.composer-title p {
+    margin: 0;
+    color: #837568;
+    line-height: 1.7;
+    font-size: 13px;
+}
+
+.reply-box {
+    text-align: right;
 }
 
 .reply-box textarea,
 .reply-box .form-control {
     width: 100%;
-    min-height: 150px;
+    min-height: 132px;
     border: 1px solid rgba(0, 0, 0, 0.09);
     border-radius: 18px;
     padding: 14px;
@@ -364,12 +394,26 @@
     outline: none;
 }
 
+.reply-box textarea:focus,
+.reply-box .form-control:focus {
+    border-color: rgba(200, 169, 81, 0.58);
+    box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+}
+
 .action-buttons {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
     gap: 10px;
     margin-top: 16px;
+}
+
+.composer-primary-actions,
+.composer-secondary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .action-alert {
@@ -400,7 +444,7 @@
 
     .detail-hero,
     .detail-card,
-    .action-panel {
+    .conversation-composer {
         border-radius: 22px;
         padding: 20px;
     }
@@ -436,6 +480,27 @@
 
     .action-buttons {
         flex-direction: column;
+        align-items: stretch;
+    }
+
+    .composer-head,
+    .composer-primary-actions,
+    .composer-secondary-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .composer-primary-actions,
+    .composer-secondary-actions,
+    .composer-primary-actions form,
+    .composer-secondary-actions form {
+        width: 100%;
+    }
+
+    .action-buttons .primary-btn,
+    .action-buttons .danger-btn,
+    .action-buttons .muted-btn {
+        width: 100%;
     }
 }
 </style>
@@ -516,6 +581,53 @@
 
     <section class="detail-card">
                 <div class="section-title">
+                    <span class="section-icon"><i class="bi bi-person"></i></span>
+                    <div>
+                        <h3>معلومات العميل</h3>
+                        <p>بيانات التواصل وصاحب التذكرة.</p>
+                    </div>
+                </div>
+
+                <div class="owner-card">
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-person"></i></span>
+                        <div>
+                            <div class="tile-label">الاسم</div>
+                            <div class="tile-value">{{ ticket.name }}</div>
+                        </div>
+                    </div>
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-envelope"></i></span>
+                        <div>
+                            <div class="tile-label">البريد الإلكتروني</div>
+                            <div class="tile-value">{{ ticket.email }}</div>
+                        </div>
+                    </div>
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-phone"></i></span>
+                        <div>
+                            <div class="tile-label">رقم الجوال</div>
+                            <div class="tile-value">{{ ticket.phone }}</div>
+                        </div>
+                    </div>
+                    <div class="owner-line">
+                        <span class="owner-icon"><i class="bi bi-person-badge"></i></span>
+                        <div>
+                            <div class="tile-label">نوع الحساب</div>
+                            <div class="tile-value">
+                                {% if ticket.user %}
+                                    {{ ticket.user.get_role_display }}
+                                {% else %}
+                                    زائر
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </section>
+
+    <section class="detail-card">
+                <div class="section-title">
                     <span class="section-icon"><i class="bi bi-chat-left-text"></i></span>
                     <div>
                         <h3>تفاصيل الطلب</h3>
@@ -571,135 +683,113 @@
                     <div class="empty-state">لا توجد رسائل في هذه التذكرة حتى الآن.</div>
                     {% endfor %}
                 </div>
-    </section>
 
-    <section class="detail-card">
-                <div class="section-title">
-                    <span class="section-icon"><i class="bi bi-person"></i></span>
-                    <div>
-                        <h3>معلومات العميل</h3>
-                        <p>بيانات التواصل وصاحب التذكرة.</p>
-                    </div>
+                <div class="current-owner">
+                    المسؤول الحالي:
+                    {% if ticket.handled_by %}
+                        {{ ticket.handled_by.full_name }}
+                    {% else %}
+                        غير مسندة
+                    {% endif %}
                 </div>
 
-                <div class="owner-card">
-                    <div class="owner-line">
-                        <span class="owner-icon"><i class="bi bi-person"></i></span>
-                        <div>
-                            <div class="tile-label">الاسم</div>
-                            <div class="tile-value">{{ ticket.name }}</div>
+                {% if not ticket.handled_by %}
+                    <div class="conversation-composer">
+                        <div class="composer-head">
+                            <div class="composer-title">
+                                <span class="composer-icon"><i class="bi bi-person-check"></i></span>
+                                <div>
+                                    <h4>استلام التذكرة</h4>
+                                    <p>استلم التذكرة لتتمكن من الرد على العميل أو إغلاقها.</p>
+                                </div>
+                            </div>
                         </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="claim">
+                            <button type="submit" class="primary-btn">
+                                <i class="bi bi-person-check"></i>
+                                استلام التذكرة
+                            </button>
+                        </form>
                     </div>
-                    <div class="owner-line">
-                        <span class="owner-icon"><i class="bi bi-envelope"></i></span>
-                        <div>
-                            <div class="tile-label">البريد الإلكتروني</div>
-                            <div class="tile-value">{{ ticket.email }}</div>
+
+                {% elif ticket.handled_by == request.user %}
+                    {% if ticket.status != "closed" and ticket.status != "resolved" %}
+                        <div class="conversation-composer">
+                            <div class="composer-head">
+                                <div class="composer-title">
+                                    <span class="composer-icon"><i class="bi bi-reply"></i></span>
+                                    <div>
+                                        <h4>الرد على العميل</h4>
+                                        <p>اكتب ردك هنا كجزء من المحادثة.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form method="post" id="replyTicketForm" class="reply-box">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="reply">
+                                {{ message_form.message }}
+                            </form>
+
+                            <form method="post" id="closeTicketForm">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="close">
+                            </form>
+
+                            <div class="action-buttons">
+                                <div class="composer-primary-actions">
+                                    <button type="submit" form="replyTicketForm" class="primary-btn">
+                                        <i class="bi bi-send"></i>
+                                        إرسال الرد
+                                    </button>
+                                    <button type="submit" form="closeTicketForm" class="danger-btn">
+                                        <i class="bi bi-lock"></i>
+                                        إغلاق التذكرة
+                                    </button>
+                                </div>
+
+                                <div class="composer-secondary-actions">
+                                    <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
+                                        رجوع للتذاكر
+                                        <i class="bi bi-arrow-left"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="owner-line">
-                        <span class="owner-icon"><i class="bi bi-phone"></i></span>
-                        <div>
-                            <div class="tile-label">رقم الجوال</div>
-                            <div class="tile-value">{{ ticket.phone }}</div>
+                    {% else %}
+                        <div class="conversation-composer">
+                            <div class="action-alert">تم إغلاق هذه التذكرة ولا يمكن إضافة ردود جديدة.</div>
+                            <div class="action-buttons">
+                                <div class="composer-secondary-actions">
+                                    <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
+                                        رجوع للتذاكر
+                                        <i class="bi bi-arrow-left"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="owner-line">
-                        <span class="owner-icon"><i class="bi bi-person-badge"></i></span>
-                        <div>
-                            <div class="tile-label">نوع الحساب</div>
-                            <div class="tile-value">
-                                {% if ticket.user %}
-                                    {{ ticket.user.get_role_display }}
-                                {% else %}
-                                    زائر
-                                {% endif %}
+                    {% endif %}
+
+                {% else %}
+                    <div class="conversation-composer">
+                        <div class="action-alert">
+                            هذه التذكرة مسندة إلى <strong>{{ ticket.handled_by.full_name }}</strong> ولا يمكنك تعديلها.
+                        </div>
+                        <div class="action-buttons">
+                            <div class="composer-secondary-actions">
+                                <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
+                                    رجوع للتذاكر
+                                    <i class="bi bi-arrow-left"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
     </section>
 
-    <section class="action-panel">
-        <div class="section-title">
-            <span class="section-icon"><i class="bi bi-sliders"></i></span>
-            <div>
-                <h3>إدارة التذكرة</h3>
-                <p>راجع التفاصيل والمحادثة ثم اتخذ الإجراء المناسب.</p>
-            </div>
-        </div>
-
-        <div class="current-owner">
-            المسؤول الحالي:
-            {% if ticket.handled_by %}
-                {{ ticket.handled_by.full_name }}
-            {% else %}
-                غير مسندة
-            {% endif %}
-        </div>
-
-        {% if not ticket.handled_by %}
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="claim">
-                <button type="submit" class="primary-btn">
-                    <i class="bi bi-person-check"></i>
-                    استلام التذكرة
-                </button>
-            </form>
-            <div class="action-alert">يجب استلام التذكرة قبل الرد على العميل أو إغلاقها.</div>
-
-        {% elif ticket.handled_by == request.user %}
-            {% if ticket.status != "closed" and ticket.status != "resolved" %}
-                <form method="post" class="reply-box">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="reply">
-                    <label>الرد على العميل</label>
-                    {{ message_form.message }}
-                    <div class="action-buttons">
-                        <button type="submit" class="primary-btn">
-                            <i class="bi bi-send"></i>
-                            إرسال الرد
-                        </button>
-                    </div>
-                </form>
-
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="close">
-                    <div class="action-buttons">
-                        <button type="submit" class="danger-btn">
-                            <i class="bi bi-lock"></i>
-                            إغلاق التذكرة
-                        </button>
-                        <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
-                            رجوع للتذاكر
-                            <i class="bi bi-arrow-left"></i>
-                        </a>
-                    </div>
-                </form>
-            {% else %}
-                <div class="action-alert">تم إغلاق هذه التذكرة ولا يمكن إضافة ردود جديدة.</div>
-                <div class="action-buttons">
-                    <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
-                        رجوع للتذاكر
-                        <i class="bi bi-arrow-left"></i>
-                    </a>
-                </div>
-            {% endif %}
-
-        {% else %}
-            <div class="action-alert">
-                هذه التذكرة مسندة إلى <strong>{{ ticket.handled_by.full_name }}</strong> ولا يمكنك تعديلها.
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'admin_panel:support_tickets' %}" class="muted-btn">
-                    رجوع للتذاكر
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
-        {% endif %}
-    </section>
 </div>
 
 {% endblock %}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>رمز التحقق من تذكرة الدعم</title>
+</head>
+
+<body style="
+    margin:0;
+    padding:0;
+    background:#f9f7f3;
+    font-family:Tahoma, Arial, sans-serif;
+">
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 15px;">
+        <tr>
+            <td align="center">
+
+                <table width="650" cellpadding="0" cellspacing="0" style="
+                    background:#ffffff;
+                    border-radius:20px;
+                    overflow:hidden;
+                    border:1px solid #e6ddd1;
+                    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+                ">
+
+                    <tr>
+                        <td style="height:8px;background:#c8a951;"></td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="
+                            background:#4a3f35;
+                            padding:40px 30px;
+                        ">
+                            <div style="
+                                color:white;
+                                font-size:52px;
+                                font-weight:bold;
+                                line-height:1;
+                            ">
+                                وصْـــــل
+                            </div>
+
+                            <div style="
+                                margin-top:10px;
+                                color:#e8dfd1;
+                                font-size:14px;
+                            ">
+                                مركز الدعم
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="
+                            padding:45px 40px;
+                            color:#4a3f35;
+                            line-height:2;
+                        ">
+
+                            <h2 style="margin-top:0;margin-bottom:18px;color:#4a3f35;">
+                                رمز الدخول لتذكرتك
+                            </h2>
+
+                            <p style="font-size:15px;color:#4a3f35;">
+                                مرحباً {{ ticket.name }}،
+                            </p>
+
+                            <p style="font-size:15px;color:#8c7b6b;">
+                                استخدم الرمز التالي لمتابعة تذكرة الدعم رقم
+                                <strong>{{ ticket.ticket_number }}</strong>.
+                                الرمز صالح لمدة 10 دقائق فقط.
+                            </p>
+
+                            <div style="
+                                background:#fbfaf7;
+                                border:1px solid #e6ddd1;
+                                border-right:5px solid #c8a951;
+                                border-radius:16px;
+                                padding:26px;
+                                margin:30px 0;
+                                text-align:center;
+                            ">
+                                <div style="
+                                    color:#8c7b6b;
+                                    font-size:13px;
+                                    margin-bottom:10px;
+                                ">
+                                    رمز التحقق
+                                </div>
+
+                                <div style="
+                                    color:#4a3f35;
+                                    font-size:34px;
+                                    font-weight:bold;
+                                    letter-spacing:6px;
+                                    direction:ltr;
+                                ">
+                                    {{ code }}
+                                </div>
+                            </div>
+
+                            <p style="font-size:14px;color:#8c7b6b;margin-bottom:0;">
+                                إذا لم تطلب هذا الرمز يمكنك تجاهل الرسالة.
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="
+                            background:#fbfaf7;
+                            padding:25px;
+                            color:#8c7b6b;
+                            font-size:13px;
+                            border-top:1px solid #e6ddd1;
+                        ">
+                            فريق وصْـــــل
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

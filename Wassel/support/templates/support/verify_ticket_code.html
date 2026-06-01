@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}
+رمز التحقق - وصل
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.verify-header {
+    text-align: center;
+    padding: 120px 0 60px;
+}
+
+.verify-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.verify-header p {
+    color: var(--soft-color);
+    font-size: 1.15rem;
+    line-height: 2;
+    max-width: 700px;
+    margin: 15px auto 0;
+}
+
+.verify-section {
+    padding: 70px 0 120px;
+}
+
+.verify-wrapper {
+    background: linear-gradient(135deg, #f6f2ea, #ece6db);
+    border-radius: 60px;
+    padding: 60px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+}
+
+.verify-card {
+    background: #fff;
+    border: 1px solid rgba(200, 169, 81, 0.25);
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
+}
+
+.email-note {
+    background: rgba(200, 169, 81, 0.09);
+    border: 1px solid rgba(200, 169, 81, 0.22);
+    border-radius: 18px;
+    color: var(--dark-color);
+    line-height: 1.9;
+    padding: 18px;
+    margin-bottom: 26px;
+}
+
+.verification-code-input {
+    border-radius: 18px;
+    padding: 15px;
+    text-align: center;
+    direction: ltr;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 8px;
+}
+
+.verification-code-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(200, 169, 81, 0.25);
+}
+
+.btn-verify {
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 32px;
+    transition: 0.3s ease;
+}
+
+.btn-verify:hover {
+    background: #b8953f;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.verify-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.resend-link {
+    color: var(--dark-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.resend-link:hover {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .verify-header {
+        padding: 90px 0 40px;
+    }
+
+    .verify-header h1 {
+        font-size: 2rem;
+    }
+
+    .verify-header p {
+        font-size: 1rem;
+    }
+
+    .verify-section {
+        padding: 45px 0 90px;
+    }
+
+    .verify-wrapper {
+        padding: 24px;
+        border-radius: 30px;
+    }
+
+    .verify-card {
+        padding: 24px 18px;
+        border-radius: 24px;
+    }
+
+    .verification-code-input {
+        font-size: 1.35rem;
+        letter-spacing: 5px;
+    }
+
+    .verify-actions,
+    .btn-verify {
+        width: 100%;
+    }
+
+    .verify-actions {
+        align-items: stretch;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="verify-header">
+    <div class="container">
+        <h1>رمز التحقق</h1>
+
+        <p>
+            أدخل الرمز المرسل إلى بريدك الإلكتروني لعرض تفاصيل التذكرة ومتابعة
+            المحادثة مع فريق الدعم.
+        </p>
+    </div>
+</section>
+
+<section class="verify-section">
+    <div class="container">
+        <div class="verify-wrapper">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="verify-card">
+                        <h4 class="fw-bold mb-3">تأكيد ملكية البريد</h4>
+
+                        <div class="email-note">
+                            أرسلنا رمز تحقق إلى:
+                            <strong>{{ ticket_email }}</strong>
+                            <br>
+                            الرمز صالح لمدة 10 دقائق.
+                        </div>
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    {{ form.code.label }}
+                                </label>
+                                {{ form.code }}
+                            </div>
+
+                            <div class="verify-actions">
+                                <button type="submit" class="btn btn-verify">
+                                    عرض التذكرة
+                                </button>
+
+                                <a href="{% url 'support:track_ticket' %}" class="resend-link">
+                                    طلب رمز جديد
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

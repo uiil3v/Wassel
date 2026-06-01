@@ -79,7 +79,7 @@ class Review(models.Model):
         # التقييم فقط بعد انتهاء الاشتراك
         subscription = self.subscription_request.subscription
 
-        if subscription.end_date > timezone.now().date():
+        if subscription.end_date > timezone.localdate():
             raise ValidationError("لا يمكنك التقييم قبل انتهاء الاشتراك.")
 
         # لازم الطلب يكون approved

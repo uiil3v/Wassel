@@ -6,7 +6,6 @@
 
 {% block extra_css %}
 <style>
-
 .track-header {
     text-align: center;
     padding: 120px 0 60px;
@@ -20,87 +19,119 @@
 .track-header p {
     color: var(--soft-color);
     font-size: 1.2rem;
-    max-width: 700px;
-    margin: auto;
-    margin-top: 15px;
+    line-height: 2;
+    max-width: 720px;
+    margin: 15px auto 0;
 }
 
 .track-section {
-    padding: 80px 0 120px;
+    padding: 70px 0 120px;
 }
 
 .track-wrapper {
     background: linear-gradient(135deg, #f6f2ea, #ece6db);
     border-radius: 60px;
     padding: 60px;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.05);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
 }
 
 .track-form {
-    background: white;
+    background: #fff;
+    border: 1px solid rgba(200, 169, 81, 0.25);
     border-radius: 30px;
     padding: 40px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
+}
+
+.track-note {
+    background: rgba(200, 169, 81, 0.09);
+    border: 1px solid rgba(200, 169, 81, 0.22);
+    border-radius: 18px;
+    color: var(--dark-color);
+    line-height: 1.9;
+    padding: 18px;
+    margin-bottom: 26px;
 }
 
 .form-control {
     border-radius: 15px;
     padding: 14px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(200, 169, 81, 0.25);
 }
 
 .btn-track {
     background: var(--accent-color);
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 30px;
-    padding: 12px 35px;
-    transition: 0.3s;
+    padding: 12px 32px;
+    transition: 0.3s ease;
 }
 
 .btn-track:hover {
-    opacity: 0.9;
+    background: #b8953f;
+    color: #fff;
     transform: translateY(-2px);
 }
 
-.ticket-card {
-    background: white;
-    border-radius: 30px;
-    padding: 35px;
-    margin-top: 35px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+.track-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
 }
 
-.ticket-row {
-    margin-bottom: 18px;
+.contact-link {
+    color: var(--dark-color);
+    text-decoration: none;
+    font-weight: 600;
 }
 
-.ticket-label {
-    font-weight: 700;
-    color: #555;
-}
-
-.status-badge {
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 14px;
+.contact-link:hover {
+    color: var(--accent-color);
 }
 
 @media (max-width: 768px) {
+    .track-header {
+        padding: 90px 0 40px;
+    }
 
     .track-header h1 {
         font-size: 2rem;
     }
 
+    .track-header p {
+        font-size: 1rem;
+    }
+
+    .track-section {
+        padding: 45px 0 90px;
+    }
+
     .track-wrapper {
-        padding: 25px;
+        padding: 24px;
         border-radius: 30px;
     }
 
-    .track-form,
-    .ticket-card {
-        padding: 25px;
+    .track-form {
+        padding: 24px 18px;
+        border-radius: 24px;
     }
 
+    .track-actions,
+    .btn-track {
+        width: 100%;
+    }
+
+    .track-actions {
+        align-items: stretch;
+    }
 }
 </style>
 {% endblock %}
@@ -109,37 +140,35 @@
 
 <section class="track-header">
     <div class="container">
-
         <h1>تتبع التذكرة</h1>
 
         <p>
-            أدخل رقم التذكرة والبريد الإلكتروني للاطلاع على حالة الطلب وآخر تحديثات فريق الدعم.
+            أدخل رقم التذكرة والبريد الإلكتروني المرتبط بها، وسنرسل لك رمز تحقق
+            قبل عرض المحادثة أو السماح بإضافة رد.
         </p>
-
     </div>
 </section>
 
 <section class="track-section">
-
     <div class="container">
-
         <div class="track-wrapper">
-
             <div class="row justify-content-center">
-
                 <div class="col-lg-7">
-
                     <div class="track-form">
+                        <h4 class="fw-bold mb-3">طلب رمز التحقق</h4>
+
+                        <div class="track-note">
+                            لحماية خصوصية طلبك، لن تظهر تفاصيل التذكرة إلا بعد إدخال
+                            الرمز المرسل إلى البريد الإلكتروني المسجل في التذكرة.
+                        </div>
 
                         <form method="POST">
-
                             {% csrf_token %}
 
                             <div class="mb-4">
                                 <label class="form-label">
                                     {{ form.ticket_number.label }}
                                 </label>
-
                                 {{ form.ticket_number }}
                             </div>
 
@@ -147,127 +176,24 @@
                                 <label class="form-label">
                                     {{ form.email.label }}
                                 </label>
-
                                 {{ form.email }}
                             </div>
 
-                            <button
-                                type="submit"
-                                class="btn btn-track"
-                            >
-                                بحث
-                            </button>
+                            <div class="track-actions">
+                                <button type="submit" class="btn btn-track">
+                                    إرسال رمز التحقق
+                                </button>
 
+                                <a href="{% url 'support:contact' %}" class="contact-link">
+                                    إنشاء تذكرة جديدة
+                                </a>
+                            </div>
                         </form>
-
                     </div>
-
-                    {% if ticket %}
-
-                    <div class="ticket-card">
-
-                        <h4 class="fw-bold mb-4">
-                            تفاصيل التذكرة
-                        </h4>
-
-                        <div class="ticket-row">
-                            <span class="ticket-label">
-                                رقم التذكرة:
-                            </span>
-
-                            {{ ticket.ticket_number }}
-                        </div>
-
-                        <div class="ticket-row">
-                            <span class="ticket-label">
-                                نوع الطلب:
-                            </span>
-
-                            {{ ticket.get_category_display }}
-                        </div>
-
-                        <div class="ticket-row">
-                            <span class="ticket-label">
-                                عنوان الطلب:
-                            </span>
-
-                            {{ ticket.subject }}
-                        </div>
-
-                        <div class="ticket-row">
-                            <span class="ticket-label">
-                                الحالة:
-                            </span>
-
-                            {% if ticket.status == "new" %}
-                                <span class="badge bg-primary status-badge">
-                                    جديدة
-                                </span>
-
-                            {% elif ticket.status == "in_progress" %}
-                                <span class="badge bg-warning text-dark status-badge">
-                                    قيد المعالجة
-                                </span>
-
-                            {% elif ticket.status == "waiting_user" %}
-                                <span class="badge bg-info status-badge">
-                                    بانتظار رد العميل
-                                </span>
-
-                            {% elif ticket.status == "resolved" %}
-                                <span class="badge bg-success status-badge">
-                                    تم الحل
-                                </span>
-
-                            {% else %}
-                                <span class="badge bg-secondary status-badge">
-                                    مغلقة
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        <div class="ticket-row">
-                            <span class="ticket-label">
-                                تاريخ الإرسال:
-                            </span>
-
-                            {{ ticket.created_at|date:"d/m/Y H:i" }}
-                        </div>
-
-                        <div class="ticket-row">
-                            <span class="ticket-label">
-                                آخر تحديث:
-                            </span>
-
-                            {{ ticket.updated_at|date:"d/m/Y H:i" }}
-                        </div>
-
-                        {% if ticket.admin_response %}
-
-                        <hr>
-
-                        <h5 class="fw-bold mb-3">
-                            رد الإدارة
-                        </h5>
-
-                        <p class="mb-0">
-                            {{ ticket.admin_response }}
-                        </p>
-
-                        {% endif %}
-
-                    </div>
-
-                    {% endif %}
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 {% endblock %}

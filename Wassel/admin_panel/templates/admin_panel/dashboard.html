@@ -99,7 +99,7 @@
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1fr;
     gap: 20px;
     align-items: start;
 }
@@ -315,7 +315,7 @@
 
     <section class="dashboard-hero">
         <h2>لوحة المشرف</h2>
-        <p>تابع حالة المنصة، الطلبات التي تحتاج مراجعة، والسائقين والدعم من مكان واحد.</p>
+        <p>تابع حالة المنصة، الطلبات التي تحتاج مراجعة، والسائقين من مكان واحد.</p>
     </section>
 
     <section class="metrics-grid">
@@ -401,84 +401,52 @@
                     <span class="panel-icon"><i class="bi bi-lightning-charge"></i></span>
                     <div>
                         <h3>يحتاج إجراء</h3>
-                        <p>أهم العناصر التي غالباً يحتاج المشرف يتابعها أولاً.</p>
+                        <p>آخر طلبات التوثيق والتذاكر غير المسندة. تظهر هنا خمسة عناصر كحد أقصى.</p>
                     </div>
                 </div>
-                <a class="panel-link" href="{% url 'admin_panel:requests' %}">
-                    عرض الطلبات
+                <a class="panel-link" href="{% url 'admin_panel:requests' %}?tab=drivers&driver_status=pending">
+                    طلبات التوثيق
                     <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
 
             <div class="attention-stack">
-                {% for driver in pending_drivers %}
+                {% for item in action_items %}
+                {% if item.type == "driver_verification" %}
                 <div class="attention-item">
                     <span class="item-icon"><i class="bi bi-person-vcard"></i></span>
                     <div>
-                        <p class="item-title">{{ driver.user.full_name }}</p>
+                        <p class="item-title">{{ item.driver.user.full_name }}</p>
                         <p class="item-meta">
-                            {% if driver.user.city %}{{ driver.user.city.name_ar }}{% else %}لم تحدد المدينة{% endif %}
-                            · تم الإرسال {{ driver.submitted_at|date:"d/m/Y" }}
+                            طلب توثيق سائق
+                            · {% if item.driver.user.city %}{{ item.driver.user.city.name_ar }}{% else %}لم تحدد المدينة{% endif %}
+                            · {{ item.driver.submitted_at|date:"d/m/Y H:i" }}
                         </p>
                     </div>
-                    <a class="chip chip-accent" href="{% url 'admin_panel:driver_detail' driver.id %}">مراجعة</a>
+                    <a class="chip chip-accent" href="{% url 'admin_panel:driver_detail' item.driver.id %}">مراجعة</a>
                 </div>
-                {% endfor %}
-
-                {% for req in pending_request_items %}
+                {% elif item.type == "unassigned_ticket" %}
                 <div class="attention-item">
-                    <span class="item-icon"><i class="bi bi-ticket-detailed"></i></span>
+                    <span class="item-icon"><i class="bi bi-headset"></i></span>
                     <div>
-                        <p class="item-title">{{ req.student.user.full_name }}</p>
+                        <p class="item-title">{{ item.ticket.subject }}</p>
                         <p class="item-meta">
-                            طلب اشتراك مع {{ req.subscription.driver.user.full_name }}
-                            · {{ req.request_date|date:"d/m/Y H:i" }}
+                            تذكرة غير مسندة
+                            · {{ item.ticket.name }}
+                            · {{ item.ticket.updated_at|date:"d/m/Y H:i" }}
                         </p>
                     </div>
-                    <a class="chip chip-accent" href="{% url 'admin_panel:request_detail' req.id %}">التفاصيل</a>
+                    <a class="chip chip-muted" href="{% url 'admin_panel:support_ticket_detail' item.ticket.id %}">إسناد</a>
                 </div>
+                {% endif %}
                 {% endfor %}
 
-                {% if not pending_drivers and not pending_request_items %}
+                {% if not action_items %}
                 <div class="empty-state">لا توجد عناصر عاجلة حالياً.</div>
                 {% endif %}
             </div>
         </div>
 
-        <div class="panel-card">
-            <div class="panel-header">
-                <div class="panel-title">
-                    <span class="panel-icon"><i class="bi bi-ticket"></i></span>
-                    <div>
-                        <h3>الدعم</h3>
-                        <p>آخر تذاكر الدعم المفتوحة والمتابعة.</p>
-                    </div>
-                </div>
-                <a class="panel-link" href="{% url 'admin_panel:support_tickets' %}">
-                    الكل
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </div>
-
-            <div class="activity-stack">
-                {% for ticket in open_tickets %}
-                <div class="activity-item">
-                    <span class="item-icon"><i class="bi bi-headset"></i></span>
-                    <div>
-                        <p class="item-title">{{ ticket.subject }}</p>
-                        <p class="item-meta">
-                            {{ ticket.name }} · {{ ticket.updated_at|date:"d/m/Y H:i" }}
-                        </p>
-                    </div>
-                    <a class="chip chip-muted" href="{% url 'admin_panel:support_ticket_detail' ticket.id %}">
-                        {% if ticket.handled_by %}متابعة{% else %}إسناد{% endif %}
-                    </a>
-                </div>
-                {% empty %}
-                <div class="empty-state">لا توجد تذاكر مفتوحة حالياً.</div>
-                {% endfor %}
-            </div>
-        </div>
     </section>
 
     <section>
@@ -536,6 +504,75 @@
                         <tr>
                             <td colspan="6">
                                 <div class="empty-state">لا توجد طلبات حالياً.</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="panel-card">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="panel-icon"><i class="bi bi-life-preserver"></i></span>
+                    <div>
+                        <h3>آخر تذاكر الدعم</h3>
+                        <p>آخر التذاكر التي وصلت للمنصة وحالة متابعتها.</p>
+                    </div>
+                </div>
+                <a class="panel-link" href="{% url 'admin_panel:support_tickets' %}">
+                    عرض الكل
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>رقم التذكرة</th>
+                            <th>العميل</th>
+                            <th>الموضوع</th>
+                            <th>الحالة</th>
+                            <th>المسؤول</th>
+                            <th>التاريخ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in latest_tickets %}
+                        <tr>
+                            <td>{{ ticket.ticket_number }}</td>
+                            <td>{{ ticket.name }}</td>
+                            <td>{{ ticket.subject }}</td>
+                            <td>
+                                <span class="chip
+                                    {% if ticket.status == 'in_progress' %}chip-pending
+                                    {% elif ticket.status == 'waiting_user' %}chip-muted
+                                    {% elif ticket.status == 'resolved' %}chip-approved
+                                    {% else %}chip-cancelled{% endif %}">
+                                    {{ ticket.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if ticket.handled_by %}
+                                    {{ ticket.handled_by.full_name }}
+                                {% else %}
+                                    <span class="chip chip-muted">غير مسندة</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <a class="panel-link" href="{% url 'admin_panel:support_ticket_detail' ticket.id %}">فتح</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">لا توجد تذاكر دعم حالياً.</div>
                             </td>
                         </tr>
                         {% endfor %}

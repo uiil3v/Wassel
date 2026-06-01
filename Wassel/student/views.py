@@ -58,7 +58,7 @@ def student_dashboard(request):
     if not profile:
         return redirect("student:profile")
 
-    today = timezone.now().date()
+    today = timezone.localdate()
 
     active_request = SubscriptionRequest.objects.filter(
         student=profile,
@@ -99,7 +99,7 @@ def my_subscriptions(request):
         return redirect("main:index")
 
     profile = request.user.student_profile
-    today = timezone.now().date()
+    today = timezone.localdate()
 
     subscriptions = SubscriptionRequest.objects.filter(
         student=profile
@@ -193,7 +193,7 @@ def available_subscriptions(request):
         status="active",
         driver__user__status="active",
         available_seats__gt=0,
-        end_date__gte=timezone.now().date(),
+        end_date__gte=timezone.localdate(),
         driver__user__city=request.user.city
     )
     # ================= SEARCH =================
@@ -234,7 +234,7 @@ def available_subscriptions(request):
     # ================= RESULTS COUNT =================
     results_count = subscriptions.count()
 
-    today = timezone.now().date()
+    today = timezone.localdate()
     has_active_request = request.user.student_profile.subscription_requests.filter(
         Q(status="pending") |
         Q(status="approved", subscription__end_date__gte=today)
@@ -273,7 +273,7 @@ def subscription_detail_view(request, sub_id):
         driver__user__city=request.user.city
     )
 
-    today = timezone.now().date()
+    today = timezone.localdate()
 
     has_active_request = profile.subscription_requests.filter(
         Q(status="pending") |
@@ -318,7 +318,7 @@ def create_request(request, sub_id):
             sub_id=sub_id
         )
 
-    today = timezone.now().date()
+    today = timezone.localdate()
     if profile.subscription_requests.filter(
         Q(status="pending") |
         Q(status="approved", subscription__end_date__gte=today)
@@ -617,7 +617,7 @@ def delete_student_account(request):
     # يوجد اشتراك قائم
     if profile.subscription_requests.filter(
         status="approved",
-        subscription__end_date__gte=timezone.now().date()
+        subscription__end_date__gte=timezone.localdate()
     ).exists():
 
         messages.error(
