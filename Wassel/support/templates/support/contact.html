@@ -5,312 +5,374 @@
 
 {% block extra_css %}
 <style>
-    /* ===== HEADER ===== */
-    .contact-header {
-        text-align: center;
-        padding: 120px 0 60px;
-    }
+.contact-header {
+    padding: 120px 0 60px;
+    text-align: center;
+}
 
-    .contact-header h1 {
-        font-size: 3rem;
-        font-weight: 700;
-    }
+.contact-header h1 {
+    color: var(--dark-color);
+    font-size: 3rem;
+    font-weight: 700;
+}
 
-    .contact-header p {
-        font-size: 1.3rem;
-        color: var(--soft-color);
-        max-width: 750px;
-        margin: 20px auto 0;
-        line-height: 2;
-    }
+.contact-header p {
+    color: var(--soft-color);
+    font-size: 1.15rem;
+    line-height: 2;
+    margin: 18px auto 0;
+    max-width: 760px;
+}
 
-    /* ===== CONTACT SECTION ===== */
-    .contact-section {
-        padding: 80px 0 120px;
-    }
+.contact-section {
+    padding: 70px 0 120px;
+}
 
-    .contact-wrapper {
-        background: linear-gradient(135deg, #f6f2ea, #ece6db);
-        border-radius: 60px;
-        padding: 60px;
-        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
-    }
+.contact-wrapper {
+    background: linear-gradient(135deg, #f6f2ea, #ece6db);
+    border-radius: 60px;
+    padding: 60px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05);
+}
 
-    /* ===== FORM ===== */
+.contact-layout {
+    align-items: stretch;
+    display: grid;
+    gap: 28px;
+    grid-template-columns: 0.85fr 1.15fr;
+}
 
-    .contact-form {
-        background: white;
-        padding: 40px;
-        border-radius: 30px;
-        border: 1px solid rgba(200, 169, 81, 0.3);
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.06);
-    }
+.support-side,
+.contact-form {
+    background: #fff;
+    border: 1px solid rgba(200, 169, 81, 0.25);
+    border-radius: 30px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.055);
+}
 
-    .form-control,
-    .form-select {
-        border-radius: 15px;
-        padding: 14px;
-        border: 1px solid #ddd;
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 0.2rem rgba(200, 169, 81, 0.25);
-    }
-
-    .btn-contact {
-        background-color: var(--accent-color);
-        color: white;
-        border-radius: 30px;
-        padding: 12px 35px;
-        border: none;
-        transition: 0.3s ease;
-    }
-
-    .btn-contact:hover {
-        background-color: #b8953f;
-        transform: translateY(-3px);
-    }
-
-    .ticket-note {
-        background: rgba(200, 169, 81, 0.08);
-        border: 1px solid rgba(200, 169, 81, 0.2);
-        padding: 15px;
-        border-radius: 15px;
-        color: var(--dark-color);
-        margin-bottom: 25px;
-    }
-
-    /* ===== RESPONSIVE ===== */
-
-    @media (max-width: 992px) {
-
-        .contact-wrapper {
-            padding: 40px;
-        }
-
-    }
-
-    @media (max-width: 768px) {
-
-        .contact-header {
-            padding: 90px 0 40px;
-        }
-
-        .contact-header h1 {
-            font-size: 2rem;
-        }
-
-        .contact-header p {
-            font-size: 1rem;
-            line-height: 1.8;
-            padding: 0 10px;
-        }
-
-        .contact-wrapper {
-            padding: 25px;
-            border-radius: 30px;
-        }
-
-        .contact-form {
-            padding: 25px 20px;
-            border-radius: 25px;
-        }
-
-    }
-
-    @media (max-width: 576px) {
-
-        .contact-wrapper {
-            padding: 15px;
-        }
-
-        .contact-form {
-            padding: 20px 15px;
-        }
-
-        .btn-contact {
-            width: 100%;
-            padding: 14px;
-            border-radius: 50px;
-        }
-
-    }
-
-    .track-ticket-box {
-    background: rgba(13, 110, 253, 0.08);
-    border: 1px solid rgba(13, 110, 253, 0.15);
-    border-radius: 18px;
-    padding: 18px;
-    margin-bottom: 25px;
+.support-side {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
+    padding: 34px;
+}
+
+.support-side h3,
+.contact-form h4 {
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+.support-side p {
+    color: var(--soft-color);
+    line-height: 1.9;
+}
+
+.support-steps {
+    display: grid;
+    gap: 14px;
+    margin: 28px 0;
+}
+
+.support-step {
+    align-items: flex-start;
+    display: flex;
+    gap: 14px;
+}
+
+.step-icon {
     align-items: center;
-    gap: 15px;
+    background: rgba(200, 169, 81, 0.12);
+    border-radius: 50%;
+    color: var(--accent-color);
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 1.15rem;
+    height: 42px;
+    justify-content: center;
+    width: 42px;
+}
+
+.support-step strong {
+    color: var(--dark-color);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.support-step span {
+    color: var(--soft-color);
+    line-height: 1.7;
+}
+
+.track-panel {
+    background: #fbfaf7;
+    border: 1px solid #eee6dc;
+    border-radius: 22px;
+    padding: 22px;
+}
+
+.track-panel strong {
+    color: var(--dark-color);
+}
+
+.track-panel p {
+    font-size: 0.95rem;
+    margin: 8px 0 18px;
 }
 
 .track-ticket-btn {
-    border-radius: 25px;
-    padding: 10px 20px;
-    text-decoration: none;
+    border-color: rgba(74, 63, 53, 0.25);
+    border-radius: 999px;
+    color: var(--dark-color);
+    padding: 10px 18px;
+    width: 100%;
+}
+
+.track-ticket-btn:hover {
+    background: var(--dark-color);
+    border-color: var(--dark-color);
+    color: #fff;
+}
+
+.contact-form {
+    padding: 38px;
+}
+
+.ticket-note {
+    background: rgba(200, 169, 81, 0.09);
+    border: 1px solid rgba(200, 169, 81, 0.22);
+    border-radius: 18px;
+    color: var(--dark-color);
+    line-height: 1.9;
+    margin: 18px 0 28px;
+    padding: 18px;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 14px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(200, 169, 81, 0.25);
+}
+
+.form-label {
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.btn-contact {
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 999px;
+    color: #fff;
+    padding: 12px 32px;
+    transition: 0.3s ease;
+}
+
+.btn-contact:hover {
+    background-color: #b8953f;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 992px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .support-side {
+        gap: 8px;
+    }
 }
 
 @media (max-width: 768px) {
-
-    .track-ticket-box {
-        flex-direction: column;
-        text-align: center;
+    .contact-header {
+        padding: 90px 0 40px;
     }
 
+    .contact-header h1 {
+        font-size: 2rem;
+    }
+
+    .contact-header p {
+        font-size: 1rem;
+    }
+
+    .contact-section {
+        padding: 45px 0 90px;
+    }
+
+    .contact-wrapper {
+        border-radius: 30px;
+        padding: 24px;
+    }
+
+    .support-side,
+    .contact-form {
+        border-radius: 24px;
+        padding: 24px 18px;
+    }
+
+    .form-actions,
+    .btn-contact {
+        width: 100%;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- ===== HEADER ===== -->
 <section class="contact-header">
     <div class="container">
-
         <h1>مركز الدعم والتواصل</h1>
 
         <p>
-            يمكنك إرسال استفسار أو شكوى أو اقتراح أو طلب دعم فني من خلال نظام التذاكر.
-            سيتم تزويدك برقم تذكرة، وتتم المتابعة لاحقاً عبر رمز تحقق يرسل إلى بريدك الإلكتروني.
+            إذا واجهتك مشكلة في الحساب أو الاشتراكات أو المدفوعات، أرسل طلبك من هنا.
+            سننشئ لك رقم تذكرة، ويمكنك متابعة الرد لاحقًا بعد التحقق من بريدك الإلكتروني.
         </p>
-
     </div>
 </section>
 
-<!-- ===== CONTACT SECTION ===== -->
 <section class="contact-section">
     <div class="container">
-
         <div class="contact-wrapper">
+            <div class="contact-layout">
+                <aside class="support-side">
+                    <div>
+                        <h3>قبل إرسال الطلب</h3>
+                        <p>
+                            اكتب تفاصيل واضحة قدر الإمكان، وأرفق صورة أو ملفًا إذا كان يساعد على فهم المشكلة.
+                        </p>
 
-            <div class="row justify-content-center">
+                        <div class="support-steps">
+                            <div class="support-step">
+                                <span class="step-icon"><i class="bi bi-pencil-square"></i></span>
+                                <div>
+                                    <strong>أرسل التفاصيل</strong>
+                                    <span>اختر نوع الطلب واكتب وصفًا مختصرًا وواضحًا.</span>
+                                </div>
+                            </div>
 
-                <div class="col-lg-8 col-xl-7">
+                            <div class="support-step">
+                                <span class="step-icon"><i class="bi bi-hash"></i></span>
+                                <div>
+                                    <strong>احتفظ برقم التذكرة</strong>
+                                    <span>سيظهر لك رقم خاص لمتابعة الطلب لاحقًا.</span>
+                                </div>
+                            </div>
 
-                    <div class="contact-form">
-
-                        <h4 class="fw-bold mb-3">
-                            إنشاء تذكرة دعم
-                        </h4>
-
-                        <div class="ticket-note">
-                            بعد إرسال الطلب سيتم إنشاء رقم تذكرة خاص بك. عند المتابعة سنرسل رمز تحقق إلى بريدك الإلكتروني قبل عرض تفاصيل التذكرة.
-                        </div>
-
-                        <div class="track-ticket-box">
-
-                        <div>
-                            <strong>لديك تذكرة سابقة؟</strong>
-                            <div class="text-muted small">
-                                يمكنك متابعة حالة التذكرة بعد التحقق من بريدك الإلكتروني.
+                            <div class="support-step">
+                                <span class="step-icon"><i class="bi bi-envelope-check"></i></span>
+                                <div>
+                                    <strong>تابع عبر البريد</strong>
+                                    <span>عند المتابعة سنرسل رمز تحقق إلى بريدك لحماية تفاصيل الطلب.</span>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <a
-                            href="{% url 'support:track_ticket' %}"
-                            class="btn btn-outline-primary track-ticket-btn"
-                        >
-                            <i class="bi bi-search me-2"></i>
+                    <div class="track-panel">
+                        <strong>لديك تذكرة سابقة؟</strong>
+                        <p>
+                            تابع حالة التذكرة والردود من صفحة التتبع باستخدام رقم التذكرة والبريد الإلكتروني.
+                        </p>
+
+                        <a href="{% url 'support:track_ticket' %}" class="btn track-ticket-btn">
+                            <i class="bi bi-search ms-1"></i>
                             تتبع التذكرة
                         </a>
+                    </div>
+                </aside>
 
+                <div class="contact-form">
+                    <h4 class="mb-2">إنشاء تذكرة جديدة</h4>
+
+                    <div class="ticket-note">
+                        إذا كان لديك حساب في وصل، سيتم استخدام بيانات حسابك تلقائيًا عند إرسال الطلب.
                     </div>
 
-                        <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-                            {% csrf_token %}
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">
-                                        {{ form.name.label }}
-                                    </label>
-
-                                    {{ form.name }}
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">
-                                        {{ form.email.label }}
-                                    </label>
-
-                                    {{ form.email }}
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">
-                                        {{ form.phone.label }}
-                                    </label>
-
-                                    {{ form.phone }}
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <label class="form-label">
-                                        {{ form.category.label }}
-                                    </label>
-
-                                    {{ form.category }}
-                                </div>
-
-                            </div>
-
-                            <div class="mb-4">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
                                 <label class="form-label">
-                                    {{ form.subject.label }}
+                                    {{ form.name.label }}
                                 </label>
-
-                                {{ form.subject }}
+                                {{ form.name }}
                             </div>
 
-                            <div class="mb-4">
+                            <div class="col-md-6 mb-4">
                                 <label class="form-label">
-                                    {{ form.message.label }}
+                                    {{ form.email.label }}
                                 </label>
-
-                                {{ form.message }}
+                                {{ form.email }}
                             </div>
+                        </div>
 
-                            <div class="mb-4">
-
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
                                 <label class="form-label">
-                                    {{ form.attachment.label }}
+                                    {{ form.phone.label }}
                                 </label>
-
-                                {{ form.attachment }}
-
-                                <small class="text-muted d-block mt-2">
-                                    يمكنك إرفاق صورة أو ملف PDF لدعم طلبك (اختياري).
-                                </small>
-
+                                {{ form.phone }}
                             </div>
 
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">
+                                    {{ form.category.label }}
+                                </label>
+                                {{ form.category }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                {{ form.subject.label }}
+                            </label>
+                            {{ form.subject }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                {{ form.message.label }}
+                            </label>
+                            {{ form.message }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                {{ form.attachment.label }}
+                            </label>
+                            {{ form.attachment }}
+
+                            <small class="text-muted d-block mt-2">
+                                يمكنك إرفاق صورة أو ملف PDF إذا كان يساعد في توضيح الطلب.
+                            </small>
+                        </div>
+
+                        <div class="form-actions">
                             <button type="submit" class="btn btn-contact">
-                                <i class="bi bi-send me-2"></i>
+                                <i class="bi bi-send ms-1"></i>
                                 إرسال التذكرة
                             </button>
-
-                        </form>
-
-                    </div>
-
+                        </div>
+                    </form>
                 </div>
-
             </div>
-
         </div>
-
     </div>
 </section>
 

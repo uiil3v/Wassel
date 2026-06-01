@@ -384,6 +384,17 @@
         </a>
         {% endif %}
 
+        {% if today_visits_count is not None %}
+        <div class="metric-card">
+            <div>
+                <div class="metric-label">زوار الموقع اليوم</div>
+                <div class="metric-value">{{ today_visits_count }}</div>
+                <div class="metric-note">{{ today_visit_hits }} مشاهدة اليوم · {{ total_unique_visitors_count }} زائر فريد إجمالاً</div>
+            </div>
+            <span class="metric-icon"><i class="bi bi-bar-chart-line"></i></span>
+        </div>
+        {% endif %}
+
         <a class="metric-card" href="{% url 'admin_panel:support_tickets' %}?status=waiting_user">
             <div>
                 <div class="metric-label">بانتظار رد العميل</div>

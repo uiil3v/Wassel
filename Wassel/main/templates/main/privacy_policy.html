@@ -1,312 +1,600 @@
 {% extends "base.html" %}
 
-{% block title %}سياسة الخصوصية - وصل{% endblock %}
+{% block title %}سياسة الخصوصية والمدفوعات - وصل{% endblock %}
 
 {% block extra_css %}
 <style>
-    .privacy-header {
-        padding: 95px 0 55px;
-        text-align: center;
+.policy-header {
+    padding: 115px 0 58px;
+    text-align: center;
+}
+
+.policy-kicker {
+    align-items: center;
+    color: var(--accent-color);
+    display: inline-flex;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.policy-header h1 {
+    color: var(--dark-color);
+    font-size: 3rem;
+    line-height: 1.45;
+    margin-bottom: 18px;
+}
+
+.policy-header p {
+    color: var(--soft-color);
+    font-size: 1.14rem;
+    line-height: 2;
+    margin: 0 auto;
+    max-width: 860px;
+}
+
+.policy-date {
+    align-items: center;
+    background: var(--primary-color);
+    border-radius: 999px;
+    color: var(--dark-color);
+    display: inline-flex;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 11px 18px;
+}
+
+.policy-layout {
+    align-items: start;
+    display: grid;
+    gap: 28px;
+    grid-template-columns: 300px 1fr;
+    padding-bottom: 110px;
+}
+
+.policy-nav {
+    background: #fff;
+    border: 1px solid rgba(200, 169, 81, 0.25);
+    border-radius: 28px;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.055);
+    padding: 24px;
+    position: sticky;
+    top: 150px;
+}
+
+.policy-nav h2 {
+    color: var(--dark-color);
+    font-size: 1.12rem;
+    margin-bottom: 14px;
+}
+
+.policy-nav a {
+    align-items: center;
+    border-bottom: 1px solid #eee6dc;
+    color: var(--soft-color);
+    display: flex;
+    gap: 10px;
+    line-height: 1.6;
+    padding: 12px 0;
+    text-decoration: none;
+}
+
+.policy-nav a:last-child {
+    border-bottom: none;
+}
+
+.policy-nav a:hover {
+    color: var(--accent-color);
+}
+
+.policy-content {
+    display: grid;
+    gap: 22px;
+}
+
+.policy-card {
+    background: #fff;
+    border: 1px solid rgba(200, 169, 81, 0.25);
+    border-radius: 30px;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.045);
+    padding: 34px;
+    scroll-margin-top: 145px;
+}
+
+.policy-card h2 {
+    align-items: center;
+    color: var(--dark-color);
+    display: flex;
+    gap: 12px;
+    font-size: 1.55rem;
+    margin-bottom: 18px;
+}
+
+.policy-icon {
+    align-items: center;
+    background: rgba(200, 169, 81, 0.12);
+    border-radius: 50%;
+    color: var(--accent-color);
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 1.15rem;
+    height: 44px;
+    justify-content: center;
+    width: 44px;
+}
+
+.policy-card p,
+.policy-card li {
+    color: var(--soft-color);
+    font-size: 1.03rem;
+    line-height: 2;
+}
+
+.policy-card ul,
+.policy-card ol {
+    margin-bottom: 0;
+    padding-right: 22px;
+}
+
+.policy-note {
+    background: #fbfaf7;
+    border: 1px solid #eee6dc;
+    border-right: 5px solid var(--accent-color);
+    border-radius: 20px;
+    color: var(--dark-color);
+    line-height: 2;
+    margin-top: 18px;
+    padding: 18px 20px;
+}
+
+.money-flow {
+    display: grid;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.money-row {
+    align-items: start;
+    background: #fbfaf7;
+    border: 1px solid #eee6dc;
+    border-radius: 20px;
+    display: grid;
+    gap: 14px;
+    grid-template-columns: 52px 190px 1fr;
+    padding: 18px;
+}
+
+.money-row i {
+    align-items: center;
+    background: rgba(200, 169, 81, 0.12);
+    border-radius: 16px;
+    color: var(--accent-color);
+    display: inline-flex;
+    font-size: 1.25rem;
+    height: 48px;
+    justify-content: center;
+    width: 48px;
+}
+
+.money-row strong {
+    color: var(--dark-color);
+    display: block;
+    line-height: 1.8;
+}
+
+.money-row span {
+    color: var(--soft-color);
+    line-height: 1.9;
+}
+
+.rules-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 18px;
+}
+
+.rule-box {
+    background: #fbfaf7;
+    border: 1px solid #eee6dc;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.rule-box h3 {
+    color: var(--dark-color);
+    font-size: 1.08rem;
+    margin-bottom: 10px;
+}
+
+.rule-box p {
+    margin-bottom: 0;
+}
+
+.policy-table-wrap {
+    border: 1px solid #eee6dc;
+    border-radius: 22px;
+    margin-top: 18px;
+    overflow: hidden;
+}
+
+.policy-table {
+    margin-bottom: 0;
+}
+
+.policy-table th {
+    background: #fbfaf7;
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+.policy-table td,
+.policy-table th {
+    border-color: #eee6dc;
+    color: var(--soft-color);
+    line-height: 1.8;
+    padding: 16px;
+    vertical-align: top;
+}
+
+.policy-table td:first-child {
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+@media (max-width: 992px) {
+    .policy-layout {
+        grid-template-columns: 1fr;
     }
 
-    .privacy-kicker {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--accent-color);
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 18px;
+    .policy-nav {
+        position: static;
     }
 
-    .privacy-header h1 {
-        font-size: 3.2rem;
-        color: var(--dark-color);
-        margin-bottom: 22px;
-    }
-
-    .privacy-header p {
-        max-width: 820px;
-        margin: auto;
-        color: var(--soft-color);
-        font-size: 1.25rem;
-        line-height: 2;
-    }
-
-    .privacy-layout {
+    .policy-nav div {
         display: grid;
-        grid-template-columns: 310px 1fr;
-        gap: 34px;
-        align-items: start;
-        margin-bottom: 80px;
+        gap: 6px 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .privacy-summary {
-        position: sticky;
-        top: 150px;
-        background: linear-gradient(135deg, #f2ede4, #ffffff);
-        border: 1.5px solid rgba(200, 169, 81, 0.45);
-        border-radius: 28px;
-        padding: 28px;
-        box-shadow: 0 24px 55px rgba(0, 0, 0, 0.06);
+    .money-row {
+        grid-template-columns: 52px 1fr;
     }
 
-    .privacy-summary h2 {
-        font-size: 1.25rem;
-        margin-bottom: 18px;
+    .money-row span {
+        grid-column: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .policy-header {
+        padding: 85px 0 42px;
     }
 
-    .privacy-summary a {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--soft-color);
-        text-decoration: none;
-        padding: 11px 0;
-        border-bottom: 1px solid rgba(74, 63, 53, 0.08);
-        transition: 0.25s ease;
+    .policy-header h1 {
+        font-size: 2rem;
     }
 
-    .privacy-summary a:last-child {
-        border-bottom: none;
-    }
-
-    .privacy-summary a:hover {
-        color: var(--accent-color);
-        transform: translateX(-4px);
-    }
-
-    .privacy-content {
-        background-color: #ffffff;
-        border-radius: 34px;
-        padding: 48px;
-        border: 1px solid rgba(200, 169, 81, 0.35);
-        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.06);
-    }
-
-    .privacy-section {
-        padding-bottom: 34px;
-        margin-bottom: 34px;
-        border-bottom: 1px solid rgba(74, 63, 53, 0.1);
-    }
-
-    .privacy-section:last-child {
-        padding-bottom: 0;
-        margin-bottom: 0;
-        border-bottom: none;
-    }
-
-    .privacy-section h2 {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        font-size: 1.75rem;
-        margin-bottom: 18px;
-        color: var(--dark-color);
-    }
-
-    .privacy-icon {
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-        border-radius: 50%;
-        background-color: rgba(200, 169, 81, 0.15);
-        color: var(--accent-color);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-
-    .privacy-section p,
-    .privacy-section li {
-        color: var(--soft-color);
-        font-size: 1.08rem;
-        line-height: 2;
-    }
-
-    .privacy-section ul {
-        padding-right: 22px;
-        margin-bottom: 0;
-    }
-
-    .privacy-note {
-        background-color: var(--light-bg);
-        border-right: 5px solid var(--accent-color);
-        border-radius: 22px;
-        padding: 22px 26px;
-        color: var(--dark-color);
-        line-height: 2;
-        margin-top: 22px;
-    }
-
-    .privacy-date {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 24px;
-        padding: 12px 20px;
-        border-radius: 28px;
-        background-color: var(--primary-color);
-        color: var(--dark-color);
+    .policy-header p,
+    .policy-card p,
+    .policy-card li {
         font-size: 0.98rem;
     }
 
-    @media (max-width: 992px) {
-        .privacy-layout {
-            grid-template-columns: 1fr;
-        }
-
-        .privacy-summary {
-            position: static;
-        }
+    .policy-card {
+        border-radius: 24px;
+        padding: 24px 18px;
+        scroll-margin-top: 125px;
     }
 
-    @media (max-width: 768px) {
-        .privacy-header {
-            padding-top: 55px;
-        }
-
-        .privacy-header h1 {
-            font-size: 2.25rem;
-        }
-
-        .privacy-header p {
-            font-size: 1.05rem;
-        }
-
-        .privacy-content {
-            padding: 28px 22px;
-            border-radius: 26px;
-        }
-
-        .privacy-section h2 {
-            font-size: 1.35rem;
-        }
+    .policy-card h2 {
+        align-items: flex-start;
+        font-size: 1.25rem;
     }
+
+    .policy-nav {
+        border-radius: 24px;
+        padding: 20px;
+    }
+
+    .policy-nav div,
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .money-row {
+        grid-template-columns: 1fr;
+    }
+
+    .money-row span {
+        grid-column: auto;
+    }
+
+    .policy-table-wrap {
+        overflow-x: auto;
+    }
+
+    .policy-table {
+        min-width: 680px;
+    }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<section class="privacy-header">
-    <div class="privacy-kicker">
+<section class="policy-header">
+    <div class="policy-kicker">
         <i class="bi bi-shield-lock"></i>
-        <span>حماية بياناتك جزء من الثقة</span>
+        <span>الخصوصية والحقوق المالية</span>
     </div>
 
-    <h1>سياسة الخصوصية</h1>
+    <h1>سياسة الخصوصية والمدفوعات والإلغاء</h1>
 
     <p>
-        توضح هذه السياسة كيف تتعامل منصة وصل مع بيانات المستخدمين عند إنشاء الحساب، استخدام خدمات النقل،
-        إدارة الاشتراكات، المدفوعات، التقييمات، وطلبات الدعم.
+        توضح هذه الصفحة كيف تتعامل منصة وصل مع بيانات الطلاب والطالبات والسائقين،
+        وكيف تدار الاشتراكات والمحفظة وعمليات التجميد والاسترجاع والسحب داخل النظام.
     </p>
 
-    <div class="privacy-date">
+    <div class="policy-date">
         <i class="bi bi-calendar-check"></i>
-        <span>آخر تحديث: 26 مايو 2026</span>
+        <span>آخر تحديث: 02 يونيو 2026</span>
     </div>
 </section>
 
-<section class="privacy-layout">
-    <aside class="privacy-summary">
-        <h2>محتويات الصفحة</h2>
-        <a href="#data"><i class="bi bi-database"></i> البيانات التي نجمعها</a>
-        <a href="#usage"><i class="bi bi-gear"></i> كيف نستخدم البيانات</a>
-        <a href="#sharing"><i class="bi bi-people"></i> مشاركة البيانات</a>
-        <a href="#payments"><i class="bi bi-wallet2"></i> المدفوعات والمحفظة</a>
-        <a href="#security"><i class="bi bi-lock"></i> حماية البيانات</a>
-        <a href="#rights"><i class="bi bi-person-check"></i> حقوق المستخدم</a>
+<section class="policy-layout">
+    <aside class="policy-nav">
+        <h2>محتويات السياسة</h2>
+        <div>
+            <a href="#data"><i class="bi bi-database"></i> البيانات التي نجمعها</a>
+            <a href="#usage"><i class="bi bi-gear"></i> استخدام البيانات</a>
+            <a href="#sharing"><i class="bi bi-people"></i> مشاركة البيانات</a>
+            <a href="#wallet"><i class="bi bi-wallet2"></i> المحفظة والمدفوعات</a>
+            <a href="#cancellation"><i class="bi bi-arrow-counterclockwise"></i> الإلغاء والاسترجاع</a>
+            <a href="#withdrawal"><i class="bi bi-cash-stack"></i> سحب الرصيد</a>
+            <a href="#accounts"><i class="bi bi-person-lock"></i> الحساب والحذف</a>
+            <a href="#security"><i class="bi bi-lock"></i> حماية البيانات</a>
+        </div>
     </aside>
 
-    <div class="privacy-content">
-        <div class="privacy-section" id="data">
+    <div class="policy-content">
+        <article class="policy-card" id="data">
             <h2>
-                <span class="privacy-icon"><i class="bi bi-database"></i></span>
+                <span class="policy-icon"><i class="bi bi-database"></i></span>
                 البيانات التي نجمعها
             </h2>
-            <p>
-                نجمع البيانات اللازمة لتشغيل الخدمة والتحقق من هوية المستخدمين، وتشمل بيانات الحساب الأساسية
-                مثل الاسم، البريد الإلكتروني، رقم الجوال، المدينة، ونوع الحساب.
-            </p>
-            <ul>
-                <li>بيانات الطالب مثل الجامعة، الحي، ورابط الموقع عند إضافته.</li>
-                <li>بيانات السائق ومركبته، ومستندات التحقق المطلوبة للمراجعة الإدارية.</li>
-                <li>بيانات الاشتراكات والطلبات والجداول المرتبطة بخدمة النقل.</li>
-                <li>المراسلات مع الدعم الفني والتقييمات المرتبطة بتجربة الاشتراك.</li>
-            </ul>
-        </div>
 
-        <div class="privacy-section" id="usage">
+            <p>
+                تجمع منصة وصل البيانات اللازمة لتشغيل خدمة النقل الجامعي وإدارة العلاقة بين الطالب أو الطالبة والسائق.
+                تشمل البيانات الأساسية: الاسم، البريد الإلكتروني، رقم الجوال، المدينة، ونوع الحساب.
+            </p>
+
+            <ul>
+                <li>بيانات الطالب أو الطالبة مثل الجامعة، الحي، الجنس، ورابط الموقع عند إضافته.</li>
+                <li>بيانات السائق ومركبته، وتشمل مستندات التحقق وصور المركبة المطلوبة للمراجعة الإدارية.</li>
+                <li>بيانات الاشتراكات والطلبات والجداول والأوقات المرتبطة بخدمة النقل.</li>
+                <li>بيانات المحفظة والمعاملات المالية والعقود والتقييمات والإشعارات.</li>
+                <li>مراسلات الدعم الفني وبيانات التذاكر عند استخدام مركز التواصل.</li>
+            </ul>
+        </article>
+
+        <article class="policy-card" id="usage">
             <h2>
-                <span class="privacy-icon"><i class="bi bi-gear"></i></span>
+                <span class="policy-icon"><i class="bi bi-gear"></i></span>
                 كيف نستخدم البيانات
             </h2>
-            <p>
-                نستخدم البيانات لتقديم الخدمة بشكل منظم وآمن، مثل إنشاء الحسابات، مطابقة الطلاب مع السائقين،
-                مراجعة طلبات التوثيق، إدارة الاشتراكات، إرسال الإشعارات، وتحسين تجربة المستخدم داخل المنصة.
-            </p>
-            <div class="privacy-note">
-                لا نستخدم بياناتك لغرض خارج نطاق تشغيل منصة وصل أو تحسين خدماتها، ولا نطلب بيانات غير مرتبطة
-                بتجربة النقل والاشتراكات.
-            </div>
-        </div>
 
-        <div class="privacy-section" id="sharing">
+            <p>
+                تستخدم البيانات لتقديم الخدمة بشكل منظم وآمن: إنشاء الحساب، التحقق من البريد، مراجعة السائقين،
+                عرض الاشتراكات المناسبة، إنشاء الطلبات والجداول، إدارة المدفوعات، إنشاء العقود، إرسال الإشعارات،
+                وتحسين تجربة المستخدم داخل المنصة.
+            </p>
+
+            <div class="policy-note">
+                لا نطلب بيانات غير مرتبطة بتجربة النقل والاشتراكات، ولا تستخدم البيانات لغرض خارج نطاق تشغيل منصة وصل
+                أو تحسين جودة الخدمة وإدارة الالتزامات بين الأطراف.
+            </div>
+        </article>
+
+        <article class="policy-card" id="sharing">
             <h2>
-                <span class="privacy-icon"><i class="bi bi-people"></i></span>
+                <span class="policy-icon"><i class="bi bi-people"></i></span>
                 مشاركة البيانات داخل المنصة
             </h2>
-            <p>
-                قد تظهر بعض البيانات الضرورية للطرف الآخر بعد وجود علاقة اشتراك أو طلب، مثل اسم المستخدم وبيانات
-                التواصل الأساسية والمعلومات اللازمة لتنظيم الرحلة. كما يمكن لفريق الإدارة الاطلاع على البيانات
-                المطلوبة للمراجعة، الدعم، وحماية جودة الخدمة.
-            </p>
-            <p>
-                لا يتم نشر مستندات التحقق أو بيانات المحفظة للعامة، وتبقى مخصصة للمراجعة الإدارية أو العمليات
-                المرتبطة بها داخل النظام.
-            </p>
-        </div>
 
-        <div class="privacy-section" id="payments">
-            <h2>
-                <span class="privacy-icon"><i class="bi bi-wallet2"></i></span>
-                المدفوعات والمحفظة
-            </h2>
             <p>
-                تحتفظ المنصة بسجلات العمليات المالية اللازمة لتوضيح الإيداع، التجميد، التحويل، الاسترجاع،
-                والعمولات. تستخدم هذه السجلات لحساب أرصدة المحافظ، متابعة الاشتراكات، وتوثيق العمليات بين الطالب
-                والسائق والمنصة.
+                قد تظهر بعض البيانات للطرف الآخر عند وجود طلب أو اشتراك، مثل الاسم وبيانات التواصل والموقع أو الحي
+                والمواعيد اللازمة لتنظيم الرحلة. كما يمكن لفريق الإدارة الاطلاع على البيانات المطلوبة للمراجعة،
+                الاعتماد، الدعم، وحماية جودة الخدمة.
             </p>
-        </div>
 
-        <div class="privacy-section" id="security">
-            <h2>
-                <span class="privacy-icon"><i class="bi bi-lock"></i></span>
-                حماية البيانات
-            </h2>
             <p>
-                نحرص على حماية بيانات المستخدمين من خلال صلاحيات وصول محددة، تحقق البريد الإلكتروني، ومراجعة
-                الحسابات والوثائق من قبل الإدارة. كما ننصح المستخدمين بالحفاظ على سرية كلمة المرور وعدم مشاركة
-                بيانات الدخول مع أي طرف آخر.
+                لا تعرض مستندات التحقق وبيانات المحفظة للعامة، وتبقى مخصصة للمراجعة الإدارية أو العمليات المرتبطة بها.
             </p>
-        </div>
+        </article>
 
-        <div class="privacy-section" id="rights">
+        <article class="policy-card" id="wallet">
             <h2>
-                <span class="privacy-icon"><i class="bi bi-person-check"></i></span>
-                حقوق المستخدم
+                <span class="policy-icon"><i class="bi bi-wallet2"></i></span>
+                سياسة المحفظة والمدفوعات
             </h2>
+
             <p>
-                يحق لك تحديث بياناتك، طلب تعديل معلومات غير صحيحة، أو التواصل مع الدعم بشأن حسابك وبياناتك.
-                وقد تحتفظ المنصة ببعض السجلات الضرورية للعمليات المالية، العقود، أو الالتزامات التنظيمية داخل
-                الخدمة.
+                تعتمد منصة وصل على محفظة داخلية لكل مستخدم. تظهر في المحفظة العمليات المالية مثل الإيداع، السحب،
+                التجميد، فك التجميد، الاسترجاع، والعمولات. هذه السجلات ضرورية لتوثيق الحقوق المالية بين الأطراف.
             </p>
+
+            <div class="policy-note">
+                في النسخة الحالية من المشروع، تعد عمليات شحن المحفظة وسحب الرصيد عمليات افتراضية داخل النظام
+                لمحاكاة آلية الدفع والسحب مستقبلاً. لا تمثل هذه العمليات تحويلًا بنكيًا فعليًا أو ربطًا مباشرًا
+                ببوابة دفع خارجية في الوقت الحالي.
+            </div>
+
+            <div class="money-flow">
+                <div class="money-row">
+                    <i class="bi bi-plus-circle"></i>
+                    <strong>شحن الرصيد</strong>
+                    <span>يمكن شحن المحفظة بمبلغ صحيح أكبر من صفر، ويضاف المبلغ إلى الرصيد المتاح مباشرة ضمن بيئة المحاكاة الحالية.</span>
+                </div>
+
+                <div class="money-row">
+                    <i class="bi bi-snow"></i>
+                    <strong>تجميد مبلغ الطلب</strong>
+                    <span>عند إرسال طلب اشتراك، يجب أن يكون رصيد الطالب أو الطالبة كافيًا. يتم خصم سعر الاشتراك من الرصيد المتاح ونقله إلى الرصيد المجمد حتى يقرر السائق قبول الطلب أو رفضه.</span>
+                </div>
+
+                <div class="money-row">
+                    <i class="bi bi-check2-circle"></i>
+                    <strong>عند قبول الطلب</strong>
+                    <span>يفك تجميد مبلغ الاشتراك، وتحول 95% من قيمة الاشتراك إلى محفظة السائق، وتسجل 5% كعمولة للمنصة.</span>
+                </div>
+
+                <div class="money-row">
+                    <i class="bi bi-x-circle"></i>
+                    <strong>عند رفض الطلب</strong>
+                    <span>إذا رفض السائق الطلب قبل القبول، يرجع المبلغ المجمد كاملًا إلى محفظة الطالب أو الطالبة.</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="policy-card" id="cancellation">
+            <h2>
+                <span class="policy-icon"><i class="bi bi-arrow-counterclockwise"></i></span>
+                سياسة الإلغاء والاسترجاع
+            </h2>
+
             <p>
-                لأي استفسار متعلق بالخصوصية، يمكنك التواصل معنا عبر صفحة الدعم أو البريد الإلكتروني:
-                support@wassel.sa
+                تختلف طريقة الاسترجاع حسب حالة الطلب ومرحلة الاشتراك. السياسة التالية مبنية على منطق العمليات الحالي في المنصة.
             </p>
-        </div>
+
+            <div class="policy-table-wrap">
+                <table class="table policy-table">
+                    <thead>
+                        <tr>
+                            <th>الحالة</th>
+                            <th>الأثر المالي</th>
+                            <th>ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>إلغاء طلب قيد الانتظار</td>
+                            <td>يرجع المبلغ المجمد كاملًا إلى محفظة الطالب أو الطالبة.</td>
+                            <td>ينطبق قبل قبول السائق للطلب.</td>
+                        </tr>
+                        <tr>
+                            <td>رفض الطلب من السائق</td>
+                            <td>يرجع المبلغ المجمد كاملًا إلى محفظة الطالب أو الطالبة.</td>
+                            <td>لا تحول أي مبالغ إلى السائق في هذه المرحلة.</td>
+                        </tr>
+                        <tr>
+                            <td>إلغاء اشتراك مقبول قبل بدايته</td>
+                            <td>يرجع للطالب أو الطالبة مبلغ السائق فقط، وهو 95% من قيمة الاشتراك.</td>
+                            <td>عمولة المنصة 5% لا تدخل ضمن مبلغ الاسترجاع بعد القبول.</td>
+                        </tr>
+                        <tr>
+                            <td>إلغاء اشتراك بعد بدايته</td>
+                            <td>يحسب الاسترجاع بشكل نسبي من مبلغ السائق 95% حسب الأيام المتبقية غير المستخدمة.</td>
+                            <td>الأيام المستخدمة تخصم من مبلغ الاسترجاع.</td>
+                        </tr>
+                        <tr>
+                            <td>عند بقاء أقل من 10% من مدة الاشتراك</td>
+                            <td>لا يتم احتساب مبلغ استرجاع.</td>
+                            <td>يعامل النظام الجزء المتبقي كغير مؤهل للاسترجاع.</td>
+                        </tr>
+                        <tr>
+                            <td>بعد نهاية الاشتراك</td>
+                            <td>لا يمكن إلغاء الاشتراك أو طلب استرجاع.</td>
+                            <td>تظهر رسالة تفيد بعدم إمكانية الإلغاء بعد انتهاء الاشتراك.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="policy-note">
+                لإتمام الاسترجاع بعد قبول الاشتراك، يجب أن يكون رصيد السائق كافيًا للمبلغ المسترجع. إذا لم يكن الرصيد كافيًا،
+                قد لا تكتمل عملية الاسترجاع حتى معالجة الرصيد.
+            </div>
+        </article>
+
+        <article class="policy-card" id="withdrawal">
+            <h2>
+                <span class="policy-icon"><i class="bi bi-cash-stack"></i></span>
+                سياسة سحب الرصيد
+            </h2>
+
+            <div class="rules-grid">
+                <div class="rule-box">
+                    <h3>سحب الطالب أو الطالبة</h3>
+                    <p>
+                        يمكن طلب سحب الرصيد المتاح إذا كان المبلغ أكبر من صفر ولا يتجاوز رصيد المحفظة، ويعالج السحب حاليًا كعملية افتراضية داخل النظام.
+                    </p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>سحب السائق</h3>
+                    <p>
+                        لا يستطيع السائق سحب كامل الرصيد مباشرة دائمًا؛ المبلغ المتاح للسحب يحسب بناءً على الجزء المستخدم من مدة الاشتراكات المقبولة، مع خصم أي مبالغ سبق سحبها. وفي النسخة الحالية، يمثل السحب محاكاة لسلوك السحب المتوقع عند ربط بوابة دفع أو حسابات بنكية مستقبلاً.
+                    </p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>الاشتراك الملغي</h3>
+                    <p>
+                        عند إلغاء اشتراك بعد قبوله، يحتسب للسائق الجزء المستخدم فقط من مبلغ السائق، ولا يحتسب الجزء المسترجع للطالب أو الطالبة ضمن السحب المتاح.
+                    </p>
+                </div>
+
+                <div class="rule-box">
+                    <h3>المبالغ غير الصالحة</h3>
+                    <p>
+                        لا تقبل المنصة عمليات شحن أو سحب بمبلغ يساوي صفرًا أو أقل، ولا تسمح بسحب مبلغ أكبر من المتاح.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <article class="policy-card" id="accounts">
+            <h2>
+                <span class="policy-icon"><i class="bi bi-person-lock"></i></span>
+                شروط الحساب والاشتراكات
+            </h2>
+
+            <ul>
+                <li>لا يمكن للطالب أو الطالبة إرسال طلب جديد عند وجود طلب قيد الانتظار أو اشتراك نشط.</li>
+                <li>لا تظهر الاشتراكات للطالب أو الطالبة إلا في المدينة المرتبطة بحسابهما وبحسب الاشتراكات النشطة المتاحة.</li>
+                <li>لا يقبل النظام طلب اشتراك إذا كان الاشتراك منتهيًا أو اقترب من نهايته بحيث تبقى 30% أو أقل من مدته.</li>
+                <li>الاشتراك الشهري يحسب على 30 يومًا، والاشتراك الفصلي يجب أن يكون 90 يومًا على الأقل.</li>
+                <li>لا يستطيع السائق إنشاء اشتراك قبل اعتماد حسابه أو عند وجود إيقاف إداري يمنع إنشاء اشتراكات جديدة.</li>
+                <li>لا يمكن تعديل اشتراك بعد وجود طلبات قيد الانتظار أو طلاب/طالبات مقبولين عليه.</li>
+                <li>لا يمكن حذف حساب طالب أو طالبة عند وجود طلب قيد الانتظار، اشتراك قائم، رصيد في المحفظة، أو مبلغ مجمد.</li>
+                <li>لا يمكن حذف حساب السائق عند وجود اشتراكات مرتبطة، رصيد في المحفظة، أو مبلغ مجمد.</li>
+            </ul>
+        </article>
+
+        <article class="policy-card" id="security">
+            <h2>
+                <span class="policy-icon"><i class="bi bi-lock"></i></span>
+                حماية البيانات وحقوق المستخدم
+            </h2>
+
+            <p>
+                تعتمد المنصة على صلاحيات منفصلة حسب نوع الحساب، وتحقق البريد الإلكتروني، ومراجعة إدارية لبيانات السائقين،
+                مع تسجيل العمليات المهمة للرجوع إليها عند الحاجة.
+            </p>
+
+            <ul>
+                <li>يحق للمستخدم تحديث بياناته من صفحته الشخصية وفق القيود المرتبطة بالاشتراكات النشطة.</li>
+                <li>عند تغيير البريد الإلكتروني، قد يطلب النظام تأكيد البريد الجديد قبل اعتماده.</li>
+                <li>قد تحتفظ المنصة بسجلات مالية وعقود وعمليات اشتراك حتى بعد الإلغاء لأغراض التوثيق وحفظ الحقوق.</li>
+                <li>يمكن التواصل مع الدعم عند وجود استفسار متعلق بالخصوصية أو الحساب أو العمليات المالية.</li>
+            </ul>
+
+            <div class="policy-note">
+                هذه الصفحة تصف السلوك الحالي للمنصة كما هو مطبق في النظام. قد تحدث تحديثات مستقبلية على السياسة عند تطوير آليات الدفع أو الإلغاء أو السحب.
+            </div>
+        </article>
     </div>
 </section>
 

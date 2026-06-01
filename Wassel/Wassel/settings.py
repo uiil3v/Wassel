@@ -66,6 +66,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "admin_panel.middleware.SiteVisitTrackingMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "accounts.middleware.EmailVerificationMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

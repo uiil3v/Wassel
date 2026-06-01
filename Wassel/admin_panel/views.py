@@ -38,6 +38,8 @@ from support.models import (
     SupportMessage,
 )
 
+from .models import SiteVisit
+
 
 @admin_required(levels=[1, 2])
 def dashboard(request):
@@ -117,8 +119,25 @@ def dashboard(request):
             type="commission",
             status="completed"
         ).aggregate(total=Sum("amount"))["total"] or 0
+        today_visits_count = SiteVisit.objects.filter(
+            visit_date=today
+        ).count()
+        today_visit_hits = SiteVisit.objects.filter(
+            visit_date=today
+        ).aggregate(total=Sum("hits"))["total"] or 0
+        total_unique_visitors_count = SiteVisit.objects.values(
+            "ip_address",
+            "user_agent"
+        ).distinct().count()
+        total_visit_hits = SiteVisit.objects.aggregate(
+            total=Sum("hits")
+        )["total"] or 0
     else:
         total_earnings = None
+        today_visits_count = None
+        today_visit_hits = None
+        total_unique_visitors_count = None
+        total_visit_hits = None
 
     latest_requests = SubscriptionRequest.objects.select_related(
         "student__user",
@@ -148,6 +167,10 @@ def dashboard(request):
         "inactive_subscriptions": inactive_subscriptions,
         "expired_subscriptions": expired_subscriptions,
         "total_earnings": total_earnings,
+        "today_visits_count": today_visits_count,
+        "today_visit_hits": today_visit_hits,
+        "total_unique_visitors_count": total_unique_visitors_count,
+        "total_visit_hits": total_visit_hits,
         "latest_requests": latest_requests,
         "latest_tickets": latest_tickets,
     }
