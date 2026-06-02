@@ -183,6 +183,11 @@
         font-size: 1.05rem;
     }
 
+    .date-value {
+        direction: ltr;
+        text-align: right;
+    }
+
     .seat-stack {
         display: flex;
         flex-direction: column;
@@ -356,6 +361,22 @@
                     </div>
 
                     <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-car-front"></i> السيارة</div>
+                        <div class="info-value">{{ subscription.driver.vehicle_display_name|default:"غير محددة" }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-calendar-check"></i> تاريخ البداية</div>
+                        <div class="info-value date-value">{{ subscription.start_date|date:"d/m/Y" }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-calendar-x"></i> تاريخ النهاية</div>
+                        <div class="info-value date-value">{{ subscription.end_date|date:"d/m/Y" }}</div>
+                    </div>
+
+                    
+                    <div class="info-tile">
                         <div class="info-label"><i class="bi bi-people"></i> المقاعد</div>
                         <div class="info-value seat-stack">
                             <span>{{ subscription.seats }} مقاعد إجمالاً</span>
@@ -364,16 +385,6 @@
                                 {{ subscription.available_seats }} متبقية
                             </span>
                         </div>
-                    </div>
-
-                    <div class="info-tile">
-                        <div class="info-label"><i class="bi bi-calendar-check"></i> تاريخ البداية</div>
-                        <div class="info-value" dir="ltr">{{ subscription.start_date|date:"d/m/Y" }}</div>
-                    </div>
-
-                    <div class="info-tile">
-                        <div class="info-label"><i class="bi bi-calendar-x"></i> تاريخ النهاية</div>
-                        <div class="info-value" dir="ltr">{{ subscription.end_date|date:"d/m/Y" }}</div>
                     </div>
                 </div>
             </section>
