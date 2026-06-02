@@ -730,7 +730,7 @@
                         <div>
                             <p class="item-title">{{ d.user.full_name }}</p>
                             <p class="item-meta">
-                                {{ d.vehicle_model|default:"السيارة غير محددة" }} ·
+                                {{ d.vehicle_display_name|default:"السيارة غير محددة" }} ·
                                 {% if d.user.city %}{{ d.user.city.name_ar }}{% else %}مدينة غير محددة{% endif %} ·
                                 {{ d.submitted_at|date:"d/m/Y H:i" }}
                             </p>

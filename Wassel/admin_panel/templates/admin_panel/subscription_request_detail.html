@@ -439,7 +439,7 @@
                             <div class="profile-name">{{ req.subscription.driver.user.full_name }}</div>
                             <div class="profile-meta">
                                 {% if req.subscription.driver.verification_status == "approved" %}سائق موثق{% else %}سائق غير موثق{% endif %}
-                                · {{ req.subscription.driver.vehicle_model|default:"السيارة غير محددة" }}
+                                · {{ req.subscription.driver.vehicle_display_name|default:"السيارة غير محددة" }}
                             </div>
                         </div>
                     </div>

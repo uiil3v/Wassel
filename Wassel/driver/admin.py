@@ -7,7 +7,7 @@ class DriverProfileAdmin(admin.ModelAdmin):
 
     list_display = (
         "user",
-        "vehicle_model",
+        "vehicle_display_name",
         "verification_status",
         "submitted_at",
         "reviewed_at",
@@ -16,10 +16,13 @@ class DriverProfileAdmin(admin.ModelAdmin):
     list_filter = (
         "verification_status",
         "submitted_at",
+        "vehicle_make",
+        "vehicle_year",
     )
 
     search_fields = (
         "user__email",
+        "vehicle_make",
         "vehicle_model",
     )
 
@@ -31,7 +34,14 @@ class DriverProfileAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("معلومات السائق", {
-            "fields": ("user", "vehicle_model", "verification_status", "rejection_reason")
+            "fields": (
+                "user",
+                "vehicle_make",
+                "vehicle_model",
+                "vehicle_year",
+                "verification_status",
+                "rejection_reason",
+            )
         }),
         ("مستندات السائق", {
             "fields": ("id_document_image", "driving_license_image")

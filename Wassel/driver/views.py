@@ -14,8 +14,10 @@ from django.db import transaction
 
 from notifications.models import Notification
 from collections import defaultdict
+import json
 
 from .decorators import driver_verified_required
+from .vehicle_data import VEHICLE_CATALOG, vehicle_models_for_make, vehicle_year_choices
 
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -48,6 +50,11 @@ def driver_dashboard(request):
 
     if not profile:
         messages.warning(request, "يرجى إكمال بياناتك أولاً.")
+        return redirect("driver:profile")
+
+    if not profile.is_profile_complete:
+        profile.enforce_incomplete_status()
+        messages.warning(request, "يرجى إكمال بيانات الحساب والمركبة والمستندات أولاً.")
         return redirect("driver:profile")
 
     if profile.verification_status != "approved":
@@ -114,7 +121,7 @@ def driver_profile(request):
 
     if request.method == "POST":
 
-        if profile.verification_status == "pending":
+        if profile.verification_status == "pending" and profile.is_profile_complete:
             messages.warning(request, "لا يمكنك التعديل أثناء المراجعة.")
             return redirect("driver:profile")
 
@@ -125,7 +132,9 @@ def driver_profile(request):
         old_phone = request.user.phone
         old_city_id = str(request.user.city_id)
 
+        old_vehicle_make = profile.vehicle_make
         old_vehicle_model = profile.vehicle_model
+        old_vehicle_year = profile.vehicle_year
         old_gender = profile.gender
         
         # ===== بيانات الحساب =====
@@ -135,6 +144,24 @@ def driver_profile(request):
         new_email = request.POST.get("email")
         new_phone = request.POST.get("phone")
         new_city_id = request.POST.get("city")
+        vehicle_make = request.POST.get("vehicle_make", "").strip()
+        vehicle_model = request.POST.get("vehicle_model", "").strip()
+        vehicle_model_other = request.POST.get("vehicle_model_other", "").strip()
+        vehicle_year = request.POST.get("vehicle_year", "").strip()
+
+        if vehicle_make == "other":
+            vehicle_model = vehicle_model_other
+
+        if vehicle_make and vehicle_make != "other":
+            allowed_models = vehicle_models_for_make(vehicle_make)
+            if vehicle_model not in allowed_models:
+                messages.error(request, "يرجى اختيار فئة المركبة من القائمة.")
+                return redirect("driver:profile")
+
+        allowed_years = {str(year) for year, _ in vehicle_year_choices()}
+        if vehicle_year and vehicle_year not in allowed_years:
+            messages.error(request, "يرجى اختيار سنة موديل صحيحة من القائمة.")
+            return redirect("driver:profile")
         
         
 
@@ -149,7 +176,11 @@ def driver_profile(request):
             or
             new_city_id != old_city_id
             or
-            request.POST.get("vehicle_model") != (old_vehicle_model or "")
+            vehicle_make != (old_vehicle_make or "")
+            or
+            vehicle_model != (old_vehicle_model or "")
+            or
+            vehicle_year != (str(old_vehicle_year) if old_vehicle_year else "")
             or
             request.POST.get("gender") != (old_gender or "")
         ):
@@ -222,7 +253,9 @@ def driver_profile(request):
             )
 
         # ===== بيانات السائق =====
-        profile.vehicle_model = request.POST.get("vehicle_model")
+        profile.vehicle_make = vehicle_make or None
+        profile.vehicle_model = vehicle_model or None
+        profile.vehicle_year = int(vehicle_year) if vehicle_year.isdigit() else None
         
         profile.gender = request.POST.get("gender")
 
@@ -245,23 +278,7 @@ def driver_profile(request):
         #     messages.info(request, "تم تغيير المدينة وسيتم إعادة مراجعة حسابك.")
 
         # ===== تحقق اكتمال البيانات =====
-        documents_complete = all([
-            profile.id_document_image,
-            profile.driving_license_image,
-            profile.vehicle_registration_image,
-            profile.vehicle_insurance_image,
-            profile.vehicle_front_image,
-            profile.vehicle_back_image,
-            profile.vehicle_side_image,
-        ])
-
-        if not (
-            profile.vehicle_model
-            and
-            profile.gender
-            and
-            documents_complete
-        ):
+        if not profile.is_profile_complete:
 
             profile.verification_status = "incomplete"
 
@@ -292,7 +309,11 @@ def driver_profile(request):
 
     context = {
         "profile": profile,
-        "cities": City.objects.filter(is_active=True)
+        "cities": City.objects.filter(is_active=True),
+        "vehicle_catalog": VEHICLE_CATALOG,
+        "vehicle_catalog_json": json.dumps(VEHICLE_CATALOG, ensure_ascii=False),
+        "vehicle_years": vehicle_year_choices(),
+        "is_profile_complete": profile.is_profile_complete,
     }
 
     return render(request, "driver/profile.html", context)
@@ -992,6 +1013,7 @@ def reject_request(request, req_id):
 
 
 @login_required
+@driver_verified_required
 def driver_notifications(request):
     if request.user.role != "driver":
         return redirect("main:index")

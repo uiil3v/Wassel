@@ -140,6 +140,10 @@
         grid-column: 1 / -1;
     }
 
+    .vehicle-other-field {
+        display: none;
+    }
+
     .form-label {
         color: var(--soft-color);
         font-size: 0.92rem;
@@ -525,9 +529,46 @@
             </div>
 
             <div class="form-grid mb-4">
-                <div class="form-field full">
-                    <label class="form-label">موديل المركبة</label>
-                    <input type="text" name="vehicle_model" value="{{ profile.vehicle_model }}" class="premium-input">
+                <div class="form-field">
+                    <label class="form-label">شركة المركبة</label>
+                    <select name="vehicle_make" id="vehicleMake" class="premium-input" required>
+                        <option value="">اختر الشركة</option>
+                        {% for make_key, make_data in vehicle_catalog.items %}
+                        <option value="{{ make_key }}" {% if profile.vehicle_make == make_key %}selected{% endif %}>
+                            {{ make_data.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">فئة المركبة</label>
+                    <select name="vehicle_model" id="vehicleModel" class="premium-input" required
+                            data-current="{{ profile.vehicle_model|default:'' }}">
+                        <option value="">اختر الفئة</option>
+                    </select>
+                </div>
+
+                <div class="form-field vehicle-other-field" id="vehicleOtherField">
+                    <label class="form-label">اسم المركبة</label>
+                    <input type="text"
+                           name="vehicle_model_other"
+                           id="vehicleModelOther"
+                           value="{% if profile.vehicle_make == 'other' %}{{ profile.vehicle_model }}{% endif %}"
+                           class="premium-input"
+                           placeholder="اكتب اسم المركبة">
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">سنة الموديل</label>
+                    <select name="vehicle_year" class="premium-input" required>
+                        <option value="">اختر السنة</option>
+                        {% for year_value, year_label in vehicle_years %}
+                        <option value="{{ year_value }}" {% if profile.vehicle_year == year_value %}selected{% endif %}>
+                            {{ year_label }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 
@@ -653,5 +694,52 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const vehicleCatalog = JSON.parse("{{ vehicle_catalog_json|escapejs }}");
+    const makeSelect = document.getElementById("vehicleMake");
+    const modelSelect = document.getElementById("vehicleModel");
+    const otherField = document.getElementById("vehicleOtherField");
+    const otherInput = document.getElementById("vehicleModelOther");
+
+    function setOtherVisibility(make) {
+        const isOther = make === "other";
+        otherField.style.display = isOther ? "block" : "none";
+        otherInput.required = isOther;
+        modelSelect.required = !isOther;
+        if (isOther) {
+            modelSelect.value = "أخرى";
+        }
+    }
+
+    function refreshModels() {
+        const make = makeSelect.value;
+        const models = vehicleCatalog[make] ? vehicleCatalog[make].models : [];
+
+        modelSelect.innerHTML = '<option value="">اختر الفئة</option>';
+
+        models.forEach(function (model) {
+            const option = document.createElement("option");
+            option.value = model;
+            option.textContent = model;
+            if (model === modelSelect.dataset.current) {
+                option.selected = true;
+            }
+            modelSelect.appendChild(option);
+        });
+
+        setOtherVisibility(make);
+    }
+
+    if (makeSelect && modelSelect && otherField && otherInput) {
+        refreshModels();
+        makeSelect.addEventListener("change", function () {
+            modelSelect.dataset.current = "";
+            refreshModels();
+        });
+    }
+});
+</script>
 
 {% endblock %}

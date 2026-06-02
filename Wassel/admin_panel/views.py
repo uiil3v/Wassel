@@ -239,8 +239,12 @@ def requests_list(request):
             Q(user__last_name__icontains=driver_search) |
             Q(user__email__icontains=driver_search) |
             Q(user__phone__icontains=driver_search) |
+            Q(vehicle_make__icontains=driver_search) |
             Q(vehicle_model__icontains=driver_search)
         )
+
+        if driver_search.isdigit():
+            drivers = drivers | base_drivers.filter(vehicle_year=int(driver_search))
 
     if driver_status:
         drivers = drivers.filter(verification_status=driver_status)
@@ -392,7 +396,7 @@ def request_detail(request, pk):
 def driver_detail(request, pk):
 
     driver = get_object_or_404(DriverProfile, id=pk)
-    document_items = [
+    driver_document_items = [
         {
             "label": "صورة الهوية",
             "hint": "تحقق من وضوح الاسم ورقم الهوية.",
@@ -405,6 +409,9 @@ def driver_detail(request, pk):
             "image": driver.driving_license_image,
             "icon": "bi-card-checklist",
         },
+    ]
+
+    vehicle_document_items = [
         {
             "label": "استمارة المركبة",
             "hint": "راجع بيانات المركبة والملكية.",
@@ -436,11 +443,14 @@ def driver_detail(request, pk):
             "icon": "bi-car-front",
         },
     ]
+
+    document_items = driver_document_items + vehicle_document_items
     uploaded_documents_count = sum(1 for item in document_items if item["image"])
 
     return render(request, "admin_panel/driver_detail.html", {
         "driver": driver,
-        "document_items": document_items,
+        "driver_document_items": driver_document_items,
+        "vehicle_document_items": vehicle_document_items,
         "uploaded_documents_count": uploaded_documents_count,
         "total_documents_count": len(document_items),
     })

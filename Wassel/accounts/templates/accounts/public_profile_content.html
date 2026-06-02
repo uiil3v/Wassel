@@ -453,7 +453,7 @@
             {% if driver_profile %}
             <div class="info-item">
                 <div class="info-label"><i class="bi bi-car-front"></i> السيارة</div>
-                <div class="info-value">{{ driver_profile.vehicle_model|default:"غير محدد" }}</div>
+                <div class="info-value">{{ driver_profile.vehicle_display_name|default:"غير محدد" }}</div>
             </div>
 
             <div class="info-item">

@@ -14,6 +14,11 @@ def driver_verified_required(view_func):
             messages.warning(request, "يرجى إكمال بياناتك أولاً.")
             return redirect("driver:profile")
 
+        if not profile.is_profile_complete:
+            profile.enforce_incomplete_status()
+            messages.warning(request, "يرجى إكمال بيانات الحساب والمركبة والمستندات أولاً.")
+            return redirect("driver:profile")
+
         if profile.verification_status != "approved":
             messages.warning(request, "حسابك غير معتمد حالياً.")
             return redirect("driver:profile")

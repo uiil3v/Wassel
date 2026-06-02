@@ -544,7 +544,7 @@
                         <span class="section-icon"><i class="bi bi-info-circle"></i></span>
                         <div>
                             <h3>بيانات السائق</h3>
-                            <p>المعلومات الأساسية المسجلة في الحساب.</p>
+                            <p>المعلومات الأساسية المسجلة في الحساب مع مستندات الهوية والرخصة.</p>
                         </div>
                     </div>
                 </div>
@@ -587,29 +587,77 @@
                             <div class="info-value">{{ driver.user.city.name_ar|default:"غير محددة" }}</div>
                         </div>
                     </div>
-                    <div class="info-cell">
-                        <span class="info-icon"><i class="bi bi-car-front"></i></span>
-                        <div>
-                            <div class="info-label">موديل المركبة</div>
-                            <div class="info-value">{{ driver.vehicle_model|default:"غير محدد" }}</div>
+                </div>
+
+                <div class="docs-grid mt-4">
+                    {% for doc in driver_document_items %}
+                    <article class="doc-card">
+                        <div class="doc-preview">
+                            {% if doc.image %}
+                            <img src="{{ doc.image.url }}" alt="{{ doc.label }}" data-full-image="{{ doc.image.url }}">
+                            <button type="button" class="doc-open" data-full-image="{{ doc.image.url }}" aria-label="عرض {{ doc.label }}">
+                                <i class="bi bi-arrows-fullscreen"></i>
+                            </button>
+                            {% else %}
+                            <div class="doc-missing">غير مرفق</div>
+                            {% endif %}
                         </div>
-                    </div>
+                        <div class="doc-body">
+                            <div class="doc-title-line">
+                                <span class="doc-icon"><i class="bi {{ doc.icon }}"></i></span>
+                                <h4>{{ doc.label }}</h4>
+                            </div>
+                            <p class="doc-hint">{{ doc.hint }}</p>
+                        </div>
+                    </article>
+                    {% endfor %}
                 </div>
             </section>
 
             <section class="review-card">
                 <div class="section-title">
                     <div class="section-title-main">
-                        <span class="section-icon"><i class="bi bi-folder-check"></i></span>
+                        <span class="section-icon"><i class="bi bi-car-front"></i></span>
                         <div>
-                            <h3>مستندات التوثيق</h3>
-                            <p>اضغط على أي صورة لعرضها بحجم أكبر.</p>
+                            <h3>بيانات المركبة</h3>
+                            <p>تفاصيل المركبة والمستندات والصور المرتبطة بها.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-grid mb-4">
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-car-front"></i></span>
+                        <div>
+                            <div class="info-label">المركبة</div>
+                            <div class="info-value">{{ driver.vehicle_display_name|default:"غير محدد" }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-building"></i></span>
+                        <div>
+                            <div class="info-label">الشركة</div>
+                            <div class="info-value">{{ driver.vehicle_make_display|default:"غير محددة" }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-car-front-fill"></i></span>
+                        <div>
+                            <div class="info-label">الفئة</div>
+                            <div class="info-value">{{ driver.vehicle_model|default:"غير محددة" }}</div>
+                        </div>
+                    </div>
+                    <div class="info-cell">
+                        <span class="info-icon"><i class="bi bi-calendar2"></i></span>
+                        <div>
+                            <div class="info-label">سنة الموديل</div>
+                            <div class="info-value">{{ driver.vehicle_year|default:"غير محددة" }}</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="docs-grid">
-                    {% for doc in document_items %}
+                    {% for doc in vehicle_document_items %}
                     <article class="doc-card">
                         <div class="doc-preview">
                             {% if doc.image %}

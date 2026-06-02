@@ -314,7 +314,7 @@
 
     <p>
         <strong>السيارة:</strong>
-        {{ driver.vehicle_model }}
+        {{ driver.vehicle_display_name|default:"غير محددة" }}
     </p>
 
 </div>
