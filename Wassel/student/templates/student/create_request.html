@@ -246,7 +246,7 @@
     <section class="request-hero">
         <h4 class="fw-bold">طلب اشتراك</h4>
         <p>
-            راجع بيانات الاشتراك، ثم حدد جدولك الأسبوعي للذهاب والعودة. يمكنك اختيار إجازة للأيام التي لا تحتاج فيها النقل.
+            {{ student_address.review }} بيانات الاشتراك، ثم {{ student_address.select }} جدولك الأسبوعي للذهاب والعودة. يمكنك اختيار إجازة للأيام التي لا تحتاج فيها النقل.
         </p>
     </section>
 
@@ -290,7 +290,7 @@
                 <span class="title-icon"><i class="bi bi-calendar-week"></i></span>
                 <div>
                     <h5 class="fw-bold mb-1">جدولك الأسبوعي</h5>
-                    <span class="text-muted">حدد وقت الذهاب والعودة لكل يوم، أو اجعل اليوم إجازة.</span>
+                    <span class="text-muted">{{ student_address.select }} وقت الذهاب والعودة لكل يوم، أو {{ student_address.make }} اليوم إجازة.</span>
                 </div>
             </div>
 

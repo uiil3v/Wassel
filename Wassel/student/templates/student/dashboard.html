@@ -237,9 +237,9 @@
 
     <section class="student-hero">
         <div class="hero-content">
-            <h3>مرحباً بك، {{ user.first_name }}</h3>
+            <h3>{{ student_address.welcome }}، {{ user.first_name }}</h3>
             <p>
-                تابع حالة اشتراكك، راجع طلباتك، وادخل للخدمات المهمة من مكان واحد.
+                {{ student_address.follow }} حالة اشتراكك، {{ student_address.review }} طلباتك، و{{ student_address.enter }} للخدمات المهمة من مكان واحد.
                 صممنا هذه المساحة عشان تكون واضحة وسريعة في الاستخدام اليومي.
             </p>
 
@@ -382,7 +382,7 @@
             <div class="panel-title">
                 <span class="panel-icon"><i class="bi bi-compass"></i></span>
                 <div>
-                    <h5 class="fw-bold mb-1">ابدأ رحلة اشتراكك</h5>
+                    <h5 class="fw-bold mb-1">{{ student_address.start }} رحلة اشتراكك</h5>
                     <span class="text-muted">لا يوجد لديك اشتراك أو طلب نشط حالياً.</span>
                 </div>
             </div>
@@ -397,7 +397,7 @@
                 <i class="bi bi-ticket-perforated"></i>
             </div>
             <p>
-                استعرض الاشتراكات المتاحة في مدينتك، اختر السائق المناسب، ثم أرسل طلبك مع جدول المواعيد.
+                {{ student_address.browse }} الاشتراكات المتاحة في مدينتك، {{ student_address.choose }} السائق المناسب، ثم {{ student_address.send }} طلبك مع جدول المواعيد.
             </p>
             <a href="{% url 'student:subscriptions' %}" class="btn btn-accent">
                 <i class="bi bi-search me-2"></i>

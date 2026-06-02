@@ -450,7 +450,7 @@
             </div>
             {% elif has_active_request %}
             <div class="alert alert-warning soft-alert mb-0">
-                لديك طلب أو اشتراك قائم بالفعل، لذلك لا يمكنك إرسال طلب جديد حالياً.
+                {% if student_address.is_female %}لديكِ طلب أو اشتراك قائم بالفعل، لذلك لا يمكنكِ إرسال طلب جديد حالياً.{% else %}لديك طلب أو اشتراك قائم بالفعل، لذلك لا يمكنك إرسال طلب جديد حالياً.{% endif %}
             </div>
             {% elif subscription.available_seats <= 0 %}
             <div class="alert alert-danger soft-alert mb-0">

@@ -417,7 +417,7 @@
     {% if has_active_request %}
     <div class="notice-card warning">
         <span class="notice-icon"><i class="bi bi-exclamation-triangle"></i></span>
-        <span>لديك طلب أو اشتراك قائم بالفعل، لذلك لن تتمكن من التقديم على اشتراك جديد حالياً.</span>
+        <span>{{ student_address.active_request_notice }}</span>
     </div>
     {% endif %}
 

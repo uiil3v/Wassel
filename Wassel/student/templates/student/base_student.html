@@ -224,7 +224,7 @@
     <div class="mobile-student-bar">
         <div class="mobile-student-title">
             <i class="bi bi-mortarboard"></i>
-            لوحة الطالب
+            {{ student_address.dashboard_title }}
         </div>
 
         <button class="btn btn-accent sidebar-toggle-btn"
@@ -245,7 +245,7 @@
 
                 <div>
                     <div class="student-name">{{ user.get_full_name }}</div>
-                    <span class="student-status">طالب جامعي</span>
+                    <span class="student-status">{{ student_address.university_role }}</span>
 
                     {% if user.student_profile.university_name %}
                     <p class="student-university">
@@ -307,7 +307,7 @@
      id="studentSidebarMobile">
 
     <div class="offcanvas-header border-0">
-        <h5 class="fw-bold mb-0">لوحة الطالب</h5>
+        <h5 class="fw-bold mb-0">{{ student_address.dashboard_title }}</h5>
         <button type="button"
                 class="btn-close"
                 data-bs-dismiss="offcanvas"></button>
@@ -321,7 +321,7 @@
 
             <div>
                 <div class="student-name">{{ user.get_full_name }}</div>
-                <span class="student-status">طالب جامعي</span>
+                <span class="student-status">{{ student_address.university_role }}</span>
             </div>
         </div>
 

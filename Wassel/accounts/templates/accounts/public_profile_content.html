@@ -360,7 +360,7 @@
                         {% if profile_user.role == "driver" %}
                         <span class="profile-chip"><i class="bi bi-car-front"></i> سائق</span>
                         {% elif profile_user.role == "student" %}
-                        <span class="profile-chip"><i class="bi bi-mortarboard"></i> طالب</span>
+                        <span class="profile-chip"><i class="bi bi-mortarboard"></i> {% if student_profile.gender == "female" %}طالبة{% else %}طالب{% endif %}</span>
                         {% elif profile_user.role == "admin" %}
                         <span class="profile-chip"><i class="bi bi-shield-lock"></i> مشرف</span>
                         {% endif %}
@@ -520,7 +520,7 @@
                     <div>
                         <div class="review-user">
                             {% if review.is_anonymous and review.reviewer.role == "student" %}
-                            طالب مجهول
+                            {% if review.reviewer.student_profile.gender == "female" %}طالبة مجهولة{% else %}طالب مجهول{% endif %}
                             {% else %}
                             {{ review.reviewer.get_full_name }}
                             {% endif %}

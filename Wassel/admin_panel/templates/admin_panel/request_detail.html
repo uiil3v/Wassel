@@ -220,7 +220,7 @@
                 </div>
 
                 <div class="profile-meta">
-                    طالب جامعي
+                    {% if req.student.gender == "female" %}طالبة جامعية{% else %}طالب جامعي{% endif %}
                 </div>
 
             </div>

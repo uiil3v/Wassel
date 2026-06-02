@@ -391,7 +391,7 @@
                         <span class="profile-avatar"><i class="bi bi-mortarboard-fill"></i></span>
                         <div>
                             <div class="profile-name">{{ req.student.user.full_name }}</div>
-                            <div class="profile-meta">طالب جامعي · {{ req.student.university_name|default:"جامعة غير محددة" }}</div>
+                            <div class="profile-meta">{% if req.student.gender == "female" %}طالبة جامعية{% else %}طالب جامعي{% endif %} · {{ req.student.university_name|default:"جامعة غير محددة" }}</div>
                         </div>
                     </div>
                     <span class="profile-action">عرض الملف <i class="bi bi-arrow-left"></i></span>

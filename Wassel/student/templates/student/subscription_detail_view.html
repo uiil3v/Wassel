@@ -271,7 +271,7 @@
 <div class="subscription-detail-page">
 
     <section class="detail-hero">
-        <h4 class="fw-bold">راجع الاشتراك قبل إرسال الطلب</h4>
+        <h4 class="fw-bold">{{ student_address.review }} الاشتراك قبل إرسال الطلب</h4>
         <p class="text-muted mb-0" style="line-height: 2; max-width: 760px;">
             هنا تجد بيانات السائق وتفاصيل الاشتراك المهمة. إذا كانت مناسبة لك، ستجد إجراء طلب الاشتراك في نهاية الصفحة.
         </p>
@@ -285,7 +285,7 @@
                     <span class="title-icon"><i class="bi bi-person-badge"></i></span>
                     <div>
                         <h5 class="fw-bold mb-1">بيانات السائق</h5>
-                        <span class="text-muted">اطلع على الملف والتقييم قبل إرسال الطلب.</span>
+                        <span class="text-muted">{{ student_address.look }} على الملف والتقييم قبل إرسال الطلب.</span>
                     </div>
                 </div>
 
@@ -335,7 +335,7 @@
                     <span class="title-icon"><i class="bi bi-info-circle"></i></span>
                     <div>
                         <h5 class="fw-bold mb-1">معلومات الاشتراك</h5>
-                        <span class="text-muted">راجع تفاصيل الاشتراك قبل المتابعة.</span>
+                        <span class="text-muted">{{ student_address.review }} تفاصيل الاشتراك قبل المتابعة.</span>
                     </div>
                 </div>
 
@@ -400,7 +400,7 @@
                 <span class="title-icon"><i class="bi bi-send-check"></i></span>
                 <div>
                     <h5 class="fw-bold mb-1">طلب الاشتراك</h5>
-                    <span class="text-muted">تأكد من التفاصيل ثم تابع للطلب.</span>
+                    <span class="text-muted">{% if student_address.is_female %}تأكدي من التفاصيل ثم تابعي للطلب.{% else %}تأكد من التفاصيل ثم تابع للطلب.{% endif %}</span>
                 </div>
             </div>
 
@@ -410,7 +410,7 @@
 
             {% if has_active_request %}
             <div class="alert alert-warning soft-alert mb-0">
-                لديك طلب أو اشتراك قائم بالفعل، لذلك لا يمكنك إرسال طلب جديد حالياً.
+                {% if student_address.is_female %}لديكِ طلب أو اشتراك قائم بالفعل، لذلك لا يمكنكِ إرسال طلب جديد حالياً.{% else %}لديك طلب أو اشتراك قائم بالفعل، لذلك لا يمكنك إرسال طلب جديد حالياً.{% endif %}
             </div>
             {% elif subscription.available_seats <= 0 %}
             <div class="alert alert-danger soft-alert mb-0">

@@ -462,7 +462,7 @@
                                 {% else %}
                                     بدون تقييمات
                                 {% endif %}
-                                · طالب جامعي
+                                · {% if req.student.gender == "female" %}طالبة جامعية{% else %}طالب جامعي{% endif %}
                             </div>
                         </div>
                     </div>

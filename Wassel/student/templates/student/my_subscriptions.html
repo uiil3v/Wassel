@@ -299,8 +299,8 @@
     <section class="subscriptions-hero">
         <h4 class="fw-bold">اشتراكاتي</h4>
         <p>
-            تابع اشتراكاتك الحالية والسابقة، راجع التفاصيل، قيّم السائق بعد انتهاء الاشتراك،
-            أو ألغِ الطلب إذا كان لا يزال قيد المراجعة.
+            {{ student_address.follow }} اشتراكاتك الحالية والسابقة، {{ student_address.review }} التفاصيل، {{ student_address.rate }} السائق بعد انتهاء الاشتراك،
+            أو {{ student_address.cancel }} الطلب إذا كان لا يزال قيد المراجعة.
         </p>
 
         <div class="summary-grid">
@@ -421,7 +421,7 @@
     <div class="empty-state">
         <i class="bi bi-inbox"></i>
         <h5 class="fw-bold text-dark">لا توجد اشتراكات حالياً</h5>
-        <p class="mb-4">ابدأ باستعراض الاشتراكات المتاحة في مدينتك واختيار الأنسب لك.</p>
+        <p class="mb-4">{{ student_address.start }} باستعراض الاشتراكات المتاحة في مدينتك واختيار الأنسب لك.</p>
         <a href="{% url 'student:subscriptions' %}" class="btn btn-accent">
             استعراض الاشتراكات
         </a>

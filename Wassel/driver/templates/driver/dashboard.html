@@ -442,7 +442,7 @@
                                         </span>
                                         <div>
                                             <div class="cell-title">{{ req.student.user.full_name }}</div>
-                                            <div class="cell-muted">{{ req.student.university_name|default:"طالب جامعي" }}</div>
+                                            <div class="cell-muted">{{ req.student.university_name|default:"" }}{% if not req.student.university_name %}{% if req.student.gender == "female" %}طالبة جامعية{% else %}طالب جامعي{% endif %}{% endif %}</div>
                                         </div>
                                     </div>
                                 </td>

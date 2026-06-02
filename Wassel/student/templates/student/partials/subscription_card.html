@@ -47,7 +47,7 @@
             <a href="{% url 'reviews:create_review' req.id %}"
                class="btn btn-dark btn-sm rounded-pill px-3">
                 <i class="bi bi-star me-1"></i>
-                قيّم السائق
+                {{ student_address.rate }} السائق
             </a>
             {% else %}
             <span class="review-done">
