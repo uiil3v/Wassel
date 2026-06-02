@@ -427,6 +427,13 @@
                     </li>
 
                     <li class="nav-item mx-2">
+                        <a class="nav-link {% if request.resolver_match.namespace == 'main' and request.resolver_match.url_name == 'drivers' %}active-link{% endif %}"
+                            href="{% url 'main:drivers' %}">
+                            السائقون
+                        </a>
+                    </li>
+
+                    <li class="nav-item mx-2">
                         <a class="nav-link {% if request.resolver_match.namespace == 'main' and request.resolver_match.url_name == 'about' %}active-link{% endif %}"
                             href="{% url 'main:about' %}">
                             من نحن
@@ -602,6 +609,12 @@
                             <a href="{% url 'main:subscriptions' %}">
                                 <i class="bi bi-ticket-perforated me-2"></i>
                                 الاشتراكات
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'main:drivers' %}">
+                                <i class="bi bi-people me-2"></i>
+                                السائقون
                             </a>
                         </li>
                         <li>

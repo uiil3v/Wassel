@@ -389,6 +389,7 @@
         .sub-price {
             align-items: flex-start;
         }
+
     }
 </style>
 
@@ -513,14 +514,7 @@
         <div class="empty-box">
             <i class="bi bi-ticket-perforated"></i>
             <h2 class="empty-title h5">لا يوجد لديك اشتراكات حالياً</h2>
-            <p class="mb-4">ابدأ بإنشاء اشتراك لاستقبال طلبات الطلاب.</p>
-
-            {% if not blocked_by_admin %}
-                <a href="{% url 'driver:create_subscription' %}" class="btn btn-accent">
-                    <i class="bi bi-plus-circle me-2"></i>
-                    إنشاء اشتراك
-                </a>
-            {% endif %}
+            <p class="mb-0">يمكنك إنشاء اشتراك جديد من الزر الموجود أعلى الصفحة.</p>
         </div>
     {% endif %}
 </div>

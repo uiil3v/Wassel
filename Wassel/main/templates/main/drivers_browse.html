@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}السائقون - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+.drivers-page {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.drivers-hero,
+.drivers-filters,
+.drivers-results {
+    background: #ffffff;
+    border: 1px solid rgba(200, 169, 81, 0.18);
+    box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+}
+
+.drivers-hero {
+    background: linear-gradient(135deg, #ffffff, #f4eee4);
+    border-radius: 30px;
+    padding: 32px;
+}
+
+.drivers-hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 22px;
+    align-items: center;
+}
+
+.drivers-kicker {
+    color: var(--accent-color);
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.drivers-hero h1 {
+    color: var(--dark-color);
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.drivers-hero p,
+.muted-copy {
+    color: var(--soft-color);
+    line-height: 2;
+}
+
+.drivers-hero-icon {
+    width: 78px;
+    height: 78px;
+    min-width: 78px;
+    border-radius: 50%;
+    align-items: center;
+    background: linear-gradient(135deg, var(--accent-color), #d4af37);
+    box-shadow: 0 16px 34px rgba(200, 169, 81, 0.28);
+    color: white;
+    display: inline-flex;
+    font-size: 2rem;
+    justify-content: center;
+}
+
+.drivers-filters {
+    border-radius: 28px;
+    padding: 24px;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(150px, 1fr)) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.filter-field {
+    min-width: 0;
+}
+
+.filter-label {
+    color: var(--soft-color);
+    font-size: 0.88rem;
+    margin-bottom: 8px;
+}
+
+.filter-control {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid rgba(74, 63, 53, 0.1);
+    border-radius: 18px;
+    background: #fdfcf9;
+    color: var(--dark-color);
+    padding: 10px 14px;
+}
+
+.filter-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 25px rgba(200, 169, 81, 0.14);
+    outline: none;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn,
+.clear-btn {
+    min-height: 48px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-weight: 800;
+    padding: 10px 16px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.clear-btn {
+    border: 1px solid rgba(200, 169, 81, 0.42);
+    color: var(--accent-color);
+}
+
+.clear-btn:hover {
+    background: rgba(200, 169, 81, 0.1);
+    color: var(--accent-color);
+}
+
+.drivers-results {
+    border-radius: 30px;
+    padding: 26px;
+}
+
+.results-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.results-count {
+    align-items: center;
+    background: rgba(200, 169, 81, 0.13);
+    border-radius: 999px;
+    color: var(--accent-color);
+    display: inline-flex;
+    font-size: 0.9rem;
+    font-weight: 800;
+    gap: 7px;
+    padding: 7px 12px;
+}
+
+.drivers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.driver-card {
+    background: linear-gradient(135deg, #fffdf9, var(--light-bg));
+    border: 1px solid rgba(74, 63, 53, 0.06);
+    border-radius: 24px;
+    padding: 20px;
+    min-width: 0;
+    transition: 0.22s ease;
+}
+
+.driver-card:hover {
+    border-color: rgba(200, 169, 81, 0.34);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.06);
+    transform: translateY(-3px);
+}
+
+.driver-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.driver-identity {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+}
+
+.driver-avatar {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 50%;
+    align-items: center;
+    background: var(--accent-color);
+    color: white;
+    display: inline-flex;
+    font-size: 1.45rem;
+    justify-content: center;
+}
+
+.driver-name {
+    color: var(--dark-color);
+    font-weight: 900;
+    line-height: 1.5;
+    margin-bottom: 5px;
+    overflow-wrap: anywhere;
+}
+
+.driver-city {
+    color: var(--soft-color);
+    font-size: 0.9rem;
+}
+
+.rating-pill {
+    align-items: center;
+    background: rgba(255, 193, 7, 0.13);
+    border-radius: 999px;
+    color: #9a6b00;
+    display: inline-flex;
+    font-size: 0.86rem;
+    font-weight: 800;
+    gap: 6px;
+    padding: 6px 10px;
+    white-space: nowrap;
+}
+
+.driver-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.driver-meta-item {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(74, 63, 53, 0.06);
+    border-radius: 18px;
+    padding: 12px;
+}
+
+.meta-label {
+    color: var(--soft-color);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.84rem;
+    margin-bottom: 5px;
+}
+
+.meta-value {
+    color: var(--dark-color);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.driver-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid rgba(74, 63, 53, 0.08);
+    padding-top: 14px;
+}
+
+.available-chip {
+    color: var(--soft-color);
+    font-size: 0.88rem;
+}
+
+.profile-link {
+    align-items: center;
+    background: var(--accent-color);
+    border-radius: 999px;
+    color: white;
+    display: inline-flex;
+    font-weight: 800;
+    gap: 8px;
+    min-height: 42px;
+    justify-content: center;
+    padding: 8px 15px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.profile-link:hover {
+    background: #b8953f;
+    color: white;
+}
+
+.empty-drivers {
+    border: 1px dashed rgba(200, 169, 81, 0.45);
+    border-radius: 24px;
+    color: var(--soft-color);
+    padding: 42px 20px;
+    text-align: center;
+}
+
+.empty-drivers i {
+    align-items: center;
+    background: rgba(200, 169, 81, 0.13);
+    border-radius: 50%;
+    color: var(--accent-color);
+    display: inline-flex;
+    font-size: 1.7rem;
+    height: 68px;
+    justify-content: center;
+    margin-bottom: 16px;
+    width: 68px;
+}
+
+@media (max-width: 1200px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 991px) {
+    .drivers-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .drivers-hero,
+    .drivers-filters,
+    .drivers-results {
+        border-radius: 24px;
+        padding: 22px;
+    }
+
+    .drivers-hero-layout,
+    .filters-grid,
+    .driver-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .drivers-hero h1 {
+        font-size: 1.55rem;
+    }
+
+    .filter-actions,
+    .driver-card-top,
+    .driver-card-actions,
+    .results-head {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .filter-btn,
+    .clear-btn,
+    .profile-link {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="drivers-page">
+    <section class="drivers-hero">
+        <div class="drivers-hero-layout">
+            <div>
+                <div class="drivers-kicker">دليل السائقين</div>
+                <h1>استعرض السائقين المعتمدين في وصل</h1>
+                <p class="mb-0">
+                    ابحث عن السائق بالاسم أو المدينة أو المركبة، واطلع على ملفه العام وتقييماته والاشتراكات المتاحة لديه.
+                </p>
+            </div>
+
+            <span class="drivers-hero-icon">
+                <i class="bi bi-people-fill"></i>
+            </span>
+        </div>
+    </section>
+
+    <section class="drivers-filters">
+        <form method="GET" class="filters-grid">
+            <div class="filter-field">
+                <label class="filter-label">البحث</label>
+                <input type="text"
+                       name="search"
+                       value="{{ search_query }}"
+                       class="filter-control"
+                       placeholder="اسم السائق، المدينة، أو المركبة">
+            </div>
+
+            <div class="filter-field">
+                <label class="filter-label">المدينة</label>
+                <select name="city" class="filter-control" {% if request.user.is_authenticated and request.user.role == "student" %}disabled{% endif %}>
+                    <option value="">كل المدن</option>
+                    {% for city in cities %}
+                    <option value="{{ city.id }}" {% if selected_city == city.id|stringformat:"s" %}selected{% endif %}>
+                        {{ city.name_ar }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if request.user.is_authenticated and request.user.role == "student" %}
+                <input type="hidden" name="city" value="{{ selected_city }}">
+                {% endif %}
+            </div>
+
+            <div class="filter-field">
+                <label class="filter-label">الجنس</label>
+                <select name="gender" class="filter-control">
+                    <option value="">الكل</option>
+                    <option value="male" {% if gender == "male" %}selected{% endif %}>ذكر</option>
+                    <option value="female" {% if gender == "female" %}selected{% endif %}>أنثى</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label class="filter-label">الاشتراكات</label>
+                <select name="has_subscriptions" class="filter-control">
+                    <option value="">الكل</option>
+                    <option value="yes" {% if has_subscriptions == "yes" %}selected{% endif %}>لديه اشتراكات متاحة</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label class="filter-label">الترتيب</label>
+                <select name="sort" class="filter-control">
+                    <option value="" {% if not sort %}selected{% endif %}>الاسم</option>
+                    <option value="rating" {% if sort == "rating" %}selected{% endif %}>الأعلى تقييماً</option>
+                    <option value="subscriptions" {% if sort == "subscriptions" %}selected{% endif %}>الأكثر اشتراكات</option>
+                    <option value="newest" {% if sort == "newest" %}selected{% endif %}>الأحدث اعتماداً</option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-accent filter-btn">
+                    <i class="bi bi-search"></i>
+                    بحث
+                </button>
+                <a href="{% url 'main:drivers' %}" class="clear-btn">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    مسح
+                </a>
+            </div>
+        </form>
+    </section>
+
+    <section class="drivers-results">
+        <div class="results-head">
+            <div>
+                <h5 class="fw-bold mb-1">نتائج السائقين</h5>
+                <span class="muted-copy">السائقون المعتمدون المتاحون للاستعراض العام.</span>
+            </div>
+            <span class="results-count">
+                <i class="bi bi-person-check"></i>
+                {{ results_count }} سائق
+            </span>
+        </div>
+
+        {% if drivers %}
+        <div class="drivers-grid">
+            {% for driver in drivers %}
+            <article class="driver-card">
+                <div class="driver-card-top">
+                    <div class="driver-identity">
+                        <span class="driver-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </span>
+                        <div>
+                            <div class="driver-name">{{ driver.user.get_full_name }}</div>
+                            <div class="driver-city">
+                                <i class="bi bi-geo-alt"></i>
+                                {{ driver.user.city.name_ar|default:"مدينة غير محددة" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="rating-pill">
+                        <i class="bi bi-star-fill"></i>
+                        {% if driver.reviews_count > 0 %}
+                            {{ driver.average_rating|floatformat:1 }} / {{ driver.reviews_count }} تقييم
+                        {% else %}
+                            جديد
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="driver-meta-grid">
+                    <div class="driver-meta-item">
+                        <div class="meta-label"><i class="bi bi-car-front"></i> المركبة</div>
+                        <div class="meta-value">{{ driver.vehicle_display_name|default:"غير محددة" }}</div>
+                    </div>
+
+                    <div class="driver-meta-item">
+                        <div class="meta-label"><i class="bi bi-person"></i> الجنس</div>
+                        <div class="meta-value">{{ driver.get_gender_display|default:"غير محدد" }}</div>
+                    </div>
+                </div>
+
+                <div class="driver-card-actions">
+                    <span class="available-chip">
+                        <i class="bi bi-ticket-perforated"></i>
+                        {{ driver.active_subscriptions_count }} اشتراك متاح
+                    </span>
+
+                    <a href="{% url 'accounts:public_profile' driver.user.id %}" class="profile-link">
+                        عرض الملف
+                        <i class="bi bi-arrow-left"></i>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-drivers">
+            <i class="bi bi-person-x"></i>
+            <div class="fw-bold mb-2">لا توجد نتائج مطابقة</div>
+            <div>جرّب تغيير كلمات البحث أو إزالة بعض الفلاتر.</div>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

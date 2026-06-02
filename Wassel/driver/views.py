@@ -484,16 +484,20 @@ def create_subscription(request):
                         return redirect("driver:create_subscription")
 
             # 🔥 إنشاء الاشتراك
-            Subscription.objects.create(
+            subscription = Subscription(
                 driver=profile,
                 neighborhood=neighborhood,
                 price=price,
                 seats=seats,
+                available_seats=seats,
                 duration=duration,
                 start_date=start_date_obj,
                 end_date=end_date_obj,
                 notes=notes
             )
+
+            subscription.full_clean()
+            subscription.save()
 
             messages.success(request, "تم إنشاء الاشتراك بنجاح 🎉")
             return redirect("driver:subscriptions")
@@ -565,7 +569,7 @@ def edit_subscription(request, sub_id):
             # فصلي
             # =========================
 
-            else:
+            elif duration == "semester":
 
                 if not end_date:
 
@@ -581,6 +585,44 @@ def edit_subscription(request, sub_id):
                         "%Y-%m-%d"
                     ).date()
 
+                    if end_date_obj < start_date_obj:
+                        messages.error(
+                            request,
+                            "تاريخ النهاية يجب أن يكون بعد البداية."
+                        )
+
+                        return redirect(
+                            "driver:edit_subscription",
+                            sub_id=sub_id
+                        )
+
+                    days_diff = (
+                        end_date_obj -
+                        start_date_obj
+                    ).days
+
+                    if days_diff < 90:
+                        messages.error(
+                            request,
+                            "الاشتراك الفصلي يجب أن يكون 90 يوم على الأقل."
+                        )
+
+                        return redirect(
+                            "driver:edit_subscription",
+                            sub_id=sub_id
+                        )
+
+            else:
+                messages.error(
+                    request,
+                    "نوع الاشتراك غير صحيح."
+                )
+
+                return redirect(
+                    "driver:edit_subscription",
+                    sub_id=sub_id
+                )
+
             # =========================
             # تحديث البيانات
             # =========================
@@ -594,6 +636,7 @@ def edit_subscription(request, sub_id):
             subscription.end_date = end_date_obj
             subscription.notes = notes
 
+            subscription.full_clean()
             subscription.save()
 
             messages.success(

@@ -3,5 +3,5 @@
 {% block title %}الملف الشخصي - وصل{% endblock %}
 
 {% block content %}
-    {% include "accounts/public_profile_content.html" %}
+    {% include "accounts/public_profile_content.html" with subscription_detail_mode="public" %}
 {% endblock %}

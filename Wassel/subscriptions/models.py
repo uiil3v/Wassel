@@ -65,6 +65,17 @@ class Subscription(models.Model):
         if self.end_date <= self.start_date:
             raise ValidationError("End date must be after start date.")
 
+        if (
+            self.duration == "semester"
+            and
+            self.start_date
+            and
+            self.end_date
+            and
+            (self.end_date - self.start_date).days < 90
+        ):
+            raise ValidationError("Semester subscriptions must be at least 90 days.")
+
     # -------------------------
     # Auto set available seats
     # -------------------------

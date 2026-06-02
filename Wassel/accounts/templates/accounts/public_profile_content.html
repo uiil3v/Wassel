@@ -162,6 +162,101 @@
         text-align: right;
     }
 
+    .driver-subscriptions-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .driver-subscription-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: center;
+        background: linear-gradient(135deg, #fffdf9, var(--light-bg));
+        border: 1px solid rgba(200, 169, 81, 0.2);
+        border-radius: 22px;
+        padding: 18px;
+        transition: 0.22s ease;
+    }
+
+    .driver-subscription-item:hover {
+        border-color: rgba(200, 169, 81, 0.42);
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.055);
+        transform: translateY(-2px);
+    }
+
+    .subscription-summary-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 13px;
+    }
+
+    .subscription-neighborhood {
+        color: var(--dark-color);
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .subscription-price {
+        align-items: center;
+        background-color: rgba(200, 169, 81, 0.14);
+        border-radius: 999px;
+        color: var(--accent-color);
+        display: inline-flex;
+        font-size: 0.9rem;
+        font-weight: 800;
+        gap: 6px;
+        padding: 6px 11px;
+        white-space: nowrap;
+    }
+
+    .subscription-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .subscription-meta {
+        color: var(--soft-color);
+        display: grid;
+        gap: 3px;
+        font-size: 0.82rem;
+        min-width: 0;
+    }
+
+    .subscription-meta strong {
+        color: var(--dark-color);
+        font-size: 0.9rem;
+        overflow-wrap: anywhere;
+    }
+
+    .subscription-meta .date-value {
+        display: block;
+    }
+
+    .subscription-detail-link {
+        align-items: center;
+        background-color: var(--accent-color);
+        border-radius: 999px;
+        color: white;
+        display: inline-flex;
+        font-weight: 800;
+        gap: 8px;
+        justify-content: center;
+        min-height: 44px;
+        padding: 9px 16px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .subscription-detail-link:hover {
+        color: white;
+        background-color: #b6953e;
+    }
+
     .reviews-list {
         display: grid;
         gap: 14px;
@@ -309,6 +404,21 @@
             flex-direction: column;
         }
 
+        .driver-subscription-item,
+        .subscription-summary-top {
+            align-items: flex-start;
+            grid-template-columns: 1fr;
+            flex-direction: column;
+        }
+
+        .subscription-meta-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .subscription-detail-link {
+            width: 100%;
+        }
+
         .profile-avatar {
             width: 74px;
             height: 74px;
@@ -334,6 +444,12 @@
 
         .public-profile-actions a {
             width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .subscription-meta-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -502,6 +618,65 @@
             {% endif %}
         </div>
     </section>
+
+    {% if driver_profile %}
+    <section class="public-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-ticket-perforated"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">الاشتراكات المتاحة</h5>
+                <span class="text-muted">اشتراكات السائق النشطة التي يمكن الاطلاع عليها حالياً.</span>
+            </div>
+        </div>
+
+        {% if driver_available_subscriptions %}
+        <div class="driver-subscriptions-list">
+            {% for subscription in driver_available_subscriptions %}
+            <article class="driver-subscription-item">
+                <div>
+                    <div class="subscription-summary-top">
+                        <h6 class="subscription-neighborhood">{{ subscription.neighborhood }}</h6>
+                        <span class="subscription-price">
+                            <i class="bi bi-cash-coin"></i>
+                            {{ subscription.price }} ر.س / {{ subscription.get_duration_display }}
+                        </span>
+                    </div>
+
+                    <div class="subscription-meta-grid">
+                        <span class="subscription-meta">
+                            المدينة
+                            <strong>{{ subscription.driver.user.city.name_ar }}</strong>
+                        </span>
+                        <span class="subscription-meta">
+                            المقاعد المتاحة
+                            <strong>{{ subscription.available_seats }} من {{ subscription.seats }}</strong>
+                        </span>
+                        <span class="subscription-meta">
+                            تاريخ البداية
+                            <strong class="date-value">{{ subscription.start_date|date:"d/m/Y" }}</strong>
+                        </span>
+                        <span class="subscription-meta">
+                            تاريخ النهاية
+                            <strong class="date-value">{{ subscription.end_date|date:"d/m/Y" }}</strong>
+                        </span>
+                    </div>
+                </div>
+
+                <a href="{% if subscription_detail_mode == 'student' %}{% url 'student:subscription_detail_view' subscription.id %}{% else %}{% url 'main:subscription_detail' subscription.id %}{% endif %}" class="subscription-detail-link">
+                    عرض التفاصيل
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-box">
+            <i class="bi bi-ticket-perforated"></i>
+            <div>لا توجد اشتراكات متاحة حالياً</div>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
 
     <section class="public-card">
         <div class="card-title-row">

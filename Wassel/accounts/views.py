@@ -10,6 +10,7 @@ from driver.models import DriverProfile
 from student.models import StudentProfile
 
 from reviews.models import Review
+from subscriptions.models import Subscription
 
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
@@ -38,10 +39,25 @@ from .utils import send_email_change_confirmation
 from Wassel.email_utils import send_platform_email
 
 
+def redirect_authenticated_user(user):
+    if user.role == "student":
+        return redirect("student:dashboard")
+
+    if user.role == "driver":
+        return redirect("driver:dashboard")
+
+    if user.role == "admin":
+        return redirect("admin_panel:dashboard")
+
+    return redirect("main:index")
+
 
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect_authenticated_user(request.user)
+
     if request.method == "POST":
         form = RegisterForm(request.POST)
 
@@ -504,6 +520,9 @@ class CustomPasswordResetView(PasswordResetView):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect_authenticated_user(request.user)
+
     if request.method == "POST":
         email = request.POST.get("email")   
         password = request.POST.get("password")
@@ -623,6 +642,7 @@ def public_profile_view(request, user_id):
 
     driver_profile = None
     student_profile = None
+    driver_available_subscriptions = None
 
     # ===== Driver =====
     if user_obj.role == "driver":
@@ -631,6 +651,19 @@ def public_profile_view(request, user_id):
             "driver_profile",
             None
         )
+
+        if driver_profile:
+            driver_available_subscriptions = Subscription.objects.filter(
+                driver=driver_profile,
+                status="active",
+                driver__user__status="active",
+                driver__verification_status="approved",
+                available_seats__gt=0,
+                end_date__gte=timezone.localdate(),
+            ).select_related(
+                "driver__user",
+                "driver__user__city",
+            ).order_by("-created_at")
 
     # ===== Student =====
     elif user_obj.role == "student":
@@ -645,6 +678,7 @@ def public_profile_view(request, user_id):
         "profile_user": user_obj,
         "driver_profile": driver_profile,
         "student_profile": student_profile,
+        "driver_available_subscriptions": driver_available_subscriptions,
         "reviews": reviews,
     }
 
