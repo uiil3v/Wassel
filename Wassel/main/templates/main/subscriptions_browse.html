@@ -1,0 +1,561 @@
+{% extends "base.html" %}
+
+{% block title %}استعراض الاشتراكات - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+.subscriptions-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.subs-hero,
+.notice-card,
+.filter-card,
+.subscription-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(200, 169, 81, 0.16);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.045);
+}
+
+.subs-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 30px;
+    padding: 28px;
+}
+
+.hero-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hero-icon,
+.notice-icon {
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200, 169, 81, 0.15);
+    color: var(--accent-color);
+    font-size: 24px;
+}
+
+.notice-icon {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    border-radius: 14px;
+    font-size: 19px;
+}
+
+.subs-hero h2 {
+    margin: 0 0 6px;
+    color: var(--dark-color);
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.subs-hero p {
+    margin: 0;
+    color: #837568;
+    line-height: 1.8;
+}
+
+.results-pill {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #f7f2e7;
+    color: #9a7a26;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.notice-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    border-radius: 22px;
+    padding: 16px 18px;
+    color: #776b60;
+    line-height: 1.8;
+}
+
+.notice-card.warning {
+    border-color: rgba(255, 193, 7, 0.32);
+    background: rgba(255, 193, 7, 0.08);
+    color: #7a5a00;
+}
+
+.filter-card {
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-primary {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.filter-secondary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.filter-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #7f7165;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 16px;
+    padding: 9px 14px;
+    background: #fbfaf7;
+    color: var(--dark-color);
+    outline: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: rgba(200, 169, 81, 0.55);
+    box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.12);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.action-btn,
+.reset-link,
+.details-link {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.action-btn {
+    border: 0;
+    background: var(--accent-color);
+    color: white;
+}
+
+.reset-link {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--dark-color);
+    background: white;
+}
+
+.subscriptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+    min-width: 0;
+}
+
+.subscription-card {
+    border-radius: 28px;
+    padding: 24px;
+    transition: 0.25s ease;
+}
+
+.subscription-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(200, 169, 81, 0.42);
+}
+
+.card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.card-title {
+    margin: 0 0 8px;
+    color: var(--dark-color);
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.driver-line {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    color: #7d7064;
+    font-size: 14px;
+}
+
+.rating-chip,
+.status-pill {
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.rating-chip {
+    background: #fff3d7;
+    color: #9a6a00;
+}
+
+.rating-chip.empty {
+    background: #eeeeee;
+    color: #666;
+}
+
+.status-pill {
+    background: rgba(200, 169, 81, 0.14);
+    color: #9a7a26;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.info-box {
+    padding: 14px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+}
+
+.info-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #887a6d;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.info-value {
+    color: var(--dark-color);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.seat-box {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #fbfaf7;
+    border: 1px solid rgba(0, 0, 0, 0.055);
+    margin-bottom: 16px;
+}
+
+.seat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    color: var(--dark-color);
+    font-weight: 800;
+}
+
+.seat-track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #f0ede7;
+}
+
+.seat-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent-color);
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.date-line {
+    color: #887a6d;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.details-link {
+    min-height: 40px;
+    color: var(--accent-color);
+    background: rgba(200, 169, 81, 0.12);
+}
+
+.empty-state {
+    padding: 42px 24px;
+    border-radius: 26px;
+    background: white;
+    border: 1px dashed rgba(200, 169, 81, 0.35);
+    text-align: center;
+    color: #887a6d;
+}
+
+@media (max-width: 991px) {
+    .filter-primary,
+    .filter-secondary {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .subs-hero,
+    .filter-card,
+    .subscription-card {
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .subs-hero,
+    .hero-title,
+    .notice-card {
+        align-items: flex-start;
+    }
+
+    .subs-hero {
+        flex-direction: column;
+    }
+
+    .subs-hero h2 {
+        font-size: 25px;
+    }
+
+    .filter-primary,
+    .filter-secondary,
+    .subscriptions-grid,
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions,
+    .card-head,
+    .card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-btn,
+    .reset-link,
+    .details-link {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="subscriptions-page">
+    <section class="subs-hero">
+        <div class="hero-title">
+            <span class="hero-icon"><i class="bi bi-ticket-perforated"></i></span>
+            <div>
+                <h2>استعراض الاشتراكات</h2>
+                <p>قارن بين السائقين والأسعار والمقاعد المتبقية قبل إنشاء حساب أو إرسال طلب اشتراك.</p>
+            </div>
+        </div>
+        <span class="results-pill">{{ results_count }} اشتراك متاح</span>
+    </section>
+
+    {% if user.is_authenticated and user.role == "student" %}
+    <div class="notice-card">
+        <span class="notice-icon"><i class="bi bi-geo-alt"></i></span>
+        <span>يتم عرض الاشتراكات المتاحة في مدينتك فقط لضمان توافق الرحلات مع موقعك.</span>
+    </div>
+    {% else %}
+    <div class="notice-card">
+        <span class="notice-icon"><i class="bi bi-geo-alt"></i></span>
+        <span>اختر المدينة المناسبة لتصفح الاشتراكات المتاحة. عند إرسال طلب اشتراك ستحتاج إلى حساب طالب أو طالبة.</span>
+    </div>
+    {% endif %}
+
+    {% if has_active_request %}
+    <div class="notice-card warning">
+        <span class="notice-icon"><i class="bi bi-exclamation-triangle"></i></span>
+        <span>لديك طلب أو اشتراك قائم بالفعل، لذلك لن تتمكن من التقديم على اشتراك جديد حالياً.</span>
+    </div>
+    {% endif %}
+
+    <section class="filter-card">
+        <form method="get" class="filter-form">
+            <div class="filter-primary">
+                <div class="filter-field">
+                    <label for="subscriptionSearch">البحث</label>
+                    <input id="subscriptionSearch" type="text" name="search" placeholder="ابحث باسم الحي أو السائق" value="{{ search_query|default:'' }}">
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="action-btn">
+                        <i class="bi bi-search"></i>
+                        تطبيق
+                    </button>
+
+                    <a href="{% url 'main:subscriptions' %}" class="reset-link">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        إعادة
+                    </a>
+                </div>
+            </div>
+
+            <div class="filter-secondary">
+                <div class="filter-field">
+                    <label for="cityFilter">المدينة</label>
+                    <select id="cityFilter" name="city" {% if user.is_authenticated and user.role == "student" %}disabled{% endif %}>
+                        <option value="">كل المدن</option>
+                        {% for city in cities %}
+                        <option value="{{ city.id }}" {% if selected_city == city.id|stringformat:"s" %}selected{% endif %}>{{ city.name_ar }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="durationFilter">المدة</label>
+                    <select id="durationFilter" name="duration">
+                        <option value="">كل المدد</option>
+                        <option value="monthly" {% if duration == "monthly" %}selected{% endif %}>شهري</option>
+                        <option value="semester" {% if duration == "semester" %}selected{% endif %}>فصلي</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="minPrice">السعر من</label>
+                    <input id="minPrice" type="number" name="min_price" value="{{ min_price }}" min="0">
+                </div>
+
+                <div class="filter-field">
+                    <label for="maxPrice">السعر إلى</label>
+                    <input id="maxPrice" type="number" name="max_price" value="{{ max_price }}" min="0">
+                </div>
+
+                <div class="filter-field">
+                    <label for="sortFilter">الترتيب</label>
+                    <select id="sortFilter" name="sort">
+                        <option value="">الأحدث</option>
+                        <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>السعر الأقل</option>
+                        <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>السعر الأعلى</option>
+                        <option value="seats" {% if sort == "seats" %}selected{% endif %}>المقاعد المتبقية</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="subscriptions-grid">
+        {% for sub in subscriptions %}
+        <article class="subscription-card">
+            <div class="card-head">
+                <div>
+                    <h3 class="card-title">{{ sub.driver.user.city.name_ar|default:"مدينة غير محددة" }} - {{ sub.neighborhood }}</h3>
+                    <div class="driver-line">
+                        <span><i class="bi bi-person"></i> {{ sub.driver.user.get_full_name }}</span>
+                        {% if sub.driver.average_rating > 0 %}
+                        <span class="rating-chip"><i class="bi bi-star-fill"></i> {{ sub.driver.average_rating|floatformat:1 }}</span>
+                        {% else %}
+                        <span class="rating-chip empty">جديد</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="status-pill"><i class="bi bi-check-circle"></i> متاح</span>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                    <div class="info-value">{{ sub.price }} ر.س</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="bi bi-calendar2-week"></i> المدة</div>
+                    <div class="info-value">{{ sub.get_duration_display }}</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label"><i class="bi bi-geo"></i> المدينة</div>
+                    <div class="info-value">{{ sub.driver.user.city.name_ar }}</div>
+                </div>
+            </div>
+
+            <div class="seat-box">
+                <div class="seat-row">
+                    <span>المقاعد المتاحة</span>
+                    <span>{{ sub.available_seats }} من {{ sub.seats }}</span>
+                </div>
+                <div class="seat-track">
+                    <div class="seat-fill" style="width: {% widthratio sub.available_seats sub.seats 100 %}%"></div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="date-line">
+                    <div>البداية: {{ sub.start_date|date:"d/m/Y" }}</div>
+                    <div>النهاية: {{ sub.end_date|date:"d/m/Y" }}</div>
+                </div>
+                <a href="{% url 'main:subscription_detail' sub.id %}" class="details-link">
+                    التفاصيل
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+        </article>
+        {% empty %}
+        <div class="empty-state">
+            <h5 class="fw-bold text-dark">لا توجد اشتراكات مطابقة</h5>
+            <p class="mb-0">جرّب اختيار مدينة أخرى أو تعديل كلمات البحث والفلاتر.</p>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+
+{% endblock %}

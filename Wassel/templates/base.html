@@ -420,6 +420,13 @@
                     </li>
 
                     <li class="nav-item mx-2">
+                        <a class="nav-link {% if request.resolver_match.namespace == 'main' and request.resolver_match.url_name == 'subscriptions' or request.resolver_match.namespace == 'main' and request.resolver_match.url_name == 'subscription_detail' %}active-link{% endif %}"
+                            href="{% url 'main:subscriptions' %}">
+                            الاشتراكات
+                        </a>
+                    </li>
+
+                    <li class="nav-item mx-2">
                         <a class="nav-link {% if request.resolver_match.namespace == 'main' and request.resolver_match.url_name == 'about' %}active-link{% endif %}"
                             href="{% url 'main:about' %}">
                             من نحن
@@ -589,6 +596,12 @@
                             <a href="{% url 'main:about' %}">
                                 <i class="bi bi-info-circle me-2"></i>
                                 من نحن
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'main:subscriptions' %}">
+                                <i class="bi bi-ticket-perforated me-2"></i>
+                                الاشتراكات
                             </a>
                         </li>
                         <li>

@@ -2,6 +2,8 @@
     .public-profile-page {
         display: grid;
         gap: 24px;
+        min-width: 0;
+        overflow-x: hidden;
         width: 100%;
     }
 
@@ -128,6 +130,7 @@
 
     .info-grid {
         display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
     }
 
@@ -136,6 +139,7 @@
         border: 1px solid rgba(74, 63, 53, 0.06);
         border-radius: 18px;
         padding: 16px;
+        min-width: 0;
     }
 
     .info-label {
@@ -150,6 +154,12 @@
     .info-value {
         color: var(--dark-color);
         font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .date-value {
+        direction: ltr;
+        text-align: right;
     }
 
     .reviews-list {
@@ -237,6 +247,26 @@
         margin-bottom: 16px;
     }
 
+    .public-profile-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        margin-top: 18px;
+    }
+
+    .public-profile-actions a {
+        min-height: 44px;
+        align-items: center;
+        border-radius: 999px;
+        display: inline-flex;
+        font-weight: 700;
+        gap: 8px;
+        justify-content: center;
+        padding: 9px 16px;
+        text-decoration: none;
+    }
+
     .confirm-modal .modal-content {
         border: none;
         border-radius: 26px;
@@ -292,6 +322,18 @@
 
         .rating-number {
             font-size: 2rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .public-profile-actions {
+            justify-content: stretch;
+        }
+
+        .public-profile-actions a {
+            width: 100%;
         }
     }
 </style>
@@ -375,6 +417,29 @@
         </div>
     </section>
 
+    {% if not request.user.is_authenticated and profile_user.role == "driver" %}
+    <section class="public-card">
+        <div class="card-title-row">
+            <span class="title-icon"><i class="bi bi-ticket-perforated"></i></span>
+            <div>
+                <h5 class="fw-bold mb-1">هل تبحث عن اشتراك مناسب؟</h5>
+                <span class="text-muted">يمكنك الرجوع لاستعراض الاشتراكات أو إنشاء حساب عند رغبتك بإرسال طلب.</span>
+            </div>
+        </div>
+
+        <div class="public-profile-actions">
+            <a href="{% url 'main:subscriptions' %}" class="btn-wassel-outline">
+                <i class="bi bi-arrow-right"></i>
+                العودة للاشتراكات
+            </a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-accent">
+                <i class="bi bi-person-plus"></i>
+                إنشاء حساب
+            </a>
+        </div>
+    </section>
+    {% endif %}
+
     <section class="public-card">
         <div class="card-title-row">
             <span class="title-icon"><i class="bi bi-info-circle"></i></span>
@@ -405,7 +470,7 @@
 
             <div class="info-item">
                 <div class="info-label"><i class="bi bi-calendar-check"></i> في المنصة منذ</div>
-                <div class="info-value" dir="ltr">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
+                <div class="info-value date-value">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
             </div>
             {% elif student_profile %}
             <div class="info-item">
@@ -427,12 +492,12 @@
 
             <div class="info-item">
                 <div class="info-label"><i class="bi bi-calendar-check"></i> في المنصة منذ</div>
-                <div class="info-value" dir="ltr">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
+                <div class="info-value date-value">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
             </div>
             {% else %}
             <div class="info-item">
                 <div class="info-label"><i class="bi bi-calendar-check"></i> في المنصة منذ</div>
-                <div class="info-value" dir="ltr">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
+                <div class="info-value date-value">{{ profile_user.date_joined|date:"d/m/Y" }}</div>
             </div>
             {% endif %}
         </div>

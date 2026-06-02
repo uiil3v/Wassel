@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+
+{% block title %}تفاصيل الاشتراك - وصل{% endblock %}
+
+{% block extra_css %}
+<style>
+.subscription-detail-page {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.detail-hero,
+.detail-card {
+    background: #ffffff;
+    border: 1px solid rgba(200, 169, 81, 0.18);
+    box-shadow: 0 22px 52px rgba(0, 0, 0, 0.05);
+}
+
+.detail-hero {
+    background: linear-gradient(135deg, #ffffff, #f4eee4);
+    border-radius: 30px;
+    padding: 32px;
+}
+
+.detail-hero h2 {
+    color: var(--dark-color);
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.detail-hero p,
+.muted-copy {
+    color: #7d7064;
+    line-height: 2;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    gap: 24px;
+    align-items: start;
+}
+
+.subscription-main {
+    display: grid;
+    gap: 24px;
+    min-width: 0;
+}
+
+.detail-card {
+    border-radius: 28px;
+    padding: 28px;
+}
+
+.card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.title-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: linear-gradient(135deg, var(--accent-color), #d4af37);
+    box-shadow: 0 12px 28px rgba(200, 169, 81, 0.28);
+}
+
+.driver-profile-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    background: var(--light-bg);
+    border: 1px solid rgba(74, 63, 53, 0.06);
+    border-radius: 24px;
+    color: var(--dark-color);
+    padding: 20px;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.driver-profile-box:hover {
+    border-color: rgba(200, 169, 81, 0.35);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.06);
+    color: var(--dark-color);
+    transform: translateY(-3px);
+}
+
+.driver-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.driver-avatar {
+    width: 62px;
+    height: 62px;
+    min-width: 62px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.driver-name {
+    color: var(--dark-color);
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.driver-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: var(--soft-color);
+    font-size: 0.9rem;
+}
+
+.rating-chip,
+.verified-chip,
+.remaining-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 16px;
+    padding: 4px 9px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.rating-chip {
+    background-color: rgba(255, 193, 7, 0.14);
+    color: #9a6b00;
+}
+
+.verified-chip {
+    background-color: rgba(25, 135, 84, 0.11);
+    color: #198754;
+}
+
+.verified-chip.muted {
+    background-color: rgba(74, 63, 53, 0.07);
+    color: var(--soft-color);
+}
+
+.profile-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-color);
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.info-tile {
+    background-color: var(--light-bg);
+    border: 1px solid rgba(74, 63, 53, 0.06);
+    border-radius: 20px;
+    padding: 18px;
+}
+
+.info-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--soft-color);
+    font-size: 0.92rem;
+    margin-bottom: 9px;
+}
+
+.info-value {
+    color: var(--dark-color);
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.seat-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.remaining-chip {
+    width: fit-content;
+    background-color: rgba(200, 169, 81, 0.12);
+    color: var(--accent-color);
+}
+
+.notes-box {
+    background-color: var(--light-bg);
+    border-right: 5px solid var(--accent-color);
+    border-radius: 20px;
+    color: var(--soft-color);
+    line-height: 2;
+    padding: 20px;
+}
+
+.action-card {
+    position: sticky;
+    top: 125px;
+}
+
+.request-btn,
+.outline-btn {
+    width: 100%;
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 24px;
+    font-weight: 800;
+}
+
+.outline-btn {
+    border: 1px solid rgba(200, 169, 81, 0.42);
+    color: var(--accent-color);
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.outline-btn:hover {
+    background: rgba(200, 169, 81, 0.1);
+    color: var(--accent-color);
+}
+
+.soft-alert {
+    border: none;
+    border-radius: 20px;
+    line-height: 1.8;
+    padding: 16px 18px;
+}
+
+@media (max-width: 991px) {
+    .detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .action-card {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .detail-hero,
+    .detail-card {
+        border-radius: 24px;
+        padding: 22px;
+    }
+
+    .detail-hero h2 {
+        font-size: 1.55rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .driver-profile-box {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .profile-action {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 420px) {
+    .driver-main {
+        align-items: flex-start;
+    }
+
+    .driver-avatar {
+        width: 54px;
+        height: 54px;
+        min-width: 54px;
+        font-size: 21px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="subscription-detail-page">
+    <section class="detail-hero">
+        <h2>راجع الاشتراك قبل إرسال الطلب</h2>
+        <p class="mb-0" style="max-width: 760px;">
+            هنا تجد بيانات السائق وتفاصيل الاشتراك المهمة. إذا كان الاشتراك مناسباً، يمكنك إنشاء حساب أو تسجيل الدخول لإرسال الطلب.
+        </p>
+    </section>
+
+    <div class="detail-layout">
+        <div class="subscription-main">
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <span class="title-icon"><i class="bi bi-person-badge"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-1">بيانات السائق</h5>
+                        <span class="muted-copy">اطلع على الملف والتقييم قبل المتابعة.</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'accounts:public_profile' subscription.driver.user.id %}" class="driver-profile-box">
+                    <div class="driver-main">
+                        <div class="driver-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div>
+                            <div class="driver-name">{{ subscription.driver.user.get_full_name }}</div>
+
+                            <div class="driver-meta">
+                                {% if subscription.driver.average_rating > 0 %}
+                                <span class="rating-chip">
+                                    <i class="bi bi-star-fill"></i>
+                                    {{ subscription.driver.average_rating|floatformat:1 }}
+                                </span>
+                                {% else %}
+                                <span class="verified-chip muted">جديد</span>
+                                {% endif %}
+
+                                <span class="verified-chip">
+                                    <i class="bi bi-shield-check"></i>
+                                    موثق
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="profile-action">
+                        عرض الملف الشخصي
+                        <i class="bi bi-arrow-left"></i>
+                    </span>
+                </a>
+            </section>
+
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <span class="title-icon"><i class="bi bi-info-circle"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-1">معلومات الاشتراك</h5>
+                        <span class="muted-copy">راجع تفاصيل الاشتراك قبل المتابعة.</span>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-geo"></i> المدينة</div>
+                        <div class="info-value">{{ subscription.driver.user.city.name_ar }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-signpost"></i> الحي</div>
+                        <div class="info-value">{{ subscription.neighborhood }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-cash-coin"></i> السعر</div>
+                        <div class="info-value">{{ subscription.price }} ر.س / {{ subscription.get_duration_display }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-people"></i> المقاعد</div>
+                        <div class="info-value seat-stack">
+                            <span>{{ subscription.seats }} مقاعد إجمالاً</span>
+                            <span class="remaining-chip">
+                                <i class="bi bi-check2-circle"></i>
+                                {{ subscription.available_seats }} متبقية
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-calendar-check"></i> تاريخ البداية</div>
+                        <div class="info-value" dir="ltr">{{ subscription.start_date|date:"d/m/Y" }}</div>
+                    </div>
+
+                    <div class="info-tile">
+                        <div class="info-label"><i class="bi bi-calendar-x"></i> تاريخ النهاية</div>
+                        <div class="info-value" dir="ltr">{{ subscription.end_date|date:"d/m/Y" }}</div>
+                    </div>
+                </div>
+            </section>
+
+            {% if subscription.notes %}
+            <section class="detail-card">
+                <div class="card-title-row">
+                    <span class="title-icon"><i class="bi bi-card-text"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-1">ملاحظات السائق</h5>
+                        <span class="muted-copy">معلومات إضافية عن الاشتراك أو الرحلة.</span>
+                    </div>
+                </div>
+
+                <div class="notes-box">
+                    {{ subscription.notes }}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+
+        <aside class="detail-card action-card">
+            <div class="card-title-row">
+                <span class="title-icon"><i class="bi bi-send-check"></i></span>
+                <div>
+                    <h5 class="fw-bold mb-1">طلب الاشتراك</h5>
+                    <span class="muted-copy">تابع عندما تكون التفاصيل مناسبة.</span>
+                </div>
+            </div>
+
+            <p class="muted-copy mb-4">
+                عند إرسال الطلب ستحدد جدول الذهاب والعودة، ثم يصل الطلب للسائق للمراجعة.
+            </p>
+
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-accent request-btn">
+                <i class="bi bi-person-plus"></i>
+                إنشاء حساب لإرسال الطلب
+            </a>
+            <a href="{% url 'accounts:login' %}" class="outline-btn">
+                <i class="bi bi-box-arrow-in-right"></i>
+                لدي حساب بالفعل
+            </a>
+            {% elif user.role != "student" %}
+            <div class="alert alert-warning soft-alert mb-0">
+                إرسال طلب الاشتراك متاح لحساب الطالب أو الطالبة فقط.
+            </div>
+            {% elif has_active_request %}
+            <div class="alert alert-warning soft-alert mb-0">
+                لديك طلب أو اشتراك قائم بالفعل، لذلك لا يمكنك إرسال طلب جديد حالياً.
+            </div>
+            {% elif subscription.available_seats <= 0 %}
+            <div class="alert alert-danger soft-alert mb-0">
+                لا توجد مقاعد متاحة حالياً في هذا الاشتراك.
+            </div>
+            {% elif not can_accept_requests %}
+            <div class="alert alert-warning soft-alert mb-0">
+                انتهت فترة استقبال الطلبات لهذا الاشتراك لقرب موعد انتهائه.
+            </div>
+            {% else %}
+            <a href="{% url 'student:create_request' subscription.id %}" class="btn btn-accent request-btn">
+                <i class="bi bi-plus-circle"></i>
+                طلب اشتراك
+            </a>
+            {% endif %}
+        </aside>
+    </div>
+</div>
+{% endblock %}

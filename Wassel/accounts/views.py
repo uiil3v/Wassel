@@ -660,10 +660,10 @@ def public_profile_view(request, user_id):
             template_name = "admin_panel/public_profile.html"
 
         else:
-            template_name = "accounts/public_profile_content.html"
+            template_name = "accounts/public_profile.html"
 
     else:
-        template_name = "accounts/public_profile_content.html"
+        template_name = "accounts/public_profile.html"
 
     return render(
         request,
