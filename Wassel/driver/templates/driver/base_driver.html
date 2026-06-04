@@ -152,6 +152,24 @@
         border-radius: 999px;
     }
 
+    .driver-logout-link {
+        color: #dc3545;
+        margin-top: 10px;
+    }
+
+    .driver-logout-link i {
+        color: #dc3545;
+    }
+
+    .driver-logout-link:hover {
+        background-color: rgba(220, 53, 69, 0.09);
+        color: #dc3545;
+    }
+
+    .driver-logout-link:hover i {
+        color: #dc3545;
+    }
+
     .mobile-driver-bar {
         display: none;
         align-items: center;
@@ -392,6 +410,11 @@
                class="driver-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
                 <i class="bi bi-person"></i>
                 الملف الشخصي
+            </a>
+
+            <a href="{% url 'accounts:logout' %}" class="driver-link driver-logout-link">
+                <i class="bi bi-box-arrow-right"></i>
+                تسجيل الخروج
             </a>
         </nav>
     </div>

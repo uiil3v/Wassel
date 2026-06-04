@@ -136,6 +136,24 @@
         border-radius: 999px;
     }
 
+    .admin-logout-link {
+        color: #dc3545;
+        margin-top: 10px;
+    }
+
+    .admin-logout-link i {
+        color: #dc3545;
+    }
+
+    .admin-logout-link:hover {
+        background-color: rgba(220, 53, 69, 0.09);
+        color: #dc3545;
+    }
+
+    .admin-logout-link:hover i {
+        color: #dc3545;
+    }
+
     .mobile-admin-bar {
         display: none;
         align-items: center;
@@ -295,6 +313,7 @@
                     <i class="bi bi-life-preserver"></i>
                     الدعم
                 </a>
+
             </nav>
         </aside>
 
@@ -370,6 +389,11 @@
                class="admin-link {% if 'support' in request.resolver_match.url_name %}active{% endif %}">
                 <i class="bi bi-life-preserver"></i>
                 الدعم
+            </a>
+
+            <a href="{% url 'accounts:logout' %}" class="admin-link admin-logout-link">
+                <i class="bi bi-box-arrow-right"></i>
+                تسجيل الخروج
             </a>
         </nav>
     </div>

@@ -100,6 +100,32 @@
             box-shadow: 0 0 0 0.2rem rgba(200, 169, 81, 0.25);
         }
 
+        .mobile-nav-actions {
+            align-items: center;
+            display: none;
+            gap: 8px;
+            margin-right: auto;
+        }
+
+        .mobile-account-trigger {
+            align-items: center;
+            background: rgba(255, 255, 255, 0.42);
+            border: 1px solid rgba(74, 63, 53, 0.18);
+            border-radius: 14px;
+            color: var(--dark-color);
+            display: inline-flex;
+            height: 48px;
+            justify-content: center;
+            text-decoration: none;
+            width: 48px;
+        }
+
+        .mobile-account-trigger:hover,
+        .mobile-account-trigger:focus {
+            background: rgba(200, 169, 81, 0.14);
+            color: var(--accent-color);
+        }
+
         .nav-link {
             color: var(--dark-color) !important;
             font-weight: 400;
@@ -343,6 +369,15 @@
                 margin-left: 0;
             }
 
+            .mobile-nav-actions {
+                display: flex;
+            }
+
+            .navbar-toggler {
+                height: 48px;
+                width: 54px;
+            }
+
             .custom-navbar.scrolled .navbar-brand {
                 font-size: 2.7rem;
             }
@@ -402,10 +437,82 @@
             <!-- الشعار -->
             <a class="navbar-brand" href="{% url 'main:index' %}">وصْـــــل</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="فتح القائمة">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="mobile-nav-actions">
+                <div class="dropdown">
+                    <a class="mobile-account-trigger"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false"
+                       aria-label="قائمة الحساب">
+                        <i class="bi bi-person-fill"></i>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end custom-dropdown text-end">
+                        {% if user.is_authenticated %}
+                            <li class="dropdown-user-summary">
+                                <span class="dropdown-user-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+
+                                <span class="dropdown-user-name">
+                                    {{ user.get_full_name|default:user.email }}
+                                </span>
+                            </li>
+
+                            {% if user.role == "driver" %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'driver:dashboard' %}">
+                                        <i class="bi bi-speedometer2"></i>
+                                        <span class="dropdown-item-label">لوحة التحكم</span>
+                                    </a>
+                                </li>
+                            {% elif user.role == "student" %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'student:dashboard' %}">
+                                        <i class="bi bi-speedometer2"></i>
+                                        <span class="dropdown-item-label">لوحة التحكم</span>
+                                    </a>
+                                </li>
+                            {% elif user.role == "admin" %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'admin_panel:dashboard' %}">
+                                        <i class="bi bi-speedometer2"></i>
+                                        <span class="dropdown-item-label">لوحة الإدارة</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span class="dropdown-item-label">تسجيل الخروج</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:login' %}">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    <span class="dropdown-item-label">تسجيل الدخول</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'accounts:register' %}">
+                                    <i class="bi bi-person-plus"></i>
+                                    <span class="dropdown-item-label">إنشاء حساب</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="فتح القائمة">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
 
             <div class="collapse navbar-collapse" id="navbarNav">
 
@@ -456,7 +563,7 @@
 
                 </ul>
 
-                <ul class="navbar-nav align-items-center">
+                <ul class="navbar-nav align-items-center d-none d-lg-flex">
 
                     {% if user.is_authenticated %}
 
