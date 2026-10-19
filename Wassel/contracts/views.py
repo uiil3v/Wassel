@@ -5,6 +5,7 @@ from .models import TransportContract
 
 
 from django.http import HttpResponse
+from django.urls import reverse
 from django.template.loader import render_to_string
 
 from weasyprint import HTML
@@ -123,7 +124,7 @@ def download_contract_pdf(request, contract_id):
 
     html = HTML(
         string=html_string,
-        base_url=request.build_absolute_uri("/")
+        base_url=request.build_absolute_uri(reverse("main:index"))
     )
 
     pdf_file = html.write_pdf()

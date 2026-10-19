@@ -32,7 +32,7 @@ class SiteVisitTrackingMiddleware:
         if response.status_code >= 400:
             return False
 
-        path = request.path or ""
+        path = request.path_info or ""
 
         if any(path.startswith(prefix) for prefix in self.SKIPPED_PREFIXES):
             return False
@@ -69,9 +69,4 @@ class SiteVisitTrackingMiddleware:
             return
 
     def _get_client_ip(self, request):
-        forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-
-        if forwarded_for:
-            return forwarded_for.split(",")[0].strip()
-
         return request.META.get("REMOTE_ADDR", "0.0.0.0")

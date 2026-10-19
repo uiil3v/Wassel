@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Notification
+from Wassel.http_utils import safe_return_url
 
 @login_required
 def mark_notification_read(request, notification_id):
@@ -14,7 +15,7 @@ def mark_notification_read(request, notification_id):
     notification.is_read = True
     notification.save()
 
-    return redirect(request.META.get("HTTP_REFERER", "main:index"))
+    return redirect(safe_return_url(request))
 
 
 @login_required
@@ -25,7 +26,7 @@ def mark_all_notifications_read(request):
         is_read=False
     ).update(is_read=True)
 
-    return redirect(request.META.get("HTTP_REFERER", "main:index"))
+    return redirect(safe_return_url(request))
 
 @login_required
 def delete_notification(request, notification_id):
@@ -38,7 +39,7 @@ def delete_notification(request, notification_id):
 
     notification.delete()
 
-    return redirect(request.META.get("HTTP_REFERER", "main:index"))
+    return redirect(safe_return_url(request))
 
 @login_required
 def delete_all_notifications(request):
@@ -47,4 +48,4 @@ def delete_all_notifications(request):
         user=request.user
     ).delete()
 
-    return redirect(request.META.get("HTTP_REFERER", "main:index"))
+    return redirect(safe_return_url(request))
