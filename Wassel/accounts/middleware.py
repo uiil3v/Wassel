@@ -35,7 +35,7 @@ class EmailVerificationMiddleware:
                 current_path = request.path
 
                 # السماح فقط للصفحات المصرح بها
-                if (current_path not in allowed_paths and not current_path.startswith("/accounts/verify-email/") and not current_path.startswith("/admin/")):
+                if (current_path not in allowed_paths and not request.path_info.startswith("/accounts/verify-email/") and not request.path_info.startswith("/admin/")):
 
                     messages.warning(
                         request,

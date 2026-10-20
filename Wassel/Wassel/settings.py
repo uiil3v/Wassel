@@ -15,7 +15,9 @@ import os
 import cloudinary
 from dotenv import load_dotenv
 
-load_dotenv()
+# The isolated test settings never read the local production-style .env file.
+if os.environ.get("DJANGO_SETTINGS_MODULE") != "Wassel.test_settings":
+    load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +32,26 @@ SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    host.strip() for host in os.getenv(
+        "ALLOWED_HOSTS", "wassel.onrender.com,projects.saifwork.online,localhost,127.0.0.1,[::1]"
+    ).split(",") if host.strip()
+]
+
+# Empty disables mounted requests. Configure a fresh shared secret later; do not commit it.
+WASSEL_PROXY_SECRET = os.getenv("WASSEL_PROXY_SECRET", "")
+USE_X_FORWARDED_HOST = False
+SECURE_PROXY_SSL_HEADER = None
+LOGIN_URL = "accounts:login"
+SESSION_COOKIE_NAME = "wassel_sessionid"
+CSRF_COOKIE_NAME = "wassel_csrftoken"
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+# No cross-origin exemption is needed: the WSGI adapter sets the verified host.
+CSRF_TRUSTED_ORIGINS = []
 
 
 # Application definition
@@ -151,7 +172,11 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+WHITENOISE_STATIC_PREFIX = "/static/"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "Wassel.static_storage.MountedStaticFilesStorage"},
+}
 
 AUTH_USER_MODEL = "accounts.User"
 

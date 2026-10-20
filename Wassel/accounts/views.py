@@ -23,7 +23,8 @@ from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from Wassel.http_utils import safe_return_url
 
 from django.conf import settings
 
@@ -279,10 +280,7 @@ def resend_email_change_confirmation_view(request):
             )
 
             return redirect(
-                request.META.get(
-                    "HTTP_REFERER",
-                    "main:index"
-                )
+                safe_return_url(request)
             )
 
     send_email_change_confirmation(
@@ -306,10 +304,7 @@ def resend_email_change_confirmation_view(request):
     )
 
     return redirect(
-        request.META.get(
-            "HTTP_REFERER",
-            "main:index"
-        )
+        safe_return_url(request)
     )
 
 
@@ -328,10 +323,7 @@ def cancel_email_change_view(request):
     )
 
     return redirect(
-        request.META.get(
-            "HTTP_REFERER",
-            "main:index"
-        )
+        safe_return_url(request)
     )
 
 
@@ -456,9 +448,7 @@ class CustomPasswordResetView(PasswordResetView):
         "emails/password_reset_email.html"
     )
 
-    success_url = (
-        "/accounts/forgot-password/done/"
-    )
+    success_url = reverse_lazy("accounts:password_reset_done")
 
     def form_valid(self, form):
 

@@ -8,6 +8,7 @@ class PlatformEarningAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
         # فقط Super Admin يشوف الأرباح
         return (
-            request.user.role == "admin"
+            request.user.is_authenticated
+            and request.user.role == "admin"
             and request.user.admin_level == 1
         )
