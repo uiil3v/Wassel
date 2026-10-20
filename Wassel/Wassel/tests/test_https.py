@@ -98,7 +98,7 @@ class HttpsBoundaryTests(SimpleTestCase):
     def test_gunicorn_configuration_limits_forwarded_metadata(self):
         config = runpy.run_path(str(Path(settings.BASE_DIR) / "gunicorn.conf.py"))
         self.assertEqual(config["secure_scheme_headers"], {"X-FORWARDED-PROTO": "https"})
-        self.assertEqual(config["forwarder_headers"], [])
+        self.assertEqual(config["forwarder_headers"], "")
         self.assertNotIn("forwarded_allow_ips", config)
         self.assertIsNone(settings.SECURE_PROXY_SSL_HEADER)
         self.assertFalse(settings.USE_X_FORWARDED_HOST)
