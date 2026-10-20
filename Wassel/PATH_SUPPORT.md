@@ -103,13 +103,15 @@ creation/approval/cancellation, seat counts, contract creation, real PDF generat
 and CSV responses. All users, contracts and balances are synthetic.
 
 These tests do not certify PostgreSQL concurrency, live Cloudinary uploads, live
-email delivery or the eventual Cloudflare/Gunicorn network integration. A separate
-staging environment with a non-production database and service credentials is
-still required before enabling the proxy. No live endpoint is exercised here.
+email delivery or the eventual Cloudflare/Gunicorn network integration. The chosen
+release plan uses the existing Render service, without staging. Release approval
+and post-deploy verification are still separate from local verification. No live
+endpoint is exercised here.
 
 ### Verification result for this implementation
 
-All 14 tests passed on Django 5.2.4 (the requirements.txt version), with no Django
+All 19 tests (14 existing plus 5 HTTPS/configuration tests) passed on Django 5.2.4
+(the requirements.txt version), with no Django
 system-check issues. collectstatic and actual WeasyPrint PDF generation succeeded.
 `git diff --check` passed. No model or migration files or payment services changed.
 
@@ -130,18 +132,61 @@ and all assertions nevertheless passed. These are not Django test failures.
 
 ## Later activation / rollback (not performed)
 
-1. Review this branch; provision independent staging configuration and data.
-2. Build static assets and run the WSGI application in staging.
-3. Separately implement and review the proxy using the contract above.
-4. Configure a fresh shared secret on staging only and verify both host paths,
-   TLS detection through Render/Gunicorn, multipart uploads, email, redirects,
-   cookie isolation and unrelated Pages routes with an actual browser.
-5. After approval, deploy the backwards-compatible Django change before enabling
-   the public proxy route. Keep the Render root URL available throughout.
+1. Review this branch and the HTTPS/build precautions below; record the previous
+   successful production release and confirm a usable database backup.
+2. After explicit approval, deploy Django to the existing Render service with the
+   proxy secret absent. Merging main triggers its configured automatic deploy.
+3. Verify the root URL, HTTPS, CSRF, static files and authentication after deploy.
+4. Separately review and approve the proxy and matching secret configuration;
+   verify both hosts, uploads, email, redirects and unrelated Pages routes.
+   Keep the Render root URL available throughout.
 
 To disable the mount, disable the proxy route and remove the shared-secret
 configuration. The direct Render route stays available; no database rollback or
 schema migration is associated with these changes.
+
+## Render HTTPS boundary and confirmed build configuration
+
+Root Directory: `Wassel/`. Start: `gunicorn Wassel.wsgi:application`.
+Build: `pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput`.
+
+Render terminates public TLS before forwarding HTTP to the service. Its native
+Python environment documents `FORWARDED_ALLOW_IPS=*`; Gunicorn uses the trusted
+peer policy and `X-Forwarded-Proto` to set `wsgi.url_scheme` before calling WSGI.
+The new `gunicorn.conf.py` is automatically loaded from this root directory. It
+accepts only `X-Forwarded-Proto` for scheme detection, excluding the alternative
+`X-Forwarded-SSL` and `X-Forwarded-Protocol` headers. It also disables header-based
+SCRIPT_NAME/PATH_INFO forwarding. It does not expand Gunicorn's trusted peers.
+
+This relies on Render's ingress supplying the protocol header and clients not
+being able to bypass that ingress to reach Gunicorn. Do not reuse Render's wildcard
+peer policy for a directly exposed server or an untrusted private-network client.
+An explicit Gunicorn config override or overridden platform environment needs a
+new review. No service environment values were read or changed for this review.
+
+ProxyMount preserves Gunicorn's scheme for direct requests while stripping raw
+forwarding headers. Keep `SECURE_PROXY_SSL_HEADER=None`: Django must not independently
+trust a visitor header. Only an authenticated mount sets the public Cloudflare
+host/scheme. HTTP reaching WSGI as HTTP remains HTTP; a forged header cannot upgrade
+it in ProxyMount. CSRF stays enabled, including origin and HTTPS referer checking.
+
+The HTTPS tests cover both WSGI schemes, forged forwarding headers, HTTPS absolute
+URLs, valid/invalid origins, missing tokens, insecure/missing referers, authenticated
+mounting and forged proxy keys. These are WSGI-boundary tests, not a running Gunicorn
+server or an end-to-end Render ingress test (Gunicorn requires a Unix runtime).
+
+There are no new migrations in this branch. However, the confirmed build command
+will connect to the configured database and apply any outstanding migrations,
+including older ones. A failed later collectstatic step does not undo migrations.
+Before approving deployment, confirm the existing migration state and backup via
+an authorized operational check. Do not infer database state solely from git diff.
+Code rollback must not automatically restore a database backup or reverse migrations.
+
+Official references:
+* https://render.com/docs/environment-variables#python-3
+* https://render.com/docs/web-services#https
+* https://gunicorn.org/reference/settings/#secure_scheme_headers
+* https://gunicorn.org/reference/settings/#forwarder_headers
 
 References:
 * https://docs.djangoproject.com/en/5.2/ref/settings/#force-script-name

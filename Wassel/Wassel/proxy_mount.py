@@ -17,6 +17,8 @@ class ProxyMount:
         environ = environ.copy()
         supplied = environ.pop("HTTP_X_WASSEL_PROXY_KEY", None)
         client_ip = environ.pop("HTTP_X_WASSEL_CLIENT_IP", "")
+        # Gunicorn has already resolved wsgi.url_scheme using its trusted peer
+        # policy. Preserve that result; never infer TLS from raw HTTP headers.
         # Never let visitor-controlled forwarding headers reach Django.
         for key in list(environ):
             if key.startswith("HTTP_X_FORWARDED_") or key in (
